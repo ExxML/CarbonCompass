@@ -22,7 +22,7 @@ This project helps users choose more sustainable travel options by calculating e
 
 ## 🧰 Tech Stack
 Frontend:
-- React.js + Vite (or CRA) + TypeScript (optional)
+- React.js + Vite (or CRA) + Javascript (optional)
 - TailwindCSS for utility-first styling
 - Axios / Fetch for API calls
 - Google Maps JavaScript API + Places + Directions (optionally Distance Matrix)

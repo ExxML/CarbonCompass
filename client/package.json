@@ -14,7 +14,7 @@
     "format:watch": "chokidar '{index.html,src/**/*.{js,jsx,ts,tsx,css,html,md,scss}}' -i 'node_modules' -i 'dist' -c 'prettier --write {path}'"
   },
   "dependencies": {
-    "@react-google-maps/api": "^2.20.7",
+    "@vis.gl/react-google-maps": "^1.5.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
