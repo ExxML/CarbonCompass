@@ -51,8 +51,7 @@ coverage/
 
 # Dependency directories
 jspm_packages/
-client/node_modules/
-server/node_modules/
+node_modules/
 
 # Optional npm cache directory
 .npm
