@@ -118,8 +118,6 @@ Never commit real API keys. Use `.env.example` to document required variables.
 | **ESLint: lint frontend**        | `client` | `npx eslint .`                       |
 | **ESLint: fix frontend**         | `client` | `npx eslint . --fix`                 |
 
-
-
 ### ⚙️ Requirements
 
 - Node.js **v18+** (use NVM to install and switch)

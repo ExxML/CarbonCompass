@@ -6,11 +6,14 @@
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.js",
+    "dev": "concurrently -n fmt,lint,server -c magenta,yellow,green \"npm run format:watch\" \"npm run lint:watch\" \"nodemon src/index.js\"",
     "start": "node src/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier . --write"
+    "lint:watch": "chokidar 'src/**/*.{js,mjs,cjs,json}' -i 'node_modules' -i 'dist' -c \"eslint --cache --cache-location .eslintcache --fix {path} || true\"",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "format:watch": "chokidar 'src/**/*.{js,jsx,json,css,html}' -c 'prettier --write {path}'"
   },
   "keywords": [],
   "author": "",
@@ -19,11 +22,13 @@
     "axios": "^1.12.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "zod": "^4.1.11",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.1.0",
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
