@@ -104,6 +104,7 @@ Never commit real API keys. Use `.env.example` to document required variables.
 
 ## 🚀 Getting Started
 
+
 ### Useful Commands
 | Purpose                          | Folder   | Command                              |
 | -------------------------------- | -------- | ------------------------------------ |
@@ -112,6 +113,11 @@ Never commit real API keys. Use `.env.example` to document required variables.
 | Build frontend for production    | `client` | `npm run build`                      |
 | Start backend in production mode | `server` | `npm start`                          |
 | Clean node_modules               | any      | `rm -rf node_modules && npm install` |
+| **ESLint: lint backend**         | `server` | `npx eslint .`                       |
+| **ESLint: fix backend**          | `server` | `npx eslint . --fix`                 |
+| **ESLint: lint frontend**        | `client` | `npx eslint .`                       |
+| **ESLint: fix frontend**         | `client` | `npx eslint . --fix`                 |
+
 
 
 ### ⚙️ Requirements
