@@ -103,10 +103,27 @@ VITE_API_BASE_URL=http://localhost:5000
 Never commit real API keys. Use `.env.example` to document required variables.
 
 ## 🚀 Getting Started
-### Prerequisites
-- Node.js (LTS 18+ recommended)
-- npm / pnpm / yarn
-- Google Cloud project with Maps APIs enabled: (Directions, Distance Matrix, Places, Maps JavaScript)
+
+### Useful Commands
+| Purpose                          | Folder   | Command                              |
+| -------------------------------- | -------- | ------------------------------------ |
+| Start backend (Express)          | `server` | `npm run dev`                        |
+| Start frontend (Vite)            | `client` | `npm run dev -- --host`              |
+| Build frontend for production    | `client` | `npm run build`                      |
+| Start backend in production mode | `server` | `npm start`                          |
+| Clean node_modules               | any      | `rm -rf node_modules && npm install` |
+
+
+### ⚙️ Requirements
+
+- Node.js **v18+** (use NVM to install and switch)
+- npm **v9+**
+- Google Cloud project with:
+  - **Routes API** (for fuel consumption)
+  - **Maps JavaScript API** (for map display)
+- API keys:
+  - Browser key → frontend (`VITE_GOOGLE_MAPS_API_KEY`)
+  - Server key → backend (`MAPS_API_KEY`)
 
 ### Installation
 From project root:
