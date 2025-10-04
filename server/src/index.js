@@ -5,6 +5,7 @@ import express from "express";
 import { z } from "zod";
 
 dotenv.config();
+console.log('Google Maps API Key:', process.env.MAPS_API_KEY ? 'YES' : 'NO');
 
 const app = express();
 app.use(cors({ origin: ["http://localhost:5173", "http://127.0.0.1:5173"] }));
