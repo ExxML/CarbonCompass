@@ -1,4 +1,5 @@
 import Route from '../models/Route.js';
+
 import CarbonCalculator from './CarbonCalculator.js';
 
 class RouteCalculator {
