@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 class RequestController {
     constructor() {
-        this.routeCalculator = new RouteCalculator(this);
+        this.routeCalculator = new RouteCalculator();
         this.carbonCalculator = new CarbonCalculator();
 
         // Zod schema for validating route requests
@@ -22,8 +22,9 @@ class RequestController {
         // CO2 emission factors per liter of fuel (gasoline only)
         this.KG_CO2_PER_L = { GASOLINE: 2.31 };
 
+        // Allow empty API key for development/testing
         if (!this.API_KEY) {
-            throw new Error('Set MAPS_API_KEY in .env');
+            console.warn('Warning: MAPS_API_KEY not set in .env - some features may be limited');
         }
     }
 
@@ -392,9 +393,10 @@ class RequestController {
                     const distanceKm = (routeData.distanceMeters ?? 0) / 1000;
                     const durationSec = parseFloat(String(routeData.duration ?? '0s').replace('s', '')) || 0;
 
+                    const route = new Route([], distanceKm, durationSec / 60, 0);
                     return {
                         transportMode: transport.name,
-                        route: new Route([], distanceKm, durationSec / 60, 0)
+                        route: route.getSummary()
                     };
                 }
             } catch (error) {
