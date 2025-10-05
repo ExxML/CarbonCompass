@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin, Clock, Route, Square, StopCircle, Navigation } from 'lucide-react';
 import { formatDuration, formatDistance } from '../utils/tripTrackingUtils';
+import { useResponsive, getMobileStackedPosition } from '../hooks/useResponsive';
 
 const TripProgressPanel = ({
   isDarkMode = false,
@@ -9,6 +10,9 @@ const TripProgressPanel = ({
   isTracking,
   onStopTracking,
 }) => {
+  // Responsive hook - must be called before any conditional returns
+  const { getPanelWidth, getResponsivePosition, isMobile } = useResponsive();
+
   if (!isTracking) return null;
 
   // Debug logging
@@ -32,16 +36,24 @@ const TripProgressPanel = ({
   };
 
   return (
-    <div style={{ position: 'fixed', top: '140px', right: '16px', zIndex: 9999 }}>
+    <div
+      style={{
+        position: 'fixed',
+        top: isMobile ? '8px' : '140px',
+        ...getResponsivePosition('right'),
+        zIndex: 9999,
+        ...getMobileStackedPosition(0, isMobile),
+      }}
+    >
       <div
         style={{
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(15px)',
-          borderRadius: '16px',
+          borderRadius: isMobile ? '12px' : '16px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           border: '1px solid rgba(255, 255, 255, 0.2)',
-          width: '320px',
-          padding: '16px',
+          width: `${getPanelWidth(320)}px`,
+          padding: isMobile ? '12px' : '16px',
         }}
       >
         {/* Header */}

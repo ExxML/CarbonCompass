@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Navigation, X, Clock, MapPin, ArrowRight, Play } from 'lucide-react';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { useDirections } from '../hooks/useDirections';
+import { useResponsive } from '../hooks/useResponsive';
 
 const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onClearSearch }) => {
+  // Responsive hook
+  const { getPanelWidth, getResponsivePosition, isMobile } = useResponsive();
   // Removed console.log to prevent constant logging
   const [isMinimized, setIsMinimized] = useState(false);
   const [origin, setOrigin] = useState('');
@@ -447,15 +450,15 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onCle
   }
 
   return (
-    <div style={{ position: 'fixed', top: '16px', left: '16px', zIndex: 9999 }}>
+    <div style={{ position: 'fixed', ...getResponsivePosition('left'), zIndex: 9999 }}>
       <div
         style={{
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(15px)',
-          borderRadius: '16px',
+          borderRadius: isMobile ? '12px' : '16px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           border: '1px solid rgba(255, 255, 255, 0.2)',
-          width: '384px',
+          width: `${getPanelWidth(384)}px`,
         }}
       >
         {/* Header */}

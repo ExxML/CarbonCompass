@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Leaf, TrendingDown, Car, TreePine, X } from 'lucide-react';
 import carbonIcon from '../assets/carbon.png';
+import { useResponsive } from '../hooks/useResponsive';
 
 const CarbonPanel = ({ isDarkMode = false }) => {
+  // Responsive hook
+  const { getPanelWidth, isMobile } = useResponsive();
   const [isMinimized, setIsMinimized] = useState(false);
   // Mock carbon savings data - you can replace this with actual calculation data
   const carbonData = {
@@ -66,16 +69,23 @@ const CarbonPanel = ({ isDarkMode = false }) => {
   }
 
   return (
-    <div style={{ position: 'fixed', bottom: '16px', left: '16px', zIndex: 9999 }}>
+    <div
+      style={{
+        position: 'fixed',
+        bottom: isMobile ? '8px' : '16px',
+        left: isMobile ? '8px' : '16px',
+        zIndex: 9999,
+      }}
+    >
       <div
         style={{
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(15px)',
-          borderRadius: '16px',
+          borderRadius: isMobile ? '12px' : '16px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           border: '1px solid rgba(255, 255, 255, 0.4)',
-          width: '384px',
-          padding: '16px',
+          width: `${getPanelWidth(384)}px`,
+          padding: isMobile ? '12px' : '16px',
         }}
       >
         {/* Header */}
