@@ -3,6 +3,7 @@ import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
 import { Home } from 'lucide-react';
 import RoutePolyline from './RoutePolyline';
 import SearchPanel from './SearchPanel';
+import RouteDetailsPanel from './RouteDetailsPanel';
 import WeatherPanel from './WeatherPanel';
 import CarbonPanel from './CarbonPanel';
 import TripProgressPanel from './TripProgressPanel';
@@ -93,6 +94,8 @@ export default function MapView({ onNavigateToLanding }) {
   const [allRoutes, setAllRoutes] = useState({});
   const [showTraffic, setShowTraffic] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [selectedRoute, setSelectedRoute] = useState(null);
+  const [selectedRouteData, setSelectedRouteData] = useState(null);
   const clearSearchPanelRef = useRef(null);
 
   // Trip tracking
@@ -115,6 +118,10 @@ export default function MapView({ onNavigateToLanding }) {
 
   const handleRouteChange = (routesData) => {
     console.log('Routes data received:', routesData);
+
+    // Clear selected route when new routes are loaded
+    setSelectedRoute(null);
+    setSelectedRouteData(null);
 
     // Handle both single route (legacy) and multiple routes
     if (routesData && typeof routesData === 'object') {
@@ -176,6 +183,19 @@ export default function MapView({ onNavigateToLanding }) {
     startTracking(routeData);
   };
 
+  // Handle route selection for detailed view
+  const handleRouteSelect = (mode, routeData) => {
+    console.log('Route selected:', mode, routeData);
+    setSelectedRoute(mode);
+    setSelectedRouteData(routeData);
+  };
+
+  // Handle closing the route details panel
+  const handleCloseRouteDetails = () => {
+    setSelectedRoute(null);
+    setSelectedRouteData(null);
+  };
+
   // Handle stopping trip tracking and clear search panel
   const handleStopTracking = () => {
     stopTracking();
@@ -186,6 +206,8 @@ export default function MapView({ onNavigateToLanding }) {
     setAllRoutes({});
     setOrigin(null);
     setDestination(null);
+    setSelectedRoute(null);
+    setSelectedRouteData(null);
   };
 
   return (
@@ -288,9 +310,19 @@ export default function MapView({ onNavigateToLanding }) {
           isDarkMode={isDarkMode}
           onRouteChange={handleRouteChange}
           onStartTracking={handleStartTracking}
+          onRouteSelect={handleRouteSelect}
           onClearSearch={(clearFn) => {
             clearSearchPanelRef.current = clearFn;
           }}
+        />
+
+        {/* Route Details Panel */}
+        <RouteDetailsPanel
+          isDarkMode={isDarkMode}
+          selectedRoute={selectedRoute}
+          routeData={selectedRouteData}
+          onClose={handleCloseRouteDetails}
+          onStartTracking={handleStartTracking}
         />
 
         {/* Trip Progress Panel */}
