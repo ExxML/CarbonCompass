@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { z } from "zod";
 import RouteCalculator from "./services/RouteCalculator.js";
+import RequestController from "./controllers/RequestController.js";
 
 dotenv.config();
 console.log("Google Maps API Key:", process.env.MAPS_API_KEY ? "YES" : "NO");
@@ -14,6 +15,9 @@ app.use(express.json());
 
 // Initialize the route calculator for multi-modal route optimization
 const routeCalculator = new RouteCalculator(axios);
+
+// Initialize the request controller for specialized route handling
+const requestController = new RequestController();
 
 const GOOGLE_ROUTES_URL =
   "https://routes.googleapis.com/directions/v2:computeRoutes";
@@ -110,6 +114,12 @@ app.post("/api/routes", async (req, res) => {
     });
   }
 });
+
+// Route endpoints using RequestController
+app.post("/api/routes/fastest", (req, res) => requestController.getFastestRoute(req, res));
+app.post("/api/routes/balanced", (req, res) => requestController.getBalancedRoute(req, res));
+app.post("/api/routes/eco", (req, res) => requestController.getEcoRoute(req, res));
+app.post("/api/routes/all", (req, res) => requestController.getAllRouteTypes(req, res));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
