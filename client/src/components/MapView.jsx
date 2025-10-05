@@ -1,169 +1,75 @@
-import { useEffect, useRef, useState } from 'react';
-import {
-  APIProvider,
-  Map,
-  Marker,
-  Polyline,
-  useMap,
-  useMapsLibrary,
-} from '@vis.gl/react-google-maps';
+import { useState, useEffect } from 'react';
+import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
+import RoutePolyline from './RoutePolyline';
 
-/** tiny polyline decoder */
-function decodePolyline(encoded) {
-  let index = 0,
-    lat = 0,
-    lng = 0;
-  const path = [];
-  while (index < encoded.length) {
-    let b,
-      shift = 0,
-      result = 0;
-    do {
-      b = encoded.charCodeAt(index++) - 63;
-      result |= (b & 0x1f) << shift;
-      shift += 5;
-    } while (b >= 0x20);
-    const dlat = result & 1 ? ~(result >> 1) : result >> 1;
-    lat += dlat;
-    shift = 0;
-    result = 0;
-    do {
-      b = encoded.charCodeAt(index++) - 63;
-      result |= (b & 0x1f) << shift;
-      shift += 5;
-    } while (b >= 0x20);
-    const dlng = result & 1 ? ~(result >> 1) : result >> 1;
-    lng += dlng;
-    path.push({ lat: lat / 1e5, lng: lng / 1e5 });
-  }
-  return path;
-}
-
-/** Autocomplete wiring for a single input */
-function AutocompleteInput({ placeholder, onPlace }) {
-  const inputRef = useRef(null);
-  const placesLib = useMapsLibrary('places');
+function ConfigureControls() {
   const map = useMap();
 
   useEffect(() => {
-    if (!placesLib || !inputRef.current) return;
-    const ac = new placesLib.Autocomplete(inputRef.current, {
-      // types: ["geocode"], // optionally restrict
-      fields: ['place_id', 'geometry', 'formatted_address', 'name'],
+    // Wait until both the map and the Google API are available
+    if (!map || !window.google || !window.google.maps) return;
+
+    map.setOptions({
+      // start clean, then enable what you want
+      disableDefaultUI: true,
+      mapTypeControl: false,
+      fullscreenControl: false,
+
+      zoomControl: true,
+      zoomControlOptions: {
+        position: window.google.maps.ControlPosition.RIGHT_BOTTOM,
+      },
+      // example of moving Map/Satellite if you re-enable it:
+      // mapTypeControl: true,
+      // mapTypeControlOptions: {
+      //   position: window.google.maps.ControlPosition.TOP_LEFT,
+      //   style: window.google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+      // },
     });
+  }, [map]);
 
-    // Bias results to current map viewport (nice UX)
-    if (map) {
-      const listener = map.addListener('bounds_changed', () => {
-        ac.setBounds(map.getBounds());
-      });
-      // cleanup
-      return () => listener.remove();
-    }
-  }, [placesLib, map]);
-
-  useEffect(() => {
-    if (!placesLib || !inputRef.current) return;
-    const ac = new placesLib.Autocomplete(inputRef.current, {
-      fields: ['place_id', 'geometry', 'formatted_address', 'name'],
-    });
-    const onChanged = () => {
-      const p = ac.getPlace();
-      if (p && p.geometry) {
-        const loc = p.geometry.location;
-        onPlace({
-          placeId: p.place_id,
-          latLng: { lat: loc.lat(), lng: loc.lng() },
-          label: p.formatted_address || p.name,
-        });
-      }
-    };
-    ac.addListener('place_changed', onChanged);
-    return () => placesLib.event.clearInstanceListeners(ac);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [placesLib]);
-
-  return (
-    <input ref={inputRef} placeholder={placeholder} className="gm-input" style={{ width: 320 }} />
-  );
+  return null;
 }
 
 export default function MapView() {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
   const defaultCenter = { lat: 49.2606, lng: -123.246 };
-  const [origin, setOrigin] = useState(null); // {placeId, latLng, label}
+  const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
-  const [mode, setMode] = useState('driving'); // driving | walking | bicycling | transit
+  const mode = 'driving';
   const [path, setPath] = useState([]);
 
-  async function fetchRoute() {
-    if (!origin || !destination) return;
+  if (!apiKey) return <div>Missing Google Maps API key</div>;
 
-    // Prefer place_id when you have it (more accurate):
-    const originParam = origin.placeId
-      ? `place_id:${origin.placeId}`
-      : `${origin.latLng.lat},${origin.latLng.lng}`;
-    const destParam = destination.placeId
-      ? `place_id:${destination.placeId}`
-      : `${destination.latLng.lat},${destination.latLng.lng}`;
-
-    const url = `/api/directions?origin=${encodeURIComponent(originParam)}&destination=${encodeURIComponent(destParam)}&mode=${mode}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    const encoded = data?.routes?.[0]?.overview_polyline?.points;
-    if (encoded) setPath(decodePolyline(encoded));
-  }
+  const handleRouteSearch = ({ origin, destination }) => {
+    // Route search functionality will be implemented later
+    console.log('Route Search:', { origin, destination });
+  };
 
   return (
     <APIProvider apiKey={apiKey} libraries={['places']}>
-      {/* Top toolbar overlay */}
-      <div
-        className="gm-toolbar"
-        style={{
-          position: 'fixed',
-          zIndex: 20,
-          top: 12,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          gap: 8,
-          display: 'flex',
-          alignItems: 'center',
-          background: 'white',
-        }}
-      >
-        <AutocompleteInput placeholder="Origin" onPlace={setOrigin} />
-        <span className="gm-sep" />
-        <AutocompleteInput placeholder="Destination" onPlace={setDestination} />
-        <select
-          className="gm-input"
-          style={{ width: 140 }}
-          value={mode}
-          onChange={(e) => setMode(e.target.value)}
+      <div style={{ position: 'relative', width: '100vw', height: '100dvh' }}>
+        {/* Map Component - Keep Original Style */}
+        <Map
+          mapId="509005e80a0f2672b07a1f26"
+          defaultCenter={defaultCenter}
+          defaultZoom={13}
+          style={{ width: '100vw', height: '100dvh' }}
+          // IMPORTANT: keep options here free of google.maps enums
+          options={{
+            disableDefaultUI: true, // hides everything initially
+            mapTypeControl: false,
+            fullscreenControl: false,
+            gestureHandling: 'greedy',
+          }}
         >
-          <option value="driving">Driving</option>
-          <option value="transit">Transit</option>
-          <option value="walking">Walking</option>
-          <option value="bicycling">Cycling</option>
-        </select>
-        <button className="gm-btn gm-btn-primary" onClick={fetchRoute}>
-          Go
-        </button>
-      </div>
+          <ConfigureControls />
 
-      {/* Map fills the viewport */}
-      <Map
-        defaultCenter={defaultCenter}
-        defaultZoom={13}
-        style={{ width: '100vw', height: '100dvh' }}
-        gestureHandling="greedy"
-      >
-        {origin?.latLng && <Marker position={origin.latLng} />}
-        {destination?.latLng && <Marker position={destination.latLng} />}
-        {path.length > 0 && (
-          <Polyline path={path} strokeColor="#4285F4" strokeOpacity={1} strokeWeight={5} />
-        )}
-      </Map>
+          {origin?.latLng && <Marker position={origin.latLng} />}
+          {destination?.latLng && <Marker position={destination.latLng} />}
+          <RoutePolyline path={path} fit strokeColor="#4285F4" strokeWeight={5} />
+        </Map>
+      </div>
     </APIProvider>
   );
 }
