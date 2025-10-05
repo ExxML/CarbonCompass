@@ -67,7 +67,7 @@ class RequestController {
     }
 
     // Helper function to create route object
-    createRouteObject(routeData, transportMode = 'DRIVE') {
+    createRouteObject(routeData) {
         const processedData = this.processRouteData(routeData);
         if (!processedData) return null;
 
@@ -113,7 +113,7 @@ class RequestController {
                 'routes.distanceMeters,routes.duration,routes.travelAdvisory.fuelConsumptionMicroliters'
             );
 
-            const route = this.createRouteObject(response.data, 'GASOLINE', 'DRIVE');
+            const route = this.createRouteObject(response.data);
 
             if (!route) {
                 return res.status(404).json({ error: 'No fastest route found' });
@@ -163,7 +163,7 @@ class RequestController {
                 'routes.distanceMeters,routes.duration,routes.travelAdvisory.fuelConsumptionMicroliters'
             );
 
-            const route = this.createRouteObject(response.data, 'GASOLINE', 'DRIVE');
+            const route = this.createRouteObject(response.data);
 
             if (!route) {
                 return res.status(404).json({ error: 'No balanced route found' });
@@ -340,7 +340,7 @@ class RequestController {
             'routes.distanceMeters,routes.duration,routes.travelAdvisory.fuelConsumptionMicroliters'
         );
 
-        return this.createRouteObject(response.data, 'DRIVE');
+        return this.createRouteObject(response.data);
     }
 
     async getBalancedRouteInternal(origin, destination) {
@@ -360,7 +360,7 @@ class RequestController {
             'routes.distanceMeters,routes.duration,routes.travelAdvisory.fuelConsumptionMicroliters'
         );
 
-        return this.createRouteObject(response.data, 'DRIVE');
+        return this.createRouteObject(response.data);
     }
 
     async getEcoRouteInternal(origin, destination) {
