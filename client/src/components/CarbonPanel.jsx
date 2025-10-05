@@ -120,9 +120,11 @@ const CarbonPanel = ({ isDarkMode = false }) => {
               transition: 'background-color 0.2s',
             }}
             onMouseOver={(e) =>
-              (e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : '#f3f4f6')
+              (e.currentTarget.style.backgroundColor = isDarkMode
+                ? 'rgba(255, 255, 255, 0.1)'
+                : '#f3f4f6')
             }
-            onMouseOut={(e) => (e.target.style.backgroundColor = 'transparent')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             <X
               style={{ width: '16px', height: '16px', color: isDarkMode ? '#d1d5db' : '#6b7280' }}

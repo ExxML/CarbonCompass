@@ -335,8 +335,14 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
               cursor: 'pointer',
               transition: 'background-color 0.2s',
             }}
-            onMouseOver={(e) => (e.target.style.backgroundColor = '#f3f4f6')}
-            onMouseOut={(e) => (e.target.style.backgroundColor = 'transparent')}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = isDarkMode
+                ? 'rgba(255, 255, 255, 0.1)'
+                : '#f3f4f6';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
           >
             <X
               style={{ width: '16px', height: '16px', color: isDarkMode ? '#d1d5db' : '#6b7280' }}
@@ -402,7 +408,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                   background: 'transparent',
                   outline: 'none',
                   border: 'none',
-                  fontSize: '16px',
+                  fontSize: '15px',
                   color: isDarkMode ? '#f9fafb' : '#111827',
                   fontWeight: '500',
                   fontFamily: 'Roboto, sans-serif',
@@ -422,8 +428,12 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                     cursor: 'pointer',
                     transition: 'background-color 0.2s',
                   }}
-                  onMouseOver={(e) => (e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)')}
-                  onMouseOut={(e) => (e.target.style.backgroundColor = 'transparent')}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
                 >
                   <X
                     style={{
@@ -516,7 +526,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                   background: 'transparent',
                   outline: 'none',
                   border: 'none',
-                  fontSize: '16px',
+                  fontSize: '15px',
                   color: isDarkMode ? '#f9fafb' : '#111827',
                   fontWeight: '500',
                   fontFamily: 'Roboto, sans-serif',
@@ -536,8 +546,12 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                     cursor: 'pointer',
                     transition: 'background-color 0.2s',
                   }}
-                  onMouseOver={(e) => (e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)')}
-                  onMouseOut={(e) => (e.target.style.backgroundColor = 'transparent')}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
                 >
                   <X
                     style={{
