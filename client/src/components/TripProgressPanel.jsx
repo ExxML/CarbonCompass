@@ -39,7 +39,7 @@ const TripProgressPanel = ({
     <div
       style={{
         position: 'fixed',
-        top: isMobile ? '8px' : '180px',
+        top: isMobile ? '26px' : '198px',
         right: isMobile ? '8px' : '16px',
         zIndex: 9999,
         transform: isMobile ? `translateY(${0 * 60}px)` : 'none',
