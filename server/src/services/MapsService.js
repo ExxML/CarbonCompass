@@ -34,7 +34,7 @@ class MapsService {
    *
    * Sets up the Maps service with Google Maps API configuration, HTTP client,
    * and error handling strategies. The service supports both production API
-   * calls and mock data for development scenarios.
+   * calls.
    */
   constructor() {
     this.config = getGoogleMapsConfig();

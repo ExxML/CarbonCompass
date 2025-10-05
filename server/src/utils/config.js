@@ -72,7 +72,6 @@ const config = {
 
   // Feature flags
   features: {
-    enableMockData: process.env.ENABLE_MOCK_DATA === "true",
     enableCaching: process.env.ENABLE_CACHING !== "false",
     enableAnalytics: process.env.ENABLE_ANALYTICS === "true",
     enableUserPreferences: process.env.ENABLE_USER_PREFERENCES !== "false",
@@ -110,8 +109,8 @@ function validateConfig() {
   }
 
   // Validate Google Maps configuration
-  if (!config.googleMaps.apiKey && !config.features.enableMockData) {
-    errors.push("MAPS_API_KEY is required when ENABLE_MOCK_DATA is false");
+  if (!config.googleMaps.apiKey) {
+    errors.push("MAPS_API_KEY is required");
   }
 
   if (config.googleMaps.timeout < 1000) {

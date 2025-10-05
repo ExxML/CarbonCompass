@@ -56,18 +56,16 @@ class RouteCalculator {
    * Calculate routes for multiple transportation modes with carbon emission analysis
    *
    * This is the main orchestration method that handles the complete route calculation workflow.
-   * It supports both real Google Maps API data and mock data for development scenarios, then
-   * processes the results through carbon emission calculations and returns ranked results.
+   * It processes the results through carbon emission calculations and returns ranked results.
    *
    * The method follows this workflow:
    * 1. Validates and extracts request parameters (origin, destination, transport modes)
-   * 2. Determines data source strategy (real API vs mock data)
-   * 3. Fetches route data for each requested transportation mode in parallel
-   * 4. Filters out any failed route requests
-   * 5. Calculates carbon emissions for each valid route
-   * 6. Converts and normalizes route data (meters→km, seconds→minutes)
-   * 7. Creates Route objects with complete emission analysis
-   * 8. Returns routes ranked by environmental impact (lowest emissions first)
+   * 2. Fetches route data for each requested transportation mode in parallel
+   * 3. Filters out any failed route requests
+   * 4. Calculates carbon emissions for each valid route
+   * 5. Converts and normalizes route data (meters→km, seconds→minutes)
+   * 6. Creates Route objects with complete emission analysis
+   * 7. Returns routes ranked by environmental impact (lowest emissions first)
    *
    * Error handling strategy:
    * - Individual mode failures don't stop the entire process
@@ -102,7 +100,6 @@ class RouteCalculator {
       }
 
       // Get routes for all requested modes from MapsService
-      // MapsService handles API vs mock data logic internally
       const routes = await this.mapsService.calculateRoutes(
         origin,
         destination,
