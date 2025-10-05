@@ -1,289 +1,185 @@
 <div align="center">
 
-# 🌍 Carbon Compass - Low-Carbon Route Planner
+# 🌍 Carbon Compass
 
-Estimate and compare the carbon footprint for multiple transportation modes between two points using the Google Maps Platform.
+A smart route planning application that helps users make environmentally conscious travel decisions by calculating and comparing carbon emissions across different transportation modes.
 
 </div>
 
-## ✨ Overview
+## � Table of Contents
 
-This project helps users choose more sustainable travel options by calculating estimated greenhouse gas (GHG) emissions for different transportation modes (e.g., walking, cycling, public transit, driving, ride‑share, EV, rail, flights (future)). A user provides (or selects on the map) an origin (Point A) and destination (Point B); the system retrieves routing data via the Google Maps Platform API and applies emission factors to approximate the carbon footprint per route & mode.
+- [📖 About](#-about)
+- [🧮 Carbon Emission Calculations](#-carbon-emission-calculations)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [📋 Technical Requirements](#-technical-requirements)
+- [🚀 Getting Started](#-getting-started)
+- [🎯 Usage](#-usage)
+- [📡 API Endpoints](#-api-endpoints)
+- [📄 License](#-license)
+- [🙏 Acknowledgments](#-acknowledgments)
 
-> NOTE: Emission values are estimates intended for educational / awareness purposes—not for regulatory or financial reporting.
+## �📖 About
 
-## 🎯 Core Features
+Carbon Compass is an interactive web application that empowers users to reduce their environmental impact through informed transportation choices. Simply enter your origin and destination, and our app will show you multiple route options with their respective carbon footprints, helping you choose the most sustainable way to travel.
 
-- Multi‑mode route retrieval (Driving, Transit, Bicycling, Walking; extendable to EV, Rail, Flight)
-- Distance & duration comparison
-- Carbon emission estimation (grams CO₂e) per mode & per trip
-- Emission factor breakdown & assumptions transparency
-- Map visualization with selectable modes
-- Mobile‑friendly responsive UI (TailwindCSS)
-- Modular API layer for future data sources (e.g., OpenRouteService, GBFS micro‑mobility feeds)
+### Key Features
 
-## 🧰 Tech Stack
+- **Multi-Modal Route Planning**: Compare walking, cycling, public transit, and driving options
+- **Real-Time Carbon Calculations**: See estimated CO₂ emissions for each transportation mode
+- **Interactive Map Interface**: Visualize routes and make selections directly on the map
+- **Weather Integration**: Get current weather information to help plan your journey
+- **Responsive Design**: Optimized for both desktop and mobile devices
 
-Frontend:
+## 🧮 Carbon Emission Calculations
 
-- React.js + Vite (or CRA) + Javascript (optional)
-- TailwindCSS for utility-first styling
-- Axios / Fetch for API calls
-- Google Maps JavaScript API + Places + Directions (optionally Distance Matrix)
+Our carbon footprint calculations are based on established emission factors for different transportation modes:
 
-Backend:
+### Transportation Mode Emission Factors
 
-- Node.js + Express.js
-- Emission factor engine (config-driven)
-- Rate limiting & input validation (Helmet / express-validator suggested)
-- Optional caching layer (in‑memory or Redis) for repeated route queries
+| Transportation Mode        | Emission Factor (g CO₂e/km) | Notes                                           |
+| -------------------------- | --------------------------- | ----------------------------------------------- |
+| **Walking**                | 0                           | No direct emissions                             |
+| **Cycling**                | 0                           | No direct emissions (excluding manufacturing)   |
+| **Public Transit**         | 80                          | Average bus/train occupancy considered          |
+| **Driving (Gasoline Car)** | 192                         | Based on average fuel consumption of 8.0L/100km |
+| **Electric Vehicle**       | 55                          | Based on average grid emission intensity        |
 
-Tooling / Infra (optional future):
+### Calculation Method
 
-- ESLint + Prettier
-
-## 🗺️ Architecture
-
-High-Level Flow:
-
-1. User selects origin & destination (autocomplete or map click).
-2. Frontend requests candidate routes per mode from backend.
-3. Backend calls Google Maps Directions / Distance Matrix APIs.
-4. Distances & mode metadata fed into emission calculator.
-5. Emissions returned (g CO₂e) + normalized comparisons (e.g., % less than driving).
-6. UI displays table, charts, and sustainability tips.
-
-## 🧮 Carbon Calculation Methodology
-
-For each mode we apply:  
-`emissions_g = distance_km * emission_factor_g_per_km` (for occupant-level factors)  
-OR  
-`emissions_g = (distance_km * vehicle_factor) / avg_passengers` (when factors are per vehicle-km).
-
-Example (illustrative — replace with sourced values):
-| Mode | Emission Factor (g CO₂e / km / passenger) | Source Notes |
-|------|--------------------------------------------|--------------|
-| Walking | ~0 | Negligible direct emissions |
-| Cycling | ~0 | Manufacturing lifecycle excluded |
-| Public Transit (Bus) | 80 | Averaged occupancy (regional) |
-| Rail (Commuter) | 45 | Assumes moderate electrification |
-| Gasoline Car (Single Occupant) | 192 | Typical compact @ 8.0 L/100km |
-| Gasoline Car (2 Occupants) | 96 | Shared occupancy divides impact |
-| Hybrid Car | 120 | Mixed urban cycle |
-| EV (Grid Avg) | 55 | Depends heavily on grid intensity |
-| Rideshare (Assumed 1.3 pax) | 148 | Includes deadheading factor |
-
-You should replace factors with region-specific, peer-reviewed, or government inventory data (e.g., IPCC, EPA, UK DEFRA GHG Conversion Factors) and cite precisely in `server/src/emissions/sources.md` (recommended file to add).
-
-Edge Considerations:
-
-- Rounding: present to nearest whole gram or show kg with 2 decimals when > 1000 g.
-- Short distances (< 300 m): treat as zero or encourage active travel.
-- Data gaps (no transit route): mark mode as N/A instead of 0.
-- EV variability: allow user to input kWh/100km & grid g CO₂/kWh.
-
-## 🔐 Environment Variables
-
-Create a `.env` file in both `client/` (if needed for build-time injection) and `server/` directories.
-
-Server `.env` (example):
+For each route, we calculate emissions using:
 
 ```
-PORT=5000
-GOOGLE_MAPS_API_KEY=YOUR_KEY_HERE
-CACHE_TTL_SECONDS=600
-RATE_LIMIT_WINDOW_MS=60000
-RATE_LIMIT_MAX=60
+Total Emissions (g CO₂e) = Distance (km) × Emission Factor (g CO₂e/km)
 ```
 
-Frontend `.env` (Vite style):
+_Note: These estimates are for educational purposes and may vary based on actual vehicle efficiency, occupancy rates, and regional energy sources._
 
-```
-VITE_GOOGLE_MAPS_API_KEY=YOUR_KEY_HERE
-VITE_API_BASE_URL=http://localhost:5000
-```
+## 🛠️ Tech Stack
 
-Never commit real API keys. Use `.env.example` to document required variables.
+### Frontend
 
-## 🚀 Getting Started
+- **React.js** with **Vite** - Modern React development environment
+- **TailwindCSS** - Utility-first CSS framework for styling
+- **Google Maps JavaScript API** - Interactive maps and route visualization
+- **Axios** - HTTP client for API communication
 
-### Useful Commands
+### Backend
 
-| Purpose                          | Folder   | Command                              |
-| -------------------------------- | -------- | ------------------------------------ |
-| Start backend (Express)          | `server` | `npm run dev`                        |
-| Start frontend (Vite)            | `client` | `npm run dev -- --host`              |
-| Build frontend for production    | `client` | `npm run build`                      |
-| Start backend in production mode | `server` | `npm start`                          |
-| Clean node_modules               | any      | `rm -rf node_modules && npm install` |
-| **ESLint: lint backend**         | `server` | `npx eslint .`                       |
-| **ESLint: fix backend**          | `server` | `npx eslint . --fix`                 |
-| **ESLint: lint frontend**        | `client` | `npx eslint .`                       |
-| **ESLint: fix frontend**         | `client` | `npx eslint . --fix`                 |
+- **Node.js** with **Express.js** - Server-side JavaScript runtime and web framework
+- **Google Maps Directions API** - Route calculation and distance data
+- **Weather API Integration** - Real-time weather information
+- **CORS** - Cross-origin resource sharing support
 
-### ⚙️ Requirements
+## 📋 Technical Requirements
 
-- Node.js **v18+** (use NVM to install and switch)
-- npm **v9+**
-- Google Cloud project with:
-  - **Routes API** (for fuel consumption)
-  - **Maps JavaScript API** (for map display)
-- API keys:
-  - Browser key → frontend (`VITE_GOOGLE_MAPS_API_KEY`)
-  - Server key → backend (`MAPS_API_KEY`)
+Before running the project, ensure you have the following installed:
 
-### Installation
+- **Node.js** v20 or higher
+- **npm** v9 or higher
+- **Google Cloud Platform account** with the following APIs enabled:
+  - Google Maps JavaScript API
+  - Google Maps Directions API
+  - Google Maps Places API
 
-From project root:
+### Required API Keys
 
-```
-cd server && npm install
-cd ../client && npm install
-```
+You'll need to obtain API keys from Google Cloud Platform:
 
-### Development Run (concurrently)
+- **Client-side API key** for the frontend (browser-restricted)
+- **Server-side API key** for the backend (server-restricted)
 
-In two terminals:
+## � Getting Started
 
-```
-cd server && npm run dev
-cd client && npm run dev
-```
+### 1. Installation
 
-Then open the displayed local URL (e.g., http://localhost:5173).
+Clone the repository and install dependencies for both client and server:
 
-### Production Build (example)
+```bash
+# Clone the repository
+git clone <repository-url>
+cd StormHacks-2025
 
-```
-cd client && npm run build
-# Serve static build from an Express static middleware or a CDN
+# Install server dependencies
+cd server
+npm install
+
+# Install client dependencies
+cd ../client
+npm install
 ```
 
-## 📡 API (Proposed)
+### 2. Environment Setup
 
-Base URL: `http://localhost:5000/api`
+Create `.env` files in both directories:
 
-| Endpoint             | Method | Description                         | Query / Body Params                                  |
-| -------------------- | ------ | ----------------------------------- | ---------------------------------------------------- |
-| `/health`            | GET    | Service healthcheck                 | —                                                    |
-| `/routes`            | GET    | Get routes & emissions for modes    | `origin`, `destination`, `modes=driving,transit,...` |
-| `/emissions/factors` | GET    | List current emission factors       | optional `region`                                    |
-| `/emissions/custom`  | POST   | Calculate using custom user factors | JSON: distances + factors                            |
+**Server `.env` file** (`server/.env`):
 
-Sample request:
-
-```
-GET /api/routes?origin=49.2827,-123.1207&destination=49.25,-123.001&modes=driving,transit,walking,cycling
+```env
+MAPS_API_KEY=your_google_maps_api_key_here
+PORT=3001
 ```
 
-Sample trimmed response:
+**Client `.env` file** (`client/.env`):
 
-```json
-{
-  "origin": "49.2827,-123.1207",
-  "destination": "49.25,-123.001",
-  "results": [
-    {
-      "mode": "driving",
-      "distance_km": 12.4,
-      "duration_min": 19,
-      "emissions_g": 2380
-    },
-    {
-      "mode": "transit",
-      "distance_km": 13.1,
-      "duration_min": 27,
-      "emissions_g": 1040
-    },
-    {
-      "mode": "cycling",
-      "distance_km": 11.8,
-      "duration_min": 36,
-      "emissions_g": 0
-    }
-  ],
-  "metadata": { "factors_version": "2025.01" }
-}
+```env
+VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
+VITE_API_URL=http://localhost:3001
 ```
 
-## 🧭 Frontend UX Notes
+### 3. Running the Application
 
-- Autocomplete search bars for origin/destination.
-- Map with polyline overlays per mode (toggle visibility).
-- Comparison panel: bar chart (g CO₂e), percent difference vs baseline (driving), suggestion text.
-- Accessibility: ARIA labels, colorblind-safe palette.
+You need to run both the server and client in separate terminals:
 
-## 🔄 Extensibility Ideas
+**Terminal 1 - Start the Backend Server:**
 
-- User profiles & historical trip carbon savings
-- Flight segment estimation (Great-circle distance + RFI multiplier)
-- Car model-specific emission factors (VIN decode / selection)
-- Gamification: badges for low-carbon choices
-- Offline caching (Service Worker) for last results
-- Multi-leg journey planner / itinerary emission totals
+```bash
+cd server
+npm start
+# For development with auto-reload:
+# npm run dev
+```
 
-## ✅ Roadmap (Example Milestones)
+**Terminal 2 - Start the Frontend Client:**
 
-1. MVP: Driving vs Transit vs Active modes
-2. Add emission factor configuration & endpoint
-3. Add EV + user-customizable grid intensity
-4. Add caching + rate limiting
-5. Add charts & shareable permalinks
-6. Add user accounts & historical analytics
+```bash
+cd client
+npm run dev
+```
 
-## 🧪 Testing Strategy (Recommended)
+The application will be available at:
 
-- Unit: emission factor math, unit conversions.
-- Integration: Google Maps API integration; route normalization.
-- E2E: Cypress/Playwright for user trip flow.
-- Performance: Cache effectiveness benchmarks.
+- **Frontend**: http://localhost:5173 (or the URL shown in your terminal)
+- **Backend API**: http://localhost:3001
+- **Health Check**: http://localhost:3001/api/health
 
-## 🔍 Validation & Edge Cases
+## 🎯 Usage
 
-- Invalid coordinates -> 400 with structured error JSON.
-- Origin == Destination -> zero-distance handling.
-- API quota errors -> 503 with retry-after header.
-- Partial mode failures -> return successful modes + warnings array.
+Once both servers are running:
 
-## 🛡️ Security & Privacy
+1. **Open the application** in your browser (typically http://localhost:5173)
+2. **Enter your starting location** in the "From" field
+3. **Enter your destination** in the "To" field
+4. **View route options** with carbon emission calculations for each transportation mode
+5. **Compare environmental impact** and choose the most sustainable option
 
-- Do not log raw API keys.
-- Minimal PII: only coordinate pairs (consider coarse rounding for analytics).
-- Consider adding a Content Security Policy and HTTP security headers.
+## � API Endpoints
 
-## 📚 References / Suggested Sources
+The backend provides the following API endpoints:
 
-- IPCC Sixth Assessment Report (transport sector summaries)
-- UK DEFRA GHG Conversion Factors
-- EPA Emission Factors for Greenhouse Gas Inventories
-- IEA Grid Emissions Intensity Data
-
-## 🤝 Contributing
-
-1. Fork & create a feature branch.
-2. Add/Update tests for any change in emission logic.
-3. Run lint + tests, open PR referencing issue.
-4. Clearly cite any new emission factor sources.
+- `GET /api/health` - Health check endpoint
+- `GET /api/directions` - Get route directions and carbon calculations
+- `GET /api/weather` - Get weather information for locations
 
 ## 📄 License
 
-This project is licensed under the terms of the `LICENSE` file in the repository (commonly MIT unless changed).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙋 FAQ (Quick)
+## � Acknowledgments
 
-Q: Why are walking/cycling shown as 0?  
-A: We omit embodied manufacturing emissions for simplicity; optionally add lifecycle factors later.
-
-Q: Why do my transit emissions seem high?  
-A: Occupancy assumptions drive per-passenger intensity; adjust factors regionally.
-
-Q: Can I export results?  
-A: Planned feature (CSV / shareable link) on roadmap milestone 5.
-
-## 🗣️ Disclaimer
-
-All emission figures are estimates; actual emissions vary based on vehicle specifics, traffic, energy mix, and occupancy. Not suitable for regulated reporting.
+- Google Maps Platform for routing and mapping services
+- Environmental data sources for emission factor calculations
+- Open source community for the tools and libraries used
 
 ---
 
-Feel free to adapt this README as the implementation evolves. Add real factors, cite sources, and keep transparency paramount. 🌱
+_Carbon Compass - Making sustainable transportation choices easier, one route at a time._ 🌱
