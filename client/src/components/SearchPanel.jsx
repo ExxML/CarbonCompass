@@ -4,7 +4,7 @@ import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { useDirections } from '../hooks/useDirections';
 
 const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
-  console.log('SearchPanel is rendering...');
+  // Removed console.log to prevent constant logging
   const [isMinimized, setIsMinimized] = useState(false);
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
@@ -16,6 +16,8 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
 
   const originInputRef = useRef(null);
   const destinationInputRef = useRef(null);
+  const originDebounceRef = useRef(null);
+  const destinationDebounceRef = useRef(null);
 
   const { directionsData, loading, error, getDirections, getBestRoute } = useDirections();
   const placesLib = useMapsLibrary('places');
@@ -74,11 +76,28 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
     setAutocompleteService(new placesLib.AutocompleteService());
   }, [placesLib]);
 
-  // Handle origin input change and fetch predictions
-  const handleOriginChange = (value) => {
-    setOrigin(value);
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (originDebounceRef.current) {
+        clearTimeout(originDebounceRef.current);
+      }
+      if (destinationDebounceRef.current) {
+        clearTimeout(destinationDebounceRef.current);
+      }
+    };
+  }, []);
 
-    if (!value || !autocompleteService) {
+  // Debounced function to fetch predictions
+  const fetchOriginPredictions = (value) => {
+    if (!value) {
+      setOriginPredictions([]);
+      return;
+    }
+
+    // Check if service is available at call time
+    if (!autocompleteService) {
+      console.warn('AutocompleteService not ready');
       setOriginPredictions([]);
       return;
     }
@@ -99,11 +118,15 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
     );
   };
 
-  // Handle destination input change and fetch predictions
-  const handleDestinationChange = (value) => {
-    setDestination(value);
+  const fetchDestinationPredictions = (value) => {
+    if (!value) {
+      setDestinationPredictions([]);
+      return;
+    }
 
-    if (!value || !autocompleteService) {
+    // Check if service is available at call time
+    if (!autocompleteService) {
+      console.warn('AutocompleteService not ready');
       setDestinationPredictions([]);
       return;
     }
@@ -122,6 +145,48 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
         }
       }
     );
+  };
+
+  // Handle origin input change with debouncing
+  const handleOriginChange = (value) => {
+    setOrigin(value);
+
+    // Clear existing timeout
+    if (originDebounceRef.current) {
+      clearTimeout(originDebounceRef.current);
+    }
+
+    // Clear predictions immediately if input is empty
+    if (!value) {
+      setOriginPredictions([]);
+      return;
+    }
+
+    // Set new timeout for API call
+    originDebounceRef.current = setTimeout(() => {
+      fetchOriginPredictions(value);
+    }, 500); // 500ms delay
+  };
+
+  // Handle destination input change with debouncing
+  const handleDestinationChange = (value) => {
+    setDestination(value);
+
+    // Clear existing timeout
+    if (destinationDebounceRef.current) {
+      clearTimeout(destinationDebounceRef.current);
+    }
+
+    // Clear predictions immediately if input is empty
+    if (!value) {
+      setDestinationPredictions([]);
+      return;
+    }
+
+    // Set new timeout for API call
+    destinationDebounceRef.current = setTimeout(() => {
+      fetchDestinationPredictions(value);
+    }, 500); // 500ms delay
   };
 
   // Handle origin prediction selection
@@ -154,7 +219,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
   };
 
   // Handle getting directions
-  const handleGetDirections = React.useCallback(async () => {
+  const handleGetDirections = async () => {
     if (!origin || !destination) {
       console.warn('Both origin and destination are required');
       return;
@@ -176,14 +241,10 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
     } catch (err) {
       console.error('Failed to get directions:', err);
     }
-  }, [origin, destination, getDirections, onRouteChange]);
+  };
 
-  // Auto-trigger directions when both origin and destination are set
-  useEffect(() => {
-    if (origin && destination && !loading) {
-      handleGetDirections();
-    }
-  }, [origin, destination, loading, handleGetDirections]);
+  // Auto-trigger directions when both origin and destination are set (removed to prevent constant API calls)
+  // Users can manually click "Get Directions" button or use Enter key
 
   if (isMinimized) {
     return (
@@ -325,6 +386,15 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                 placeholder="Choose starting point"
                 value={origin}
                 onChange={(e) => handleOriginChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && origin.trim()) {
+                    // Clear existing timeout and fetch immediately
+                    if (originDebounceRef.current) {
+                      clearTimeout(originDebounceRef.current);
+                    }
+                    fetchOriginPredictions(origin.trim());
+                  }
+                }}
                 onFocus={() => setIsOriginFocused(true)}
                 onBlur={() => setTimeout(() => setIsOriginFocused(false), 200)}
                 style={{
@@ -430,6 +500,15 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                 placeholder="Where do you want to go?"
                 value={destination}
                 onChange={(e) => handleDestinationChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && destination.trim()) {
+                    // Clear existing timeout and fetch immediately
+                    if (destinationDebounceRef.current) {
+                      clearTimeout(destinationDebounceRef.current);
+                    }
+                    fetchDestinationPredictions(destination.trim());
+                  }
+                }}
                 onFocus={() => setIsDestinationFocused(true)}
                 onBlur={() => setTimeout(() => setIsDestinationFocused(false), 200)}
                 style={{
