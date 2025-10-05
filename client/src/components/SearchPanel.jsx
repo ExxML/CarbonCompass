@@ -237,21 +237,21 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
     try {
       // Fetch routes for all 4 transportation modes in parallel
       const modes = ['driving', 'transit', 'bicycling', 'walking'];
-      const routePromises = modes.map(mode => 
+      const routePromises = modes.map((mode) =>
         getDirections({
           origin,
           destination,
           mode,
           alternatives: false, // Get best route for each mode
           units: 'metric',
-        }).catch(err => {
+        }).catch((err) => {
           console.warn(`Failed to get ${mode} directions:`, err.message);
           return null; // Return null for failed requests
         })
       );
 
       const responses = await Promise.all(routePromises);
-      
+
       // Combine all successful responses
       const allRoutes = {};
       let successCount = 0;
@@ -672,44 +672,123 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
           )}
 
           {/* Route Summary - All Transportation Modes */}
-          {allRoutesData && typeof allRoutesData === 'object' && Object.keys(allRoutesData).length > 0 && (
-            <div
-              style={{
-                padding: '16px',
-                background: 'rgba(16, 185, 129, 0.1)',
-                borderRadius: '12px',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
-              }}
-            >
-              <p
+          {allRoutesData &&
+            typeof allRoutesData === 'object' &&
+            Object.keys(allRoutesData).length > 0 && (
+              <div
                 style={{
-                  margin: '0 0 12px 0',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: '#059669',
-                  fontFamily: 'Roboto, sans-serif',
+                  padding: '16px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
                 }}
               >
-                Routes Found!
-              </p>
-              
-              {/* Route Cards */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {['driving', 'transit', 'bicycling', 'walking'].map((mode) => {
-                  const routeData = allRoutesData[mode];
-                  const route = routeData?.routes?.[0];
-                  
-                  const modeConfig = {
-                    driving: { icon: '🚗', name: 'Driving', color: '#dc2626' },
-                    transit: { icon: '🚌', name: 'Transit', color: '#2563eb' },
-                    bicycling: { icon: '🚴', name: 'Biking', color: '#16a34a' },
-                    walking: { icon: '🚶', name: 'Walking', color: '#7c3aed' }
-                  };
-                  
-                  const config = modeConfig[mode] || { icon: '🗺️', name: mode, color: '#6b7280' };
-                  
-                  if (!routeData || !route) {
-                    // Show unavailable route
+                <p
+                  style={{
+                    margin: '0 0 12px 0',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#059669',
+                    fontFamily: 'Roboto, sans-serif',
+                  }}
+                >
+                  Routes Found!
+                </p>
+
+                {/* Route Cards */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {['driving', 'transit', 'bicycling', 'walking'].map((mode) => {
+                    const routeData = allRoutesData[mode];
+                    const route = routeData?.routes?.[0];
+
+                    const modeConfig = {
+                      driving: { icon: '🚗', name: 'Driving', color: '#dc2626' },
+                      transit: { icon: '🚌', name: 'Transit', color: '#2563eb' },
+                      bicycling: { icon: '🚴', name: 'Biking', color: '#16a34a' },
+                      walking: { icon: '🚶', name: 'Walking', color: '#7c3aed' },
+                    };
+
+                    const config = modeConfig[mode] || { icon: '🗺️', name: mode, color: '#6b7280' };
+
+                    if (!routeData || !route) {
+                      // Show unavailable route
+                      return (
+                        <div
+                          key={mode}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '10px 12px',
+                            background: 'rgba(107, 114, 128, 0.1)',
+                            borderRadius: '8px',
+                            border: `1px solid ${config.color}`,
+                            opacity: 0.6,
+                            position: 'relative',
+                          }}
+                        >
+                          {/* Left side - Icon */}
+                          <div
+                            style={{
+                              position: 'absolute',
+                              left: '12px',
+                              display: 'flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <span style={{ fontSize: '18px', filter: 'grayscale(1)' }}>
+                              {config.icon}
+                            </span>
+                          </div>
+
+                          {/* Center - Transportation mode and details */}
+                          <div style={{ textAlign: 'center' }}>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                color: isDarkMode ? '#9ca3af' : '#6b7280',
+                                fontFamily: 'Roboto, sans-serif',
+                              }}
+                            >
+                              {config.name}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: isDarkMode ? '#6b7280' : '#9ca3af',
+                                fontFamily: 'Roboto, sans-serif',
+                              }}
+                            >
+                              Route not available
+                            </div>
+                          </div>
+
+                          {/* Right side - N/A */}
+                          <div
+                            style={{
+                              position: 'absolute',
+                              right: '12px',
+                              textAlign: 'right',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                color: '#6b7280',
+                                fontFamily: 'Roboto, sans-serif',
+                              }}
+                            >
+                              N/A
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    const emissions = route.carbon_emissions;
+
                     return (
                       <div
                         key={mode}
@@ -718,30 +797,31 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                           alignItems: 'center',
                           justifyContent: 'center',
                           padding: '10px 12px',
-                          background: 'rgba(107, 114, 128, 0.1)',
+                          background: 'rgba(255, 255, 255, 0.1)',
                           borderRadius: '8px',
-                          border: `1px solid ${config.color}`,
-                          opacity: 0.6,
+                          border: `2px solid ${config.color}`,
                           position: 'relative',
                         }}
                       >
                         {/* Left side - Icon */}
-                        <div style={{ 
-                          position: 'absolute', 
-                          left: '12px',
-                          display: 'flex',
-                          alignItems: 'center'
-                        }}>
-                          <span style={{ fontSize: '18px', filter: 'grayscale(1)' }}>{config.icon}</span>
+                        <div
+                          style={{
+                            position: 'absolute',
+                            left: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span style={{ fontSize: '18px' }}>{config.icon}</span>
                         </div>
-                        
+
                         {/* Center - Transportation mode and details */}
                         <div style={{ textAlign: 'center' }}>
                           <div
                             style={{
                               fontSize: '14px',
                               fontWeight: '500',
-                              color: isDarkMode ? '#9ca3af' : '#6b7280',
+                              color: isDarkMode ? '#f9fafb' : '#111827',
                               fontFamily: 'Roboto, sans-serif',
                             }}
                           >
@@ -750,119 +830,50 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                           <div
                             style={{
                               fontSize: '12px',
-                              color: isDarkMode ? '#6b7280' : '#9ca3af',
+                              color: isDarkMode ? '#d1d5db' : '#6b7280',
                               fontFamily: 'Roboto, sans-serif',
                             }}
                           >
-                            Route not available
+                            {route.distance?.text} • {route.duration?.text}
                           </div>
                         </div>
-                        
-                        {/* Right side - N/A */}
-                        <div style={{ 
-                          position: 'absolute', 
-                          right: '12px',
-                          textAlign: 'right'
-                        }}>
+
+                        {/* Right side - Emissions */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            right: '12px',
+                            textAlign: 'right',
+                          }}
+                        >
                           <div
                             style={{
                               fontSize: '13px',
                               fontWeight: '600',
-                              color: '#6b7280',
+                              color: emissions?.emissions_kg === 0 ? '#16a34a' : config.color,
                               fontFamily: 'Roboto, sans-serif',
                             }}
                           >
-                            N/A
+                            {emissions?.emissions_kg === 0
+                              ? '0 kg CO₂'
+                              : `${emissions?.emissions_kg || 0} kg CO₂`}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '11px',
+                              color: isDarkMode ? '#9ca3af' : '#6b7280',
+                              fontFamily: 'Roboto, sans-serif',
+                            }}
+                          >
+                            emissions
                           </div>
                         </div>
                       </div>
                     );
-                  }
-                  
-                  const emissions = route.carbon_emissions;
-                  
-                  return (
-                    <div
-                      key={mode}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '10px 12px',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        borderRadius: '8px',
-                        border: `2px solid ${config.color}`,
-                        position: 'relative',
-                      }}
-                    >
-                      {/* Left side - Icon */}
-                      <div style={{ 
-                        position: 'absolute', 
-                        left: '12px',
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}>
-                        <span style={{ fontSize: '18px' }}>{config.icon}</span>
-                      </div>
-                      
-                      {/* Center - Transportation mode and details */}
-                      <div style={{ textAlign: 'center' }}>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            color: isDarkMode ? '#f9fafb' : '#111827',
-                            fontFamily: 'Roboto, sans-serif',
-                          }}
-                        >
-                          {config.name}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: isDarkMode ? '#d1d5db' : '#6b7280',
-                            fontFamily: 'Roboto, sans-serif',
-                          }}
-                        >
-                          {route.distance?.text} • {route.duration?.text}
-                        </div>
-                      </div>
-                      
-                      {/* Right side - Emissions */}
-                      <div style={{ 
-                        position: 'absolute', 
-                        right: '12px',
-                        textAlign: 'right'
-                      }}>
-                        <div
-                          style={{
-                            fontSize: '13px',
-                            fontWeight: '600',
-                            color: emissions?.emissions_kg === 0 ? '#16a34a' : config.color,
-                            fontFamily: 'Roboto, sans-serif',
-                          }}
-                        >
-                          {emissions?.emissions_kg === 0 
-                            ? '0 kg CO₂' 
-                            : `${emissions?.emissions_kg || 0} kg CO₂`
-                          }
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '11px',
-                            color: isDarkMode ? '#9ca3af' : '#6b7280',
-                            fontFamily: 'Roboto, sans-serif',
-                          }}
-                        >
-                          emissions
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Origin Autocomplete Suggestions */}
           {isOriginFocused && originPredictions.length > 0 && (
