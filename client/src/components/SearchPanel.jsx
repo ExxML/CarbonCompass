@@ -509,7 +509,6 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onCle
             />
           </button>
         </div>
-
         {/* Search Input */}
         <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {/* Origin Input */}
@@ -1247,23 +1246,147 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onCle
                                 <div
                                   style={{
                                     fontSize: '14px',
-                                    fontWeight: '500',
-                                    marginBottom: '8px',
+                                    fontWeight: '600',
+                                    marginBottom: '12px',
+                                    color: isDarkMode ? '#f9fafb' : '#111827',
                                   }}
                                 >
-                                  Driving Directions
+                                  🚗 Driving Directions
                                 </div>
-                                {route.steps?.slice(0, 3).map((step, index) => (
-                                  <div
-                                    key={index}
-                                    style={{ marginBottom: '6px', fontSize: '11px' }}
-                                  >
-                                    <div style={{ color: isDarkMode ? '#d1d5db' : '#6b7280' }}>
-                                      {index + 1}.{' '}
-                                      {step.instructions?.replace(/<[^>]*>/g, '') || 'Continue'}
+                                {route.steps?.map((step, stepIndex) => {
+                                  const instructions =
+                                    step.instructions?.replace(/<[^>]*>/g, '') || 'Continue';
+                                  const distance = step.distance?.text || '';
+                                  const duration = step.duration?.text || '';
+
+                                  // Extract turn information from instructions
+                                  const getTurnIcon = (instruction) => {
+                                    if (instruction.toLowerCase().includes('left')) return '⬅️';
+                                    if (instruction.toLowerCase().includes('right')) return '➡️';
+                                    if (instruction.toLowerCase().includes('straight')) return '⬆️';
+                                    if (instruction.toLowerCase().includes('u-turn')) return '🔄';
+                                    if (instruction.toLowerCase().includes('merge')) return '↗️';
+                                    if (instruction.toLowerCase().includes('exit')) return '🛣️';
+                                    return '🚗';
+                                  };
+
+                                  const getHighwayInfo = (instruction) => {
+                                    if (
+                                      instruction.toLowerCase().includes('hwy') ||
+                                      instruction.toLowerCase().includes('highway')
+                                    ) {
+                                      const match = instruction.match(
+                                        /Hwy\s+(\d+)|Highway\s+(\d+)/i
+                                      );
+                                      return match ? `Highway ${match[1] || match[2]}` : 'Highway';
+                                    }
+                                    return null;
+                                  };
+
+                                  const highwayInfo = getHighwayInfo(instructions);
+
+                                  return (
+                                    <div
+                                      key={stepIndex}
+                                      style={{
+                                        marginBottom: '16px',
+                                        position: 'relative',
+                                        paddingLeft: '24px',
+                                      }}
+                                    >
+                                      {/* Timeline dot */}
+                                      <div
+                                        style={{
+                                          position: 'absolute',
+                                          left: '0',
+                                          top: '4px',
+                                          width: '8px',
+                                          height: '8px',
+                                          borderRadius: '50%',
+                                          background: '#dc2626',
+                                          border: '2px solid white',
+                                        }}
+                                      />
+
+                                      {/* Turn icon and distance */}
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          gap: '8px',
+                                          marginBottom: '4px',
+                                        }}
+                                      >
+                                        <span style={{ fontSize: '16px' }}>
+                                          {getTurnIcon(instructions)}
+                                        </span>
+                                        <span
+                                          style={{
+                                            fontSize: '10px',
+                                            color: isDarkMode ? '#9ca3af' : '#6b7280',
+                                          }}
+                                        >
+                                          {distance} • {duration}
+                                        </span>
+                                      </div>
+
+                                      {/* Main instruction */}
+                                      <div
+                                        style={{
+                                          fontSize: '13px',
+                                          fontWeight: '500',
+                                          color: isDarkMode ? '#f9fafb' : '#111827',
+                                          marginBottom: '2px',
+                                          lineHeight: '1.3',
+                                        }}
+                                      >
+                                        {instructions}
+                                      </div>
+
+                                      {/* Highway badge */}
+                                      {highwayInfo && (
+                                        <div
+                                          style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            padding: '2px 6px',
+                                            background: 'rgba(59, 130, 246, 0.1)',
+                                            borderRadius: '8px',
+                                            marginTop: '2px',
+                                            border: '1px solid rgba(59, 130, 246, 0.3)',
+                                          }}
+                                        >
+                                          <span
+                                            style={{
+                                              fontSize: '10px',
+                                              color: '#3b82f6',
+                                              fontWeight: '500',
+                                            }}
+                                          >
+                                            🛣️ {highwayInfo}
+                                          </span>
+                                        </div>
+                                      )}
+
+                                      {/* Vertical line connecting to next step */}
+                                      {stepIndex < route.steps.length - 1 && (
+                                        <div
+                                          style={{
+                                            position: 'absolute',
+                                            left: '3px',
+                                            top: '12px',
+                                            bottom: '-16px',
+                                            width: '2px',
+                                            background: isDarkMode
+                                              ? 'rgba(255,255,255,0.1)'
+                                              : 'rgba(0,0,0,0.1)',
+                                          }}
+                                        />
+                                      )}
                                     </div>
-                                  </div>
-                                ))}
+                                  );
+                                })}
                               </div>
                             )}
 
@@ -1272,23 +1395,250 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onCle
                                 <div
                                   style={{
                                     fontSize: '14px',
-                                    fontWeight: '500',
-                                    marginBottom: '8px',
+                                    fontWeight: '600',
+                                    marginBottom: '12px',
+                                    color: isDarkMode ? '#f9fafb' : '#111827',
                                   }}
                                 >
-                                  Walking Directions
+                                  🚶 Walking Directions
                                 </div>
-                                {route.steps?.slice(0, 3).map((step, index) => (
-                                  <div
-                                    key={index}
-                                    style={{ marginBottom: '6px', fontSize: '11px' }}
-                                  >
-                                    <div style={{ color: isDarkMode ? '#d1d5db' : '#6b7280' }}>
-                                      {index + 1}.{' '}
-                                      {step.instructions?.replace(/<[^>]*>/g, '') || 'Continue'}
+                                {route.steps?.map((step, stepIndex) => {
+                                  const instructions =
+                                    step.instructions?.replace(/<[^>]*>/g, '') ||
+                                    'Continue walking';
+                                  const distance = step.distance?.text || '';
+                                  const duration = step.duration?.text || '';
+
+                                  // Categorize walking segments
+                                  const getWalkingContext = (instruction) => {
+                                    if (instruction.toLowerCase().includes('cross'))
+                                      return { icon: '🚦', type: 'Crosswalk' };
+                                    if (instruction.toLowerCase().includes('sidewalk'))
+                                      return { icon: '🛣️', type: 'Sidewalk' };
+                                    if (instruction.toLowerCase().includes('stair'))
+                                      return { icon: '🪜', type: 'Stairs' };
+                                    if (
+                                      instruction.toLowerCase().includes('path') ||
+                                      instruction.toLowerCase().includes('trail')
+                                    )
+                                      return { icon: '🌳', type: 'Path' };
+                                    return { icon: '🚶', type: 'Walk' };
+                                  };
+
+                                  const context = getWalkingContext(instructions);
+
+                                  return (
+                                    <div
+                                      key={stepIndex}
+                                      style={{
+                                        marginBottom: '16px',
+                                        position: 'relative',
+                                        paddingLeft: '24px',
+                                      }}
+                                    >
+                                      {/* Timeline dot */}
+                                      <div
+                                        style={{
+                                          position: 'absolute',
+                                          left: '0',
+                                          top: '4px',
+                                          width: '8px',
+                                          height: '8px',
+                                          borderRadius: '50%',
+                                          background: '#7c3aed',
+                                          border: '2px solid white',
+                                        }}
+                                      />
+
+                                      {/* Context icon and distance */}
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          gap: '6px',
+                                          marginBottom: '4px',
+                                        }}
+                                      >
+                                        <span style={{ fontSize: '12px' }}>{context.icon}</span>
+                                        <span
+                                          style={{
+                                            fontSize: '10px',
+                                            color: isDarkMode ? '#9ca3af' : '#6b7280',
+                                          }}
+                                        >
+                                          {distance} • {duration}
+                                        </span>
+                                        <span
+                                          style={{
+                                            fontSize: '9px',
+                                            color: '#10b981',
+                                            background: 'rgba(16, 185, 129, 0.1)',
+                                            padding: '1px 4px',
+                                            borderRadius: '4px',
+                                          }}
+                                        >
+                                          {context.type}
+                                        </span>
+                                      </div>
+
+                                      {/* Main instruction */}
+                                      <div
+                                        style={{
+                                          fontSize: '12px',
+                                          color: isDarkMode ? '#d1d5db' : '#6b7280',
+                                          lineHeight: '1.3',
+                                        }}
+                                      >
+                                        {instructions}
+                                      </div>
+
+                                      {/* Vertical line connecting to next step */}
+                                      {stepIndex < route.steps.length - 1 && (
+                                        <div
+                                          style={{
+                                            position: 'absolute',
+                                            left: '3px',
+                                            top: '12px',
+                                            bottom: '-16px',
+                                            width: '2px',
+                                            background: isDarkMode
+                                              ? 'rgba(255,255,255,0.1)'
+                                              : 'rgba(0,0,0,0.1)',
+                                          }}
+                                        />
+                                      )}
                                     </div>
-                                  </div>
-                                ))}
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {mode === 'bicycling' && (
+                              <div>
+                                <div
+                                  style={{
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    marginBottom: '12px',
+                                    color: isDarkMode ? '#f9fafb' : '#111827',
+                                  }}
+                                >
+                                  🚴 Biking Directions
+                                </div>
+                                {route.steps?.map((step, stepIndex) => {
+                                  const instructions =
+                                    step.instructions?.replace(/<[^>]*>/g, '') || 'Continue biking';
+                                  const distance = step.distance?.text || '';
+                                  const duration = step.duration?.text || '';
+
+                                  // Categorize bike segments
+                                  const getBikeContext = (instruction) => {
+                                    if (
+                                      instruction.toLowerCase().includes('bike lane') ||
+                                      instruction.toLowerCase().includes('cycle')
+                                    )
+                                      return { icon: '🚴', type: 'Bike Lane', color: '#10b981' };
+                                    if (
+                                      instruction.toLowerCase().includes('path') ||
+                                      instruction.toLowerCase().includes('trail')
+                                    )
+                                      return { icon: '🌳', type: 'Bike Path', color: '#059669' };
+                                    if (
+                                      instruction.toLowerCase().includes('road') &&
+                                      !instruction.toLowerCase().includes('bike')
+                                    )
+                                      return { icon: '🚗', type: 'Shared Road', color: '#f59e0b' };
+                                    if (instruction.toLowerCase().includes('sidewalk'))
+                                      return { icon: '🛣️', type: 'Sidewalk', color: '#6b7280' };
+                                    return { icon: '🚴', type: 'Bike Route', color: '#16a34a' };
+                                  };
+
+                                  const context = getBikeContext(instructions);
+
+                                  return (
+                                    <div
+                                      key={stepIndex}
+                                      style={{
+                                        marginBottom: '16px',
+                                        position: 'relative',
+                                        paddingLeft: '24px',
+                                      }}
+                                    >
+                                      {/* Timeline dot */}
+                                      <div
+                                        style={{
+                                          position: 'absolute',
+                                          left: '0',
+                                          top: '4px',
+                                          width: '8px',
+                                          height: '8px',
+                                          borderRadius: '50%',
+                                          background: context.color,
+                                          border: '2px solid white',
+                                        }}
+                                      />
+
+                                      {/* Context icon and distance */}
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          gap: '6px',
+                                          marginBottom: '4px',
+                                        }}
+                                      >
+                                        <span style={{ fontSize: '12px' }}>{context.icon}</span>
+                                        <span
+                                          style={{
+                                            fontSize: '10px',
+                                            color: isDarkMode ? '#9ca3af' : '#6b7280',
+                                          }}
+                                        >
+                                          {distance} • {duration}
+                                        </span>
+                                        <span
+                                          style={{
+                                            fontSize: '9px',
+                                            color: context.color,
+                                            background: `${context.color}20`,
+                                            padding: '1px 4px',
+                                            borderRadius: '4px',
+                                            border: `1px solid ${context.color}40`,
+                                          }}
+                                        >
+                                          {context.type}
+                                        </span>
+                                      </div>
+
+                                      {/* Main instruction */}
+                                      <div
+                                        style={{
+                                          fontSize: '12px',
+                                          color: isDarkMode ? '#d1d5db' : '#6b7280',
+                                          lineHeight: '1.3',
+                                        }}
+                                      >
+                                        {instructions}
+                                      </div>
+
+                                      {/* Vertical line connecting to next step */}
+                                      {stepIndex < route.steps.length - 1 && (
+                                        <div
+                                          style={{
+                                            position: 'absolute',
+                                            left: '3px',
+                                            top: '12px',
+                                            bottom: '-16px',
+                                            width: '2px',
+                                            background: isDarkMode
+                                              ? 'rgba(255,255,255,0.1)'
+                                              : 'rgba(0,0,0,0.1)',
+                                          }}
+                                        />
+                                      )}
+                                    </div>
+                                  );
+                                })}
                               </div>
                             )}
                           </div>
@@ -1297,472 +1647,470 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onCle
                     );
                   })}
                 </div>
-
-                {/* Start Trip Tracking Button */}
-                {allRoutesData.driving && (
-                  <div style={{ marginTop: '12px' }}>
-                    <button
-                      onClick={() => onStartTracking && onStartTracking(allRoutesData.driving)}
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        background: 'rgba(16, 185, 129, 0.8)',
-                        borderRadius: '8px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.background = 'rgba(16, 185, 129, 1)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.background = 'rgba(16, 185, 129, 0.8)';
-                      }}
-                    >
-                      <Play
-                        style={{
-                          width: '16px',
-                          height: '16px',
-                          color: 'white',
-                        }}
-                      />
-                      <span
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          color: 'white',
-                          fontFamily: 'Roboto, sans-serif',
-                        }}
-                      >
-                        Start Trip Tracking
-                      </span>
-                    </button>
-                  </div>
-                )}
               </div>
             )}
 
-          {/* Origin Autocomplete Suggestions */}
-          {isOriginFocused && (originPredictions.length > 0 || true) && (
+          {/* Start Trip Tracking Button */}
+          {allRoutesData.driving && (
+            <div style={{ marginTop: '12px' }}>
+              <button
+                onClick={() => onStartTracking && onStartTracking(allRoutesData.driving)}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  background: 'rgba(16, 185, 129, 0.8)',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(16, 185, 129, 1)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(16, 185, 129, 0.8)';
+                }}
+              >
+                <Play
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    color: 'white',
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: 'white',
+                    fontFamily: 'Roboto, sans-serif',
+                  }}
+                >
+                  Start Trip Tracking
+                </span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Origin Autocomplete Suggestions */}
+        {isOriginFocused && (originPredictions.length > 0 || true) && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              overflow: 'hidden',
+            }}
+          >
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                overflow: 'hidden',
+                padding: '12px 16px 8px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <MapPin
+                  style={{
+                    width: '14px',
+                    height: '14px',
+                    color: '#10b981',
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    color: isDarkMode ? '#d1d5db' : '#6b7280',
+                    fontFamily: 'Roboto, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}
+                >
+                  Starting Points
+                </span>
+              </div>
+            </div>
+            {/* Current Location Option */}
+            <div
+              onClick={() => handleCurrentLocationSelect('origin')}
+              style={{
+                padding: '12px 16px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
               }}
             >
               <div
                 style={{
-                  padding: '12px 16px 8px',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <MapPin
-                    style={{
-                      width: '14px',
-                      height: '14px',
-                      color: '#10b981',
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: '500',
-                      color: isDarkMode ? '#d1d5db' : '#6b7280',
-                      fontFamily: 'Roboto, sans-serif',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Starting Points
-                  </span>
+                <Navigation
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    color: 'white',
+                  }}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: isDarkMode ? '#f9fafb' : '#111827',
+                    fontFamily: 'Roboto, sans-serif',
+                    marginBottom: '2px',
+                  }}
+                >
+                  {isGettingLocation ? 'Getting location...' : 'Current Location'}
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: isDarkMode ? '#9ca3af' : '#6b7280',
+                    fontFamily: 'Roboto, sans-serif',
+                  }}
+                >
+                  {currentLocation
+                    ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}`
+                    : 'Use your current position'}
                 </div>
               </div>
-              {/* Current Location Option */}
+            </div>
+            {originPredictions.slice(0, 4).map((prediction, index) => (
               <div
-                onClick={() => handleCurrentLocationSelect('origin')}
+                key={prediction.place_id}
+                onClick={() => handleOriginSelect(prediction)}
                 style={{
                   padding: '12px 16px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
+                  borderBottom:
+                    index < Math.min(originPredictions.length - 1, 3)
+                      ? '1px solid rgba(255, 255, 255, 0.05)'
+                      : 'none',
                 }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
                 }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                <div
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Navigation
-                    style={{
-                      width: '16px',
-                      height: '16px',
-                      color: 'white',
-                    }}
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      color: isDarkMode ? '#f9fafb' : '#111827',
-                      fontFamily: 'Roboto, sans-serif',
-                      marginBottom: '2px',
-                    }}
-                  >
-                    {isGettingLocation ? 'Getting location...' : 'Current Location'}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: isDarkMode ? '#9ca3af' : '#6b7280',
-                      fontFamily: 'Roboto, sans-serif',
-                    }}
-                  >
-                    {currentLocation
-                      ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}`
-                      : 'Use your current position'}
-                  </div>
-                </div>
-              </div>
-              {originPredictions.slice(0, 4).map((prediction, index) => (
-                <div
-                  key={prediction.place_id}
-                  onClick={() => handleOriginSelect(prediction)}
-                  style={{
-                    padding: '12px 16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    borderBottom:
-                      index < Math.min(originPredictions.length - 1, 3)
-                        ? '1px solid rgba(255, 255, 255, 0.05)'
-                        : 'none',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <MapPin
-                      style={{ width: '16px', height: '16px', color: '#10b981', flexShrink: 0 }}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          color: isDarkMode ? '#f9fafb' : '#111827',
-                          fontFamily: 'Roboto, sans-serif',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {prediction.structured_formatting?.main_text || prediction.description}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '12px',
-                          color: isDarkMode ? '#d1d5db' : '#6b7280',
-                          fontFamily: 'Roboto, sans-serif',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                          marginTop: '2px',
-                        }}
-                      >
-                        {prediction.structured_formatting?.secondary_text || ''}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Destination Autocomplete Suggestions */}
-          {isDestinationFocused && (destinationPredictions.length > 0 || true) && (
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  padding: '12px 16px 8px',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <MapPin
-                    style={{
-                      width: '14px',
-                      height: '14px',
-                      color: '#dc2626',
-                    }}
+                    style={{ width: '16px', height: '16px', color: '#10b981', flexShrink: 0 }}
                   />
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: '500',
-                      color: isDarkMode ? '#d1d5db' : '#6b7280',
-                      fontFamily: 'Roboto, sans-serif',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Destinations
-                  </span>
-                </div>
-              </div>
-              {/* Current Location Option */}
-              <div
-                onClick={() => handleCurrentLocationSelect('destination')}
-                style={{
-                  padding: '12px 16px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                <div
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Navigation
-                    style={{
-                      width: '16px',
-                      height: '16px',
-                      color: 'white',
-                    }}
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      color: isDarkMode ? '#f9fafb' : '#111827',
-                      fontFamily: 'Roboto, sans-serif',
-                      marginBottom: '2px',
-                    }}
-                  >
-                    {isGettingLocation ? 'Getting location...' : 'Current Location'}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: isDarkMode ? '#9ca3af' : '#6b7280',
-                      fontFamily: 'Roboto, sans-serif',
-                    }}
-                  >
-                    {currentLocation
-                      ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}`
-                      : 'Use your current position'}
-                  </div>
-                </div>
-              </div>
-              {destinationPredictions.slice(0, 4).map((prediction, index) => (
-                <div
-                  key={prediction.place_id}
-                  onClick={() => handleDestinationPredictionSelect(prediction)}
-                  style={{
-                    padding: '12px 16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    borderBottom:
-                      index < Math.min(destinationPredictions.length - 1, 3)
-                        ? '1px solid rgba(255, 255, 255, 0.05)'
-                        : 'none',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <MapPin
-                      style={{ width: '16px', height: '16px', color: '#dc2626', flexShrink: 0 }}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          color: isDarkMode ? '#f9fafb' : '#111827',
-                          fontFamily: 'Roboto, sans-serif',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {prediction.structured_formatting?.main_text || prediction.description}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '12px',
-                          color: isDarkMode ? '#d1d5db' : '#6b7280',
-                          fontFamily: 'Roboto, sans-serif',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                          marginTop: '2px',
-                        }}
-                      >
-                        {prediction.structured_formatting?.secondary_text || ''}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Recent Searches */}
-          {(isOriginFocused || isDestinationFocused) &&
-            recentSearches.length > 0 &&
-            originPredictions.length === 0 &&
-            destinationPredictions.length === 0 && (
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  overflow: 'hidden',
-                }}
-              >
-                <div
-                  style={{
-                    padding: '12px 16px 8px',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Clock
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
                       style={{
-                        width: '14px',
-                        height: '14px',
-                        color: isDarkMode ? '#d1d5db' : '#6b7280',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isDarkMode ? '#f9fafb' : '#111827',
+                        fontFamily: 'Roboto, sans-serif',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
                       }}
-                    />
-                    <span
+                    >
+                      {prediction.structured_formatting?.main_text || prediction.description}
+                    </div>
+                    <div
                       style={{
                         fontSize: '12px',
-                        fontWeight: '500',
                         color: isDarkMode ? '#d1d5db' : '#6b7280',
                         fontFamily: 'Roboto, sans-serif',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        marginTop: '2px',
                       }}
                     >
-                      Recent Searches
-                    </span>
+                      {prediction.structured_formatting?.secondary_text || ''}
+                    </div>
                   </div>
                 </div>
-                {recentSearches.slice(0, 3).map((search, index) => (
-                  <div
-                    key={search.id}
-                    onClick={() => handleRecentSearchSelect(search)}
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Destination Autocomplete Suggestions */}
+        {isDestinationFocused && (destinationPredictions.length > 0 || true) && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                padding: '12px 16px 8px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <MapPin
+                  style={{
+                    width: '14px',
+                    height: '14px',
+                    color: '#dc2626',
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    color: isDarkMode ? '#d1d5db' : '#6b7280',
+                    fontFamily: 'Roboto, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}
+                >
+                  Destinations
+                </span>
+              </div>
+            </div>
+            {/* Current Location Option */}
+            <div
+              onClick={() => handleCurrentLocationSelect('destination')}
+              style={{
+                padding: '12px 16px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Navigation
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    color: 'white',
+                  }}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: isDarkMode ? '#f9fafb' : '#111827',
+                    fontFamily: 'Roboto, sans-serif',
+                    marginBottom: '2px',
+                  }}
+                >
+                  {isGettingLocation ? 'Getting location...' : 'Current Location'}
+                </div>
+                <div
+                  style={{
+                    fontSize: '12px',
+                    color: isDarkMode ? '#9ca3af' : '#6b7280',
+                    fontFamily: 'Roboto, sans-serif',
+                  }}
+                >
+                  {currentLocation
+                    ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}`
+                    : 'Use your current position'}
+                </div>
+              </div>
+            </div>
+            {destinationPredictions.slice(0, 4).map((prediction, index) => (
+              <div
+                key={prediction.place_id}
+                onClick={() => handleDestinationPredictionSelect(prediction)}
+                style={{
+                  padding: '12px 16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  borderBottom:
+                    index < Math.min(destinationPredictions.length - 1, 3)
+                      ? '1px solid rgba(255, 255, 255, 0.05)'
+                      : 'none',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <MapPin
+                    style={{ width: '16px', height: '16px', color: '#dc2626', flexShrink: 0 }}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isDarkMode ? '#f9fafb' : '#111827',
+                        fontFamily: 'Roboto, sans-serif',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {prediction.structured_formatting?.main_text || prediction.description}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: isDarkMode ? '#d1d5db' : '#6b7280',
+                        fontFamily: 'Roboto, sans-serif',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        marginTop: '2px',
+                      }}
+                    >
+                      {prediction.structured_formatting?.secondary_text || ''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Recent Searches */}
+        {(isOriginFocused || isDestinationFocused) &&
+          recentSearches.length > 0 &&
+          originPredictions.length === 0 &&
+          destinationPredictions.length === 0 && (
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  padding: '12px 16px 8px',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Clock
                     style={{
-                      padding: '12px 16px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      borderBottom:
-                        index < recentSearches.length - 1 && index < 2
-                          ? '1px solid rgba(255, 255, 255, 0.05)'
-                          : 'none',
+                      width: '14px',
+                      height: '14px',
+                      color: isDarkMode ? '#d1d5db' : '#6b7280',
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent';
+                  />
+                  <span
+                    style={{
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      color: isDarkMode ? '#d1d5db' : '#6b7280',
+                      fontFamily: 'Roboto, sans-serif',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <MapPin
-                        style={{ width: '16px', height: '16px', color: '#2563eb', flexShrink: 0 }}
-                      />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            color: isDarkMode ? '#f9fafb' : '#111827',
-                            fontFamily: 'Roboto, sans-serif',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {search.name}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: isDarkMode ? '#d1d5db' : '#6b7280',
-                            fontFamily: 'Roboto, sans-serif',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            marginTop: '2px',
-                          }}
-                        >
-                          {search.address}
-                        </div>
+                    Recent Searches
+                  </span>
+                </div>
+              </div>
+              {recentSearches.slice(0, 3).map((search, index) => (
+                <div
+                  key={search.id}
+                  onClick={() => handleRecentSearchSelect(search)}
+                  style={{
+                    padding: '12px 16px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    borderBottom:
+                      index < recentSearches.length - 1 && index < 2
+                        ? '1px solid rgba(255, 255, 255, 0.05)'
+                        : 'none',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <MapPin
+                      style={{ width: '16px', height: '16px', color: '#2563eb', flexShrink: 0 }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          color: isDarkMode ? '#f9fafb' : '#111827',
+                          fontFamily: 'Roboto, sans-serif',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {search.name}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: isDarkMode ? '#d1d5db' : '#6b7280',
+                          fontFamily: 'Roboto, sans-serif',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          marginTop: '2px',
+                        }}
+                      >
+                        {search.address}
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-        </div>
+                </div>
+              ))}
+            </div>
+          )}
       </div>
     </div>
   );
