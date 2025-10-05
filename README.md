@@ -202,7 +202,7 @@ Sample trimmed response:
 
 ## 🧪 Testing Strategy (Recommended)
 - Unit: emission factor math, unit conversions.
-- Integration: mock Google Maps responses; snapshot route normalization.
+- Integration: Google Maps API integration; route normalization.
 - E2E: Cypress/Playwright for user trip flow.
 - Performance: Cache effectiveness benchmarks.
 

@@ -46,9 +46,6 @@ class MapsService {
       },
     });
 
-    // Enable mock data mode if no API key is provided
-    this.useMockData =
-      !this.config.apiKey || this.config.apiKey === "PUT_API_KEY_HERE";
   }
 
   /**
@@ -72,10 +69,6 @@ class MapsService {
    */
   async calculateRoutes(origin, destination, modes = ["driving"]) {
     try {
-      if (this.useMockData) {
-        return this.getMockRoutes(origin, destination, modes);
-      }
-
       const routePromises = modes.map((mode) =>
         this.calculateSingleRoute(origin, destination, mode),
       );
@@ -268,10 +261,6 @@ class MapsService {
    */
   async geocodeAddress(address) {
     try {
-      if (this.useMockData) {
-        return this.getMockGeocode(address);
-      }
-
       const response = await retryWithBackoff(
         () =>
           this.httpClient.get(this.config.geocodingApiBaseUrl, {
@@ -316,10 +305,6 @@ class MapsService {
    */
   async calculateDistanceMatrix(origins, destinations, mode = "driving") {
     try {
-      if (this.useMockData) {
-        return this.getMockDistanceMatrix(origins, destinations, mode);
-      }
-
       const response = await retryWithBackoff(
         () =>
           this.httpClient.get(this.config.distanceMatrixApiBaseUrl, {
@@ -345,109 +330,9 @@ class MapsService {
     }
   }
 
-  /**
-   * Generate mock route data for development and testing
-   *
-   * This method creates realistic mock route data when Google Maps API
-   * credentials are not available or for testing scenarios.
-   *
-   * @param {string} origin - Starting location (unused in mock)
-   * @param {string} destination - Ending location (unused in mock)
-   * @param {string[]} modes - Transportation modes to generate data for
-   * @returns {Object[]} Array of mock route objects
-   */
-  getMockRoutes(origin, destination, modes) {
-    const baseDistance = 5.0; // Base distance in km
-    const routes = [];
 
-    modes.forEach((mode) => {
-      let distance, duration, polyline;
 
-      switch (mode) {
-        case "walking":
-          distance = Math.round(baseDistance * 1.2 * 1000); // Convert to meters
-          duration = Math.round((distance / 1000) * 12 * 60); // 12 min per km, convert to seconds
-          polyline = "mock_walking_polyline_" + Date.now();
-          break;
-        case "cycling":
-          distance = Math.round(baseDistance * 0.95 * 1000);
-          duration = Math.round((distance / 1000) * 3 * 60); // 3 min per km
-          polyline = "mock_cycling_polyline_" + Date.now();
-          break;
-        case "transit":
-          distance = Math.round(baseDistance * 1.1 * 1000);
-          duration = Math.round((distance / 1000) * 6 * 60); // 6 min per km including waiting
-          polyline = "mock_transit_polyline_" + Date.now();
-          break;
-        case "driving":
-        default:
-          distance = Math.round(baseDistance * 1000);
-          duration = Math.round((distance / 1000) * 2 * 60); // 2 min per km
-          polyline = "mock_driving_polyline_" + Date.now();
-          break;
-      }
 
-      routes.push({
-        mode,
-        distance,
-        duration,
-        polyline,
-      });
-    });
-
-    return routes;
-  }
-
-  /**
-   * Generate mock geocoding data for development
-   *
-   * @param {string} address - Address to geocode (unused in mock)
-   * @returns {Object} Mock geocoding result
-   */
-  getMockGeocode(address) {
-    return {
-      formattedAddress: address,
-      coordinates: [-123.1207, 49.2827], // Vancouver coordinates as example
-      placeId: "mock_place_id_" + Date.now(),
-    };
-  }
-
-  /**
-   * Generate mock distance matrix data for development
-   *
-   * @param {string[]} origins - Origin locations (unused in mock)
-   * @param {string[]} destinations - Destination locations (unused in mock)
-   * @param {string} mode - Transportation mode (unused in mock)
-   * @returns {Object} Mock distance matrix data
-   */
-  getMockDistanceMatrix(origins, destinations, mode) {
-    const mockData = {
-      status: "OK",
-      origin_addresses: origins,
-      destination_addresses: destinations,
-      rows: origins.map(() => ({
-        elements: destinations.map(() => ({
-          status: "OK",
-          duration: { value: 600 }, // 10 minutes in seconds
-          distance: { value: 5000 }, // 5 km in meters
-        })),
-      })),
-    };
-
-    return mockData;
-  }
-
-  /**
-   * Check if the service is in mock data mode
-   *
-   * This utility method allows other services to check if the Maps service
-   * is operating in mock data mode for testing or development.
-   *
-   * @returns {boolean} True if using mock data, false if using real API
-   */
-  isMockMode() {
-    return this.useMockData;
-  }
 
   /**
    * Get service health and configuration status
@@ -460,15 +345,14 @@ class MapsService {
   getHealth() {
     return {
       service: "MapsService",
-      mockMode: this.useMockData,
       apiKeyConfigured:
         !!this.config.apiKey && this.config.apiKey !== "PUT_API_KEY_HERE",
       timeout: this.config.timeout,
       retries: this.config.retries,
       apis: {
-        routes: !this.useMockData,
-        geocoding: !this.useMockData,
-        distanceMatrix: !this.useMockData,
+        routes: true,
+        geocoding: true,
+        distanceMatrix: true,
       },
     };
   }

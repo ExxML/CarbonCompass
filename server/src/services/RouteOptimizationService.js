@@ -585,7 +585,7 @@ class RouteOptimizationService {
       carbonCalculator: this.carbonCalculator.getEmissionFactor
         ? "enhanced"
         : "basic",
-      mapsService: this.mapsService.isMockMode() ? "mock_mode" : "api_mode",
+      mapsService: "api_mode",
       supportedStrategies: [
         "carbon_optimized",
         "time_optimized",
