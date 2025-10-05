@@ -212,8 +212,13 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
 
   // Handle selecting a recent search
   const handleRecentSearchSelect = (search) => {
-    setDestination(search.name);
-    setIsDestinationFocused(false);
+    if (isOriginFocused) {
+      setOrigin(search.address);
+      setIsOriginFocused(false);
+    } else if (isDestinationFocused) {
+      setDestination(search.address);
+      setIsDestinationFocused(false);
+    }
     // Move selected search to top
     addToRecentSearches(search);
   };
