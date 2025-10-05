@@ -90,15 +90,47 @@ class GoogleMapsService {
         start_location: leg.start_location,
         end_location: leg.end_location,
         polyline: route.overview_polyline.points,
-        steps: leg.steps.map((step) => ({
-          distance: step.distance,
-          duration: step.duration,
-          instructions: step.html_instructions,
-          polyline: step.polyline.points,
-          travel_mode: step.travel_mode,
-          start_location: step.start_location,
-          end_location: step.end_location,
-        })),
+        steps: leg.steps.map((step) => {
+          const baseStep = {
+            distance: step.distance,
+            duration: step.duration,
+            instructions: step.html_instructions,
+            polyline: step.polyline.points,
+            travel_mode: step.travel_mode,
+            start_location: step.start_location,
+            end_location: step.end_location,
+          };
+
+          // Add transit-specific details if this is a transit step
+          if (step.travel_mode === "TRANSIT" && step.transit_details) {
+            return {
+              ...baseStep,
+              transit_details: {
+                departure_stop: {
+                  name: step.transit_details.departure_stop.name,
+                  location: step.transit_details.departure_stop.location,
+                },
+                arrival_stop: {
+                  name: step.transit_details.arrival_stop.name,
+                  location: step.transit_details.arrival_stop.location,
+                },
+                transit_line: {
+                  name:
+                    step.transit_details.line.short_name ||
+                    step.transit_details.line.name,
+                  vehicle: step.transit_details.line.vehicle.name,
+                  color: step.transit_details.line.color,
+                  agencies: step.transit_details.line.agencies,
+                },
+                departure_time: step.transit_details.departure_time?.text,
+                arrival_time: step.transit_details.arrival_time?.text,
+                num_stops: step.transit_details.num_stops,
+              },
+            };
+          }
+
+          return baseStep;
+        }),
         warnings: route.warnings || [],
         waypoint_order: route.waypoint_order || [],
       };

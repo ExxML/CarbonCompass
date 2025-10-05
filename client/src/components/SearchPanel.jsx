@@ -17,6 +17,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onCle
   const [originPredictions, setOriginPredictions] = useState([]);
   const [destinationPredictions, setDestinationPredictions] = useState([]);
   const [allRoutesData, setAllRoutesData] = useState({});
+  const [expandedRoute, setExpandedRoute] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
 
@@ -914,82 +915,384 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onCle
                     return (
                       <div
                         key={mode}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: '10px 12px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          borderRadius: '8px',
-                          border: `2px solid ${config.color}`,
-                          position: 'relative',
-                        }}
+                        style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
                       >
-                        {/* Left side - Icon */}
+                        {/* Main Route Card */}
                         <div
                           style={{
-                            position: 'absolute',
-                            left: '12px',
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '10px 12px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                            border: `2px solid ${config.color}`,
+                            position: 'relative',
+                            cursor: 'pointer',
                           }}
+                          onClick={() => setExpandedRoute(expandedRoute === mode ? null : mode)}
                         >
-                          <span style={{ fontSize: '18px' }}>{config.icon}</span>
-                        </div>
-
-                        {/* Center - Transportation mode and details */}
-                        <div style={{ textAlign: 'center' }}>
+                          {/* Left side - Icon */}
                           <div
                             style={{
-                              fontSize: '14px',
-                              fontWeight: '500',
+                              position: 'absolute',
+                              left: '12px',
+                              display: 'flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <span style={{ fontSize: '18px' }}>{config.icon}</span>
+                          </div>
+
+                          {/* Center - Transportation mode and details */}
+                          <div style={{ textAlign: 'center' }}>
+                            <div
+                              style={{
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                color: isDarkMode ? '#f9fafb' : '#111827',
+                                fontFamily: 'Roboto, sans-serif',
+                              }}
+                            >
+                              {config.name}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: isDarkMode ? '#d1d5db' : '#6b7280',
+                                fontFamily: 'Roboto, sans-serif',
+                              }}
+                            >
+                              {route.distance?.text} • {route.duration?.text}
+                            </div>
+                          </div>
+
+                          {/* Right side - Emissions */}
+                          <div
+                            style={{
+                              position: 'absolute',
+                              right: '12px',
+                              textAlign: 'right',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                color: emissions?.emissions_kg === 0 ? '#16a34a' : config.color,
+                                fontFamily: 'Roboto, sans-serif',
+                              }}
+                            >
+                              {emissions?.emissions_kg === 0
+                                ? '0 kg CO₂'
+                                : `${emissions?.emissions_kg || 0} kg CO₂`}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '11px',
+                                color: isDarkMode ? '#9ca3af' : '#6b7280',
+                                fontFamily: 'Roboto, sans-serif',
+                              }}
+                            >
+                              emissions
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Expanded Route Details */}
+                        {expandedRoute === mode && (
+                          <div
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              borderRadius: '8px',
+                              border: `1px solid ${config.color}`,
+                              padding: '12px',
                               color: isDarkMode ? '#f9fafb' : '#111827',
                               fontFamily: 'Roboto, sans-serif',
+                              maxHeight: '400px',
+                              overflowY: 'auto',
+                              overflowX: 'hidden',
                             }}
                           >
-                            {config.name}
-                          </div>
-                          <div
-                            style={{
-                              fontSize: '12px',
-                              color: isDarkMode ? '#d1d5db' : '#6b7280',
-                              fontFamily: 'Roboto, sans-serif',
-                            }}
-                          >
-                            {route.distance?.text} • {route.duration?.text}
-                          </div>
-                        </div>
+                            {mode === 'transit' && (
+                              <div>
+                                <div
+                                  style={{
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    marginBottom: '12px',
+                                    color: isDarkMode ? '#f9fafb' : '#111827',
+                                  }}
+                                >
+                                  Transit Route Details
+                                </div>
+                                {route.steps?.map((step, stepIndex) => {
+                                  const isTransit = step.travel_mode === 'TRANSIT';
+                                  const isWalking = step.travel_mode === 'WALKING';
 
-                        {/* Right side - Emissions */}
-                        <div
-                          style={{
-                            position: 'absolute',
-                            right: '12px',
-                            textAlign: 'right',
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: '13px',
-                              fontWeight: '600',
-                              color: emissions?.emissions_kg === 0 ? '#16a34a' : config.color,
-                              fontFamily: 'Roboto, sans-serif',
-                            }}
-                          >
-                            {emissions?.emissions_kg === 0
-                              ? '0 kg CO₂'
-                              : `${emissions?.emissions_kg || 0} kg CO₂`}
+                                  if (isTransit && step.transit_details) {
+                                    const td = step.transit_details;
+                                    if (
+                                      !td?.transit_line ||
+                                      !td?.departure_stop ||
+                                      !td?.arrival_stop
+                                    ) {
+                                      return null;
+                                    }
+
+                                    return (
+                                      <div
+                                        key={stepIndex}
+                                        style={{
+                                          marginBottom: '16px',
+                                          position: 'relative',
+                                          paddingLeft: '24px',
+                                        }}
+                                      >
+                                        {/* Timeline dot */}
+                                        <div
+                                          style={{
+                                            position: 'absolute',
+                                            left: '0',
+                                            top: '4px',
+                                            width: '8px',
+                                            height: '8px',
+                                            borderRadius: '50%',
+                                            background: td.transit_line?.color || '#2563eb',
+                                            border: '2px solid white',
+                                          }}
+                                        />
+
+                                        {/* Departure time and stop */}
+                                        <div style={{ marginBottom: '8px' }}>
+                                          <div
+                                            style={{
+                                              fontSize: '13px',
+                                              fontWeight: '600',
+                                              color: isDarkMode ? '#f9fafb' : '#111827',
+                                              marginBottom: '2px',
+                                            }}
+                                          >
+                                            {td.departure_time || 'N/A'}
+                                          </div>
+                                          <div
+                                            style={{
+                                              fontSize: '11px',
+                                              color: isDarkMode ? '#d1d5db' : '#6b7280',
+                                            }}
+                                          >
+                                            {td.departure_stop?.name || 'Unknown Stop'}
+                                          </div>
+                                        </div>
+
+                                        {/* Transit line badge */}
+                                        <div
+                                          style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
+                                            padding: '4px 8px',
+                                            background: td.transit_line?.color || '#2563eb',
+                                            borderRadius: '12px',
+                                            marginBottom: '6px',
+                                          }}
+                                        >
+                                          <div
+                                            style={{
+                                              fontSize: '11px',
+                                              fontWeight: 'bold',
+                                              color: 'white',
+                                            }}
+                                          >
+                                            {td.transit_line?.vehicle || 'Transit'}{' '}
+                                            {td.transit_line?.name || '?'}
+                                          </div>
+                                        </div>
+
+                                        {/* Duration and stops info */}
+                                        <div
+                                          style={{
+                                            fontSize: '10px',
+                                            color: isDarkMode ? '#9ca3af' : '#6b7280',
+                                            marginBottom: '8px',
+                                          }}
+                                        >
+                                          {step.duration?.text || 'N/A'}
+                                          {td.num_stops ? ` (${td.num_stops} stops)` : ''}
+                                        </div>
+
+                                        {/* Arrival time and stop */}
+                                        <div>
+                                          <div
+                                            style={{
+                                              fontSize: '13px',
+                                              fontWeight: '600',
+                                              color: isDarkMode ? '#f9fafb' : '#111827',
+                                              marginBottom: '2px',
+                                            }}
+                                          >
+                                            {td.arrival_time || 'N/A'}
+                                          </div>
+                                          <div
+                                            style={{
+                                              fontSize: '11px',
+                                              color: isDarkMode ? '#d1d5db' : '#6b7280',
+                                            }}
+                                          >
+                                            {td.arrival_stop?.name || 'Unknown Stop'}
+                                          </div>
+                                        </div>
+
+                                        {/* Vertical line connecting to next step */}
+                                        {stepIndex < route.steps.length - 1 && (
+                                          <div
+                                            style={{
+                                              position: 'absolute',
+                                              left: '3px',
+                                              top: '12px',
+                                              bottom: '-16px',
+                                              width: '2px',
+                                              background: isDarkMode
+                                                ? 'rgba(255,255,255,0.1)'
+                                                : 'rgba(0,0,0,0.1)',
+                                            }}
+                                          />
+                                        )}
+                                      </div>
+                                    );
+                                  }
+
+                                  if (isWalking) {
+                                    return (
+                                      <div
+                                        key={stepIndex}
+                                        style={{
+                                          marginBottom: '16px',
+                                          position: 'relative',
+                                          paddingLeft: '24px',
+                                        }}
+                                      >
+                                        {/* Walking dot */}
+                                        <div
+                                          style={{
+                                            position: 'absolute',
+                                            left: '0',
+                                            top: '4px',
+                                            width: '8px',
+                                            height: '8px',
+                                            borderRadius: '50%',
+                                            background: '#7c3aed',
+                                            border: '2px solid white',
+                                          }}
+                                        />
+
+                                        <div
+                                          style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
+                                            marginBottom: '4px',
+                                          }}
+                                        >
+                                          <span style={{ fontSize: '12px', fontWeight: '500' }}>
+                                            🚶 Walk
+                                          </span>
+                                          <span
+                                            style={{
+                                              fontSize: '10px',
+                                              color: isDarkMode ? '#9ca3af' : '#6b7280',
+                                            }}
+                                          >
+                                            {step.duration?.text || 'N/A'} ·{' '}
+                                            {step.distance?.text || 'N/A'}
+                                          </span>
+                                        </div>
+
+                                        <div
+                                          style={{
+                                            fontSize: '10px',
+                                            color: isDarkMode ? '#d1d5db' : '#6b7280',
+                                          }}
+                                        >
+                                          {step.instructions?.replace(/<[^>]*>/g, '') ||
+                                            'Continue walking'}
+                                        </div>
+
+                                        {/* Vertical line connecting to next step */}
+                                        {stepIndex < route.steps.length - 1 && (
+                                          <div
+                                            style={{
+                                              position: 'absolute',
+                                              left: '3px',
+                                              top: '12px',
+                                              bottom: '-16px',
+                                              width: '2px',
+                                              background: isDarkMode
+                                                ? 'rgba(255,255,255,0.1)'
+                                                : 'rgba(0,0,0,0.1)',
+                                            }}
+                                          />
+                                        )}
+                                      </div>
+                                    );
+                                  }
+
+                                  return null;
+                                })}
+                              </div>
+                            )}
+
+                            {mode === 'driving' && (
+                              <div>
+                                <div
+                                  style={{
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    marginBottom: '8px',
+                                  }}
+                                >
+                                  Driving Directions
+                                </div>
+                                {route.steps?.slice(0, 3).map((step, index) => (
+                                  <div
+                                    key={index}
+                                    style={{ marginBottom: '6px', fontSize: '11px' }}
+                                  >
+                                    <div style={{ color: isDarkMode ? '#d1d5db' : '#6b7280' }}>
+                                      {index + 1}.{' '}
+                                      {step.instructions?.replace(/<[^>]*>/g, '') || 'Continue'}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {mode === 'walking' && (
+                              <div>
+                                <div
+                                  style={{
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    marginBottom: '8px',
+                                  }}
+                                >
+                                  Walking Directions
+                                </div>
+                                {route.steps?.slice(0, 3).map((step, index) => (
+                                  <div
+                                    key={index}
+                                    style={{ marginBottom: '6px', fontSize: '11px' }}
+                                  >
+                                    <div style={{ color: isDarkMode ? '#d1d5db' : '#6b7280' }}>
+                                      {index + 1}.{' '}
+                                      {step.instructions?.replace(/<[^>]*>/g, '') || 'Continue'}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                          <div
-                            style={{
-                              fontSize: '11px',
-                              color: isDarkMode ? '#9ca3af' : '#6b7280',
-                              fontFamily: 'Roboto, sans-serif',
-                            }}
-                          >
-                            emissions
-                          </div>
-                        </div>
+                        )}
                       </div>
                     );
                   })}
