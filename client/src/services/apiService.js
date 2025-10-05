@@ -114,7 +114,7 @@ class ApiService {
    * @returns {Promise<Object>} - Server health status
    */
   async healthCheck() {
-    const response = await fetch(`${API_BASE_URL}/health`);
+    const response = await fetch(`${API_BASE_URL}/api/health`);
     return response.json();
   }
 }

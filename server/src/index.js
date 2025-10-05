@@ -19,7 +19,7 @@ app.use("/api/directions", directionsRoutes);
 app.use("/api/weather", weatherRoutes);
 
 // Health check endpoint
-app.get("/health", (req, res) => {
+app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "Carbon Compass Server is running" });
 });
 
@@ -47,3 +47,11 @@ app.use((req, res) => {
 
 // Export for Vercel backend deployment
 export default app;
+
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`🚀 API listening on http://localhost:${PORT}`);
+    console.log(`📍 Health: http://localhost:${PORT}/api/health`);
+  });
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://<your-backend-project>.vercel.app/$1" },
+    { "source": "/api/(.*)", "destination": "https://<your-backend>.vercel.app/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
