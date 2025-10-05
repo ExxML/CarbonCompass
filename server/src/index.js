@@ -12,8 +12,8 @@ const app = express();
 app.use(cors({ origin: ["http://localhost:5173", "http://127.0.0.1:5173"] }));
 app.use(express.json());
 
-// Initialize the route calculator for multi-modal route optimization
-const routeCalculator = new RouteCalculator(axios);
+// Initialize services for multi-modal route optimization
+const routeCalculator = new RouteCalculator();
 
 const GOOGLE_ROUTES_URL =
   "https://routes.googleapis.com/directions/v2:computeRoutes";
