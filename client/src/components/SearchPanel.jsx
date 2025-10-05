@@ -438,7 +438,11 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                     fetchOriginPredictions(origin.trim());
                   }
                 }}
-                onFocus={() => setIsOriginFocused(true)}
+                onFocus={() => {
+                  setIsOriginFocused(true);
+                  // Clear routes when user starts a new search
+                  setAllRoutesData({});
+                }}
                 onBlur={() => setTimeout(() => setIsOriginFocused(false), 200)}
                 style={{
                   flex: 1,
@@ -556,7 +560,11 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                     fetchDestinationPredictions(destination.trim());
                   }
                 }}
-                onFocus={() => setIsDestinationFocused(true)}
+                onFocus={() => {
+                  setIsDestinationFocused(true);
+                  // Clear routes when user starts a new search
+                  setAllRoutesData({});
+                }}
                 onBlur={() => setTimeout(() => setIsDestinationFocused(false), 200)}
                 style={{
                   flex: 1,
