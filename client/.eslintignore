@@ -1,0 +1,2 @@
+# Ignore map style JSON files
+src/styles/*.json

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navigation, X } from 'lucide-react';
 
-const SearchPanel = () => {
+const SearchPanel = ({ isDarkMode = false }) => {
   console.log('SearchPanel is rendering...');
   const [isMinimized, setIsMinimized] = useState(false);
   const [destination, setDestination] = useState('');
@@ -17,7 +17,7 @@ const SearchPanel = () => {
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
             padding: '12px',
             cursor: 'pointer',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.4)',
             transition: 'all 0.3s ease',
           }}
           onClick={() => setIsMinimized(false)}
@@ -38,7 +38,7 @@ const SearchPanel = () => {
               style={{
                 fontSize: '14px',
                 fontWeight: '500',
-                color: '#374151',
+                color: isDarkMode ? '#f9fafb' : '#374151',
                 fontFamily: 'Roboto, sans-serif',
               }}
             >
@@ -69,7 +69,7 @@ const SearchPanel = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '16px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -78,7 +78,7 @@ const SearchPanel = () => {
               style={{
                 fontSize: '16px',
                 fontWeight: '500',
-                color: '#111827',
+                color: isDarkMode ? '#f9fafb' : '#111827',
                 fontFamily: 'Roboto, sans-serif',
               }}
             >
@@ -98,7 +98,9 @@ const SearchPanel = () => {
             onMouseOver={(e) => (e.target.style.backgroundColor = '#f3f4f6')}
             onMouseOut={(e) => (e.target.style.backgroundColor = 'transparent')}
           >
-            <X style={{ width: '16px', height: '16px', color: '#6b7280' }} />
+            <X
+              style={{ width: '16px', height: '16px', color: isDarkMode ? '#d1d5db' : '#6b7280' }}
+            />
           </button>
         </div>
 
@@ -112,7 +114,7 @@ const SearchPanel = () => {
                 alignItems: 'center',
                 gap: '12px',
                 padding: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
                 borderRadius: '12px',
                 background: 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(5px)',
@@ -120,12 +122,12 @@ const SearchPanel = () => {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.3)';
+                e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.5)';
                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.1)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0px)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
@@ -151,7 +153,7 @@ const SearchPanel = () => {
                   outline: 'none',
                   border: 'none',
                   fontSize: '16px',
-                  color: '#374151',
+                  color: isDarkMode ? '#f9fafb' : '#111827',
                   fontWeight: '400',
                   fontFamily: 'Roboto, sans-serif',
                 }}
@@ -170,7 +172,13 @@ const SearchPanel = () => {
                   onMouseOver={(e) => (e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)')}
                   onMouseOut={(e) => (e.target.style.backgroundColor = 'transparent')}
                 >
-                  <X style={{ width: '16px', height: '16px', color: '#9ca3af' }} />
+                  <X
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      color: isDarkMode ? '#d1d5db' : '#9ca3af',
+                    }}
+                  />
                 </button>
               )}
             </div>
