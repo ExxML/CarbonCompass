@@ -4,16 +4,13 @@
 
 A smart route planning application that helps users make environmentally conscious travel decisions by calculating and comparing carbon emissions across different transportation modes.
 
-<p align="center">
-  <img src="demo_pic/2.png" alt="Carbon Compass Page" width="300">
-</p>
+<div align="center">
+  <img src="demo_pic/2.png" alt="Carbon Compass Page" width="400" style="margin: 0 10px 0 0;">
+  <img src="demo_pic/Carbon%20Compass.png" alt="Carbon Compass Demo" width="400">
+</div>
 
 <p align="center">
-  <img src="demo_pic/Carbon%20Compass.png" alt="Carbon Compass Demo" width="300">
-</p>
-
-<p align="center">
-  <img src="demo_pic/8.png" alt="Carbon Compass Page" width="300">
+  <img src="demo_pic/8.png" alt="Carbon Compass Page" width="500">
 </p>
 
 </div>
@@ -21,7 +18,6 @@ A smart route planning application that helps users make environmentally conscio
 ## Table of Contents
 
 - [📖 About](#-about)
-- [📸 Screenshots](#-screenshots)
 - [🧮 Carbon Emission Calculations](#-carbon-emission-calculations)
 - [🛠️ Tech Stack](#️-tech-stack)
 - [📋 Technical Requirements](#-technical-requirements)
@@ -42,26 +38,6 @@ Carbon Compass is an interactive web application that empowers users to reduce t
 - **Interactive Map Interface**: Visualize routes and make selections directly on the map
 - **Weather Integration**: Get current weather information to help plan your journey
 - **Responsive Design**: Optimized for both desktop and mobile devices
-
-## 📸 Screenshots
-
-Here are some screenshots showcasing the Carbon Compass application in action:
-
-### Main Interface
-![Screenshot 1](demo_pic/1.png)
-![Screenshot 2](demo_pic/2.png)
-
-### Route Planning & Comparison
-![Screenshot 3](demo_pic/3.png)
-![Screenshot 4](demo_pic/4.png)
-
-### Carbon Emission Details
-![Screenshot 5](demo_pic/5.png)
-![Screenshot 6](demo_pic/6.png)
-
-### Map Integration & Weather
-![Screenshot 7](demo_pic/7.png)
-![Screenshot 8](demo_pic/8.png)
 
 ## 🧮 Carbon Emission Calculations
 
