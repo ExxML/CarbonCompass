@@ -6,6 +6,7 @@ import WeatherPanel from './WeatherPanel';
 import CarbonPanel from './CarbonPanel';
 import lightMapStyles from '../styles/lightMapStyles.js';
 import darkMapStyles from '../styles/darkMapStyles.js';
+import { decodePolyline } from '../utils/decodePolyline.js';
 
 function TrafficLayer({ isVisible }) {
   const map = useMap();
@@ -88,7 +89,6 @@ export default function MapView() {
   const defaultCenter = { lat: 49.2606, lng: -123.246 };
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
-  const mode = 'driving';
   const [path, setPath] = useState([]);
   const [showTraffic, setShowTraffic] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -101,9 +101,33 @@ export default function MapView() {
 
   if (!apiKey) return <div>Missing Google Maps API key</div>;
 
-  const handleRouteSearch = ({ origin, destination }) => {
-    // Route search functionality will be implemented later
-    console.log('Route Search:', { origin, destination });
+  const handleRouteChange = (directionsData) => {
+    console.log('Route data received:', directionsData);
+
+    if (directionsData && directionsData.routes && directionsData.routes.length > 0) {
+      const bestRoute = directionsData.routes[0];
+
+      // Set origin and destination markers
+      if (bestRoute.start_location) {
+        setOrigin({
+          latLng: bestRoute.start_location,
+          address: bestRoute.start_address,
+        });
+      }
+
+      if (bestRoute.end_location) {
+        setDestination({
+          latLng: bestRoute.end_location,
+          address: bestRoute.end_address,
+        });
+      }
+
+      // Decode and set the path for the polyline
+      if (bestRoute.polyline) {
+        const decodedPath = decodePolyline(bestRoute.polyline);
+        setPath(decodedPath);
+      }
+    }
   };
 
   return (
@@ -133,7 +157,7 @@ export default function MapView() {
         </Map>
 
         {/* Google Maps-style Search Panel */}
-        <SearchPanel isDarkMode={isDarkMode} />
+        <SearchPanel isDarkMode={isDarkMode} onRouteChange={handleRouteChange} />
 
         {/* Weather Panel */}
         <WeatherPanel isDarkMode={isDarkMode} />

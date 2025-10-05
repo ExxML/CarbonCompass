@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navigation, X, Clock, MapPin, ArrowRight } from 'lucide-react';
-import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { useDirections } from '../hooks/useDirections';
 
 const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
@@ -11,14 +10,14 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
   const [isOriginFocused, setIsOriginFocused] = useState(false);
   const [isDestinationFocused, setIsDestinationFocused] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
-  const [originPredictions, setOriginPredictions] = useState([]);
-  const [destinationPredictions, setDestinationPredictions] = useState([]);
 
   const originInputRef = useRef(null);
   const destinationInputRef = useRef(null);
+  const originAutocompleteRef = useRef(null);
+  const destinationAutocompleteRef = useRef(null);
 
-  const { directionsData, loading, error, getDirections, getBestRoute } = useDirections();
-  const placesLib = useMapsLibrary('places');
+  const { directionsData, loading, error, getDirections, clearDirections, getBestRoute } =
+    useDirections();
 
   // Load recent searches from localStorage on component mount
   useEffect(() => {
@@ -66,84 +65,67 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
     [recentSearches]
   );
 
-  // Initialize Places AutocompleteService
-  const [autocompleteService, setAutocompleteService] = useState(null);
-
+  // Initialize Google Places Autocomplete for Origin
   useEffect(() => {
-    if (!placesLib) return;
-    setAutocompleteService(new placesLib.AutocompleteService());
-  }, [placesLib]);
+    if (!window.google || !originInputRef.current) return;
 
-  // Handle origin input change and fetch predictions
-  const handleOriginChange = (value) => {
-    setOrigin(value);
+    const originAutocomplete = new window.google.maps.places.Autocomplete(originInputRef.current, {
+      types: ['establishment', 'geocode'],
+      componentRestrictions: { country: 'ca' }, // Restrict to Canada for Vancouver area
+    });
 
-    if (!value || !autocompleteService) {
-      setOriginPredictions([]);
-      return;
-    }
+    originAutocompleteRef.current = originAutocomplete;
 
-    autocompleteService.getPlacePredictions(
-      {
-        input: value,
-        componentRestrictions: { country: 'ca' },
-        types: ['establishment', 'geocode'],
-      },
-      (predictions, status) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
-          setOriginPredictions(predictions);
-        } else {
-          setOriginPredictions([]);
-        }
+    originAutocomplete.addListener('place_changed', () => {
+      const place = originAutocomplete.getPlace();
+      if (place.place_id && place.name) {
+        setOrigin(place.formatted_address || place.name);
+        setIsOriginFocused(false);
       }
-    );
-  };
+    });
 
-  // Handle destination input change and fetch predictions
-  const handleDestinationChange = (value) => {
-    setDestination(value);
-
-    if (!value || !autocompleteService) {
-      setDestinationPredictions([]);
-      return;
-    }
-
-    autocompleteService.getPlacePredictions(
-      {
-        input: value,
-        componentRestrictions: { country: 'ca' },
-        types: ['establishment', 'geocode'],
-      },
-      (predictions, status) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
-          setDestinationPredictions(predictions);
-        } else {
-          setDestinationPredictions([]);
-        }
+    return () => {
+      if (window.google && originAutocompleteRef.current) {
+        window.google.maps.event.clearInstanceListeners(originAutocompleteRef.current);
       }
-    );
-  };
-
-  // Handle origin prediction selection
-  const handleOriginSelect = (prediction) => {
-    setOrigin(prediction.description);
-    setOriginPredictions([]);
-    setIsOriginFocused(false);
-  };
-
-  // Handle destination prediction selection
-  const handleDestinationSelect = (prediction) => {
-    const newSearch = {
-      id: prediction.place_id,
-      name: prediction.structured_formatting?.main_text || prediction.description,
-      address: prediction.description,
-      timestamp: Date.now(),
     };
-    addToRecentSearches(newSearch);
-    setDestination(prediction.description);
-    setDestinationPredictions([]);
-    setIsDestinationFocused(false);
-  };
+  }, []);
+
+  // Initialize Google Places Autocomplete for Destination
+  useEffect(() => {
+    if (!window.google || !destinationInputRef.current) return;
+
+    const destinationAutocomplete = new window.google.maps.places.Autocomplete(
+      destinationInputRef.current,
+      {
+        types: ['establishment', 'geocode'],
+        componentRestrictions: { country: 'ca' }, // Restrict to Canada for Vancouver area
+      }
+    );
+
+    destinationAutocompleteRef.current = destinationAutocomplete;
+
+    destinationAutocomplete.addListener('place_changed', () => {
+      const place = destinationAutocomplete.getPlace();
+      if (place.place_id && place.name) {
+        const newSearch = {
+          id: place.place_id,
+          name: place.name,
+          address: place.formatted_address || place.vicinity || '',
+          timestamp: Date.now(),
+        };
+        addToRecentSearches(newSearch);
+        setDestination(place.formatted_address || place.name);
+        setIsDestinationFocused(false);
+      }
+    });
+
+    return () => {
+      if (window.google && destinationAutocompleteRef.current) {
+        window.google.maps.event.clearInstanceListeners(destinationAutocompleteRef.current);
+      }
+    };
+  }, [addToRecentSearches]);
 
   // Handle selecting a recent search
   const handleRecentSearchSelect = (search) => {
@@ -154,7 +136,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
   };
 
   // Handle getting directions
-  const handleGetDirections = React.useCallback(async () => {
+  const handleGetDirections = async () => {
     if (!origin || !destination) {
       console.warn('Both origin and destination are required');
       return;
@@ -176,14 +158,14 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
     } catch (err) {
       console.error('Failed to get directions:', err);
     }
-  }, [origin, destination, getDirections, onRouteChange]);
+  };
 
   // Auto-trigger directions when both origin and destination are set
   useEffect(() => {
     if (origin && destination && !loading) {
       handleGetDirections();
     }
-  }, [origin, destination, loading, handleGetDirections]);
+  }, [origin, destination, loading]);
 
   if (isMinimized) {
     return (
@@ -324,9 +306,9 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                 type="text"
                 placeholder="Choose starting point"
                 value={origin}
-                onChange={(e) => handleOriginChange(e.target.value)}
+                onChange={(e) => setOrigin(e.target.value)}
                 onFocus={() => setIsOriginFocused(true)}
-                onBlur={() => setTimeout(() => setIsOriginFocused(false), 200)}
+                onBlur={() => setTimeout(() => setIsOriginFocused(false), 150)}
                 style={{
                   flex: 1,
                   background: 'transparent',
@@ -340,10 +322,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
               />
               {origin && (
                 <button
-                  onClick={() => {
-                    setOrigin('');
-                    setOriginPredictions([]);
-                  }}
+                  onClick={() => setOrigin('')}
                   style={{
                     padding: '4px',
                     borderRadius: '50%',
@@ -429,9 +408,9 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                 type="text"
                 placeholder="Where do you want to go?"
                 value={destination}
-                onChange={(e) => handleDestinationChange(e.target.value)}
+                onChange={(e) => setDestination(e.target.value)}
                 onFocus={() => setIsDestinationFocused(true)}
-                onBlur={() => setTimeout(() => setIsDestinationFocused(false), 200)}
+                onBlur={() => setTimeout(() => setIsDestinationFocused(false), 150)}
                 style={{
                   flex: 1,
                   background: 'transparent',
@@ -445,10 +424,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
               />
               {destination && (
                 <button
-                  onClick={() => {
-                    setDestination('');
-                    setDestinationPredictions([]);
-                  }}
+                  onClick={() => setDestination('')}
                   style={{
                     padding: '4px',
                     borderRadius: '50%',
@@ -567,296 +543,101 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
             </div>
           )}
 
-          {/* Origin Autocomplete Suggestions */}
-          {isOriginFocused && originPredictions.length > 0 && (
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  padding: '12px 16px 8px',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <MapPin
-                    style={{
-                      width: '14px',
-                      height: '14px',
-                      color: '#10b981',
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: '500',
-                      color: isDarkMode ? '#d1d5db' : '#6b7280',
-                      fontFamily: 'Roboto, sans-serif',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Starting Points
-                  </span>
-                </div>
-              </div>
-              {originPredictions.slice(0, 4).map((prediction, index) => (
-                <div
-                  key={prediction.place_id}
-                  onClick={() => handleOriginSelect(prediction)}
-                  style={{
-                    padding: '12px 16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    borderBottom:
-                      index < Math.min(originPredictions.length - 1, 3)
-                        ? '1px solid rgba(255, 255, 255, 0.05)'
-                        : 'none',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <MapPin
-                      style={{ width: '16px', height: '16px', color: '#10b981', flexShrink: 0 }}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          color: isDarkMode ? '#f9fafb' : '#111827',
-                          fontFamily: 'Roboto, sans-serif',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {prediction.structured_formatting?.main_text || prediction.description}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '12px',
-                          color: isDarkMode ? '#d1d5db' : '#6b7280',
-                          fontFamily: 'Roboto, sans-serif',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                          marginTop: '2px',
-                        }}
-                      >
-                        {prediction.structured_formatting?.secondary_text || ''}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Destination Autocomplete Suggestions */}
-          {isDestinationFocused && destinationPredictions.length > 0 && (
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  padding: '12px 16px 8px',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <MapPin
-                    style={{
-                      width: '14px',
-                      height: '14px',
-                      color: '#dc2626',
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: '500',
-                      color: isDarkMode ? '#d1d5db' : '#6b7280',
-                      fontFamily: 'Roboto, sans-serif',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Destinations
-                  </span>
-                </div>
-              </div>
-              {destinationPredictions.slice(0, 4).map((prediction, index) => (
-                <div
-                  key={prediction.place_id}
-                  onClick={() => handleDestinationSelect(prediction)}
-                  style={{
-                    padding: '12px 16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    borderBottom:
-                      index < Math.min(destinationPredictions.length - 1, 3)
-                        ? '1px solid rgba(255, 255, 255, 0.05)'
-                        : 'none',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <MapPin
-                      style={{ width: '16px', height: '16px', color: '#dc2626', flexShrink: 0 }}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          color: isDarkMode ? '#f9fafb' : '#111827',
-                          fontFamily: 'Roboto, sans-serif',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        {prediction.structured_formatting?.main_text || prediction.description}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '12px',
-                          color: isDarkMode ? '#d1d5db' : '#6b7280',
-                          fontFamily: 'Roboto, sans-serif',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                          marginTop: '2px',
-                        }}
-                      >
-                        {prediction.structured_formatting?.secondary_text || ''}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
           {/* Recent Searches */}
-          {(isOriginFocused || isDestinationFocused) &&
-            recentSearches.length > 0 &&
-            originPredictions.length === 0 &&
-            destinationPredictions.length === 0 && (
+          {(isOriginFocused || isDestinationFocused) && recentSearches.length > 0 && (
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                overflow: 'hidden',
+              }}
+            >
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  overflow: 'hidden',
+                  padding: '12px 16px 8px',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
-                <div
-                  style={{
-                    padding: '12px 16px 8px',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Clock
-                      style={{
-                        width: '14px',
-                        height: '14px',
-                        color: isDarkMode ? '#d1d5db' : '#6b7280',
-                      }}
-                    />
-                    <span
-                      style={{
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        color: isDarkMode ? '#d1d5db' : '#6b7280',
-                        fontFamily: 'Roboto, sans-serif',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                      }}
-                    >
-                      Recent Searches
-                    </span>
-                  </div>
-                </div>
-                {recentSearches.slice(0, 3).map((search, index) => (
-                  <div
-                    key={search.id}
-                    onClick={() => handleRecentSearchSelect(search)}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Clock
                     style={{
-                      padding: '12px 16px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      borderBottom:
-                        index < recentSearches.length - 1 && index < 2
-                          ? '1px solid rgba(255, 255, 255, 0.05)'
-                          : 'none',
+                      width: '14px',
+                      height: '14px',
+                      color: isDarkMode ? '#d1d5db' : '#6b7280',
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent';
+                  />
+                  <span
+                    style={{
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      color: isDarkMode ? '#d1d5db' : '#6b7280',
+                      fontFamily: 'Roboto, sans-serif',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <MapPin
-                        style={{ width: '16px', height: '16px', color: '#2563eb', flexShrink: 0 }}
-                      />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            color: isDarkMode ? '#f9fafb' : '#111827',
-                            fontFamily: 'Roboto, sans-serif',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {search.name}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: isDarkMode ? '#d1d5db' : '#6b7280',
-                            fontFamily: 'Roboto, sans-serif',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            marginTop: '2px',
-                          }}
-                        >
-                          {search.address}
-                        </div>
+                    Recent Searches
+                  </span>
+                </div>
+              </div>
+              {recentSearches.slice(0, 3).map((search, index) => (
+                <div
+                  key={search.id}
+                  onClick={() => handleRecentSearchSelect(search)}
+                  style={{
+                    padding: '12px 16px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    borderBottom:
+                      index < recentSearches.length - 1 && index < 2
+                        ? '1px solid rgba(255, 255, 255, 0.05)'
+                        : 'none',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <MapPin
+                      style={{ width: '16px', height: '16px', color: '#2563eb', flexShrink: 0 }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          color: isDarkMode ? '#f9fafb' : '#111827',
+                          fontFamily: 'Roboto, sans-serif',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {search.name}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: isDarkMode ? '#d1d5db' : '#6b7280',
+                          fontFamily: 'Roboto, sans-serif',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          marginTop: '2px',
+                        }}
+                      >
+                        {search.address}
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
