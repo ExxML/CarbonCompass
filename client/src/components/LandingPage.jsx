@@ -542,38 +542,6 @@ const LandingPage = ({ onNavigateToMap }) => {
               height: '140px',
             }}
           ></img>
-          <a
-            href="https://github.com/ExxML/CarbonCompass"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '50px',
-              height: '50px',
-              borderRadius: '50%',
-              backgroundColor: '#ffffff',
-              transition: 'all 0.3s ease',
-              textDecoration: 'none',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#f0f0f0';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = '#ffffff';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            <Github
-              style={{
-                width: '28px',
-                height: '28px',
-                color: '#333333',
-              }}
-            />
-          </a>
         </div>
 
         {/* Right side - Repository and team info */}
@@ -586,7 +554,19 @@ const LandingPage = ({ onNavigateToMap }) => {
           }}
         >
           <div style={{ marginBottom: '8px' }}>
-            <strong style={{ color: '#ffffff' }}>Github Repository</strong>
+            <a
+              href="https://github.com/ExxML/CarbonCompass"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: '#ffffff',
+                textDecoration: 'underline',
+                fontWeight: '800',
+                fontSize: '16px',
+              }}
+            >
+              Github Repository
+            </a>
           </div>
           <div style={{ marginBottom: '12px' }}>Powered by Google LLC ©</div>
           <div>
