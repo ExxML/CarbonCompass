@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
 import RoutePolyline from './RoutePolyline';
 import SearchPanel from './SearchPanel';
 import WeatherPanel from './WeatherPanel';
 import CarbonPanel from './CarbonPanel';
+import TripProgressPanel from './TripProgressPanel';
+import { useTripTracking } from '../hooks/useTripTracking';
 import lightMapStyles from '../styles/lightMapStyles.js';
 import darkMapStyles from '../styles/darkMapStyles.js';
 import { decodePolyline } from '../utils/decodePolyline.js';
@@ -92,6 +94,17 @@ export default function MapView() {
   const [allRoutes, setAllRoutes] = useState({});
   const [showTraffic, setShowTraffic] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const clearSearchPanelRef = useRef(null);
+
+  // Trip tracking
+  const {
+    isTracking,
+    currentLocation,
+    tripProgress,
+    error: trackingError,
+    startTracking,
+    stopTracking,
+  } = useTripTracking();
 
   // Debug logging
   useEffect(() => {
@@ -109,12 +122,12 @@ export default function MapView() {
       // Check if it's the new multi-route format
       if (routesData.driving || routesData.transit || routesData.bicycling || routesData.walking) {
         setAllRoutes(routesData);
-        
+
         // Set origin and destination from the first available route
-        const firstRoute = Object.values(routesData).find(data => data?.routes?.[0]);
+        const firstRoute = Object.values(routesData).find((data) => data?.routes?.[0]);
         if (firstRoute?.routes?.[0]) {
           const route = firstRoute.routes[0];
-          
+
           if (route.start_location) {
             setOrigin({
               latLng: route.start_location,
@@ -153,6 +166,29 @@ export default function MapView() {
     }
   };
 
+  // Handle starting trip tracking
+  const handleStartTracking = (routeData) => {
+    if (!routeData) {
+      console.error('No route data provided for tracking');
+      return;
+    }
+
+    console.log('Starting trip tracking with route:', routeData);
+    startTracking(routeData);
+  };
+
+  // Handle stopping trip tracking and clear search panel
+  const handleStopTracking = () => {
+    stopTracking();
+    if (clearSearchPanelRef.current) {
+      clearSearchPanelRef.current();
+    }
+    // Also clear MapView's route state
+    setAllRoutes({});
+    setOrigin(null);
+    setDestination(null);
+  };
+
   return (
     <APIProvider apiKey={apiKey} libraries={['places']}>
       <div style={{ position: 'relative', width: '100vw', height: '100dvh' }}>
@@ -176,22 +212,22 @@ export default function MapView() {
 
           {origin?.latLng && <Marker position={origin.latLng} />}
           {destination?.latLng && <Marker position={destination.latLng} />}
-          
+
           {/* Render polylines for all available routes */}
           {Object.entries(allRoutes).map(([mode, routeData]) => {
             const route = routeData?.routes?.[0];
             if (!route?.polyline) return null;
-            
+
             const decodedPath = decodePolyline(route.polyline);
             const modeConfig = {
               driving: { color: '#dc2626', weight: 5, opacity: 0.8 },
               transit: { color: '#2563eb', weight: 5, opacity: 0.8 },
               bicycling: { color: '#16a34a', weight: 5, opacity: 0.8 },
-              walking: { color: '#7c3aed', weight: 5, opacity: 0.8 }
+              walking: { color: '#7c3aed', weight: 5, opacity: 0.8 },
             };
-            
+
             const config = modeConfig[mode] || { color: '#6b7280', weight: 5, opacity: 0.8 };
-            
+
             return (
               <RoutePolyline
                 key={mode}
@@ -206,7 +242,41 @@ export default function MapView() {
         </Map>
 
         {/* Google Maps-style Search Panel */}
-        <SearchPanel isDarkMode={isDarkMode} onRouteChange={handleRouteChange} />
+        <SearchPanel
+          key="search-panel"
+          isDarkMode={isDarkMode}
+          onRouteChange={handleRouteChange}
+          onStartTracking={handleStartTracking}
+          onClearSearch={(clearFn) => {
+            clearSearchPanelRef.current = clearFn;
+          }}
+        />
+
+        {/* Trip Progress Panel */}
+        <TripProgressPanel
+          isDarkMode={isDarkMode}
+          isTracking={isTracking}
+          tripProgress={tripProgress}
+          currentLocation={currentLocation}
+          onStopTracking={handleStopTracking}
+        />
+
+        {/* Current Location Marker */}
+        {currentLocation && (
+          <Marker
+            position={{ lat: currentLocation.lat, lng: currentLocation.lng }}
+            options={{
+              icon: {
+                path: window.google?.maps?.SymbolPath?.CIRCLE,
+                fillColor: '#4285f4',
+                fillOpacity: 1,
+                strokeColor: '#ffffff',
+                strokeWeight: 2,
+                scale: 8,
+              },
+            }}
+          />
+        )}
 
         {/* Route Legend */}
         {Object.keys(allRoutes).length > 0 && (
@@ -241,11 +311,11 @@ export default function MapView() {
                 driving: { icon: '🚗', name: 'Driving', color: '#dc2626' },
                 transit: { icon: '🚌', name: 'Transit', color: '#2563eb' },
                 bicycling: { icon: '🚴', name: 'Biking', color: '#16a34a' },
-                walking: { icon: '🚶', name: 'Walking', color: '#7c3aed' }
+                walking: { icon: '🚶', name: 'Walking', color: '#7c3aed' },
               };
-              
+
               const config = modeConfig[mode] || { icon: '🗺️', name: mode, color: '#6b7280' };
-              
+
               return (
                 <div
                   key={mode}
@@ -375,6 +445,46 @@ export default function MapView() {
             {isDarkMode ? 'Light Mode' : 'Dark Mode'}
           </span>
         </button>
+
+        {/* Trip Tracking Error Display */}
+        {trackingError && (
+          <div
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 10000,
+              background: 'rgba(220, 38, 38, 0.95)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '12px',
+              padding: '16px 20px',
+              maxWidth: '300px',
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '14px',
+                fontWeight: '500',
+                color: 'white',
+                fontFamily: 'Roboto, sans-serif',
+                marginBottom: '8px',
+              }}
+            >
+              Trip Tracking Error
+            </div>
+            <div
+              style={{
+                fontSize: '12px',
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontFamily: 'Roboto, sans-serif',
+              }}
+            >
+              {trackingError}
+            </div>
+          </div>
+        )}
       </div>
     </APIProvider>
   );

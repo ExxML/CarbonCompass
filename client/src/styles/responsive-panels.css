@@ -1,0 +1,66 @@
+/* Responsive Panel Utilities */
+
+@media (max-width: 767px) {
+  /* Mobile styles */
+  .panel-container {
+    width: calc(100vw - 16px) !important;
+    max-width: 320px !important;
+    margin: 8px !important;
+  }
+
+  .panel-content {
+    padding: 12px !important;
+  }
+
+  .panel-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .panel-text {
+    font-size: 14px !important;
+  }
+
+  .panel-title {
+    font-size: 16px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet styles */
+  .panel-container {
+    width: 350px !important;
+  }
+
+  .panel-content {
+    padding: 14px !important;
+  }
+}
+
+@media (min-width: 1440px) {
+  /* Large desktop styles */
+  .panel-container {
+    width: 420px !important;
+  }
+
+  .panel-content {
+    padding: 18px !important;
+  }
+}
+
+/* Animation for responsive transitions */
+.panel-container {
+  transition:
+    width 0.3s ease,
+    padding 0.3s ease,
+    transform 0.3s ease;
+}
+
+/* Ensure panels don't overflow on small screens */
+@media (max-width: 480px) {
+  .panel-container {
+    max-width: calc(100vw - 16px) !important;
+    min-width: 280px !important;
+  }
+}
