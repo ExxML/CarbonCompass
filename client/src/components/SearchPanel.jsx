@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Navigation, X, Clock, MapPin, ArrowRight } from 'lucide-react';
+import { Navigation, X, Clock, MapPin, ArrowRight, Play } from 'lucide-react';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { useDirections } from '../hooks/useDirections';
 
-const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
+const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onClearSearch }) => {
   // Removed console.log to prevent constant logging
   const [isMinimized, setIsMinimized] = useState(false);
   const [origin, setOrigin] = useState('');
@@ -14,13 +14,79 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
   const [originPredictions, setOriginPredictions] = useState([]);
   const [destinationPredictions, setDestinationPredictions] = useState([]);
   const [allRoutesData, setAllRoutesData] = useState({});
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+
+  // Get current location
+  const getCurrentLocation = React.useCallback(() => {
+    if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by this browser');
+      return Promise.reject(new Error('Geolocation not supported'));
+    }
+
+    return new Promise((resolve, reject) => {
+      setIsGettingLocation(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+          };
+          setCurrentLocation(location);
+          setIsGettingLocation(false);
+          resolve(location);
+        },
+        (error) => {
+          setIsGettingLocation(false);
+          let message = 'Location access failed';
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              message = 'Location access denied by user';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              message = 'Location information unavailable';
+              break;
+            case error.TIMEOUT:
+              message = 'Location request timed out';
+              break;
+          }
+          reject(new Error(message));
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000,
+        }
+      );
+    });
+  }, []);
+
+  // Clear search function
+  const clearSearch = React.useCallback(() => {
+    setOrigin('');
+    setDestination('');
+    setOriginPredictions([]);
+    setDestinationPredictions([]);
+    setAllRoutesData({});
+    setIsOriginFocused(false);
+    setIsDestinationFocused(false);
+    setCurrentLocation(null);
+  }, []);
+
+  // Expose clearSearch function to parent component
+  React.useEffect(() => {
+    if (onClearSearch) {
+      onClearSearch(clearSearch);
+    }
+  }, [onClearSearch, clearSearch]);
 
   const originInputRef = useRef(null);
   const destinationInputRef = useRef(null);
   const originDebounceRef = useRef(null);
   const destinationDebounceRef = useRef(null);
 
-  const { directionsData, loading, error, getDirections, getBestRoute } = useDirections();
+  const { loading, error, getDirections } = useDirections();
   const placesLib = useMapsLibrary('places');
 
   // Load recent searches from localStorage on component mount
@@ -73,8 +139,14 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
   const [autocompleteService, setAutocompleteService] = useState(null);
 
   useEffect(() => {
-    if (!placesLib) return;
-    setAutocompleteService(new placesLib.AutocompleteService());
+    if (!placesLib || !placesLib.AutocompleteService) return;
+    try {
+      const service = new placesLib.AutocompleteService();
+      setAutocompleteService(service);
+      console.log('AutocompleteService initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize AutocompleteService:', error);
+    }
   }, [placesLib]);
 
   // Cleanup timeouts on unmount
@@ -103,6 +175,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
       return;
     }
 
+    console.log('Fetching origin predictions for:', value);
     autocompleteService.getPlacePredictions(
       {
         input: value,
@@ -110,9 +183,11 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
         types: ['establishment', 'geocode'],
       },
       (predictions, status) => {
+        console.log('Origin predictions response:', { predictions, status });
         if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
           setOriginPredictions(predictions);
         } else {
+          console.warn('Origin predictions failed:', status);
           setOriginPredictions([]);
         }
       }
@@ -132,6 +207,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
       return;
     }
 
+    console.log('Fetching destination predictions for:', value);
     autocompleteService.getPlacePredictions(
       {
         input: value,
@@ -139,9 +215,11 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
         types: ['establishment', 'geocode'],
       },
       (predictions, status) => {
+        console.log('Destination predictions response:', { predictions, status });
         if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
           setDestinationPredictions(predictions);
         } else {
+          console.warn('Destination predictions failed:', status);
           setDestinationPredictions([]);
         }
       }
@@ -198,17 +276,58 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
   };
 
   // Handle destination prediction selection
-  const handleDestinationSelect = (prediction) => {
-    const newSearch = {
-      id: prediction.place_id,
-      name: prediction.structured_formatting?.main_text || prediction.description,
-      address: prediction.description,
-      timestamp: Date.now(),
-    };
-    addToRecentSearches(newSearch);
+  const handleDestinationPredictionSelect = (prediction) => {
     setDestination(prediction.description);
     setDestinationPredictions([]);
     setIsDestinationFocused(false);
+
+    // Add to recent searches
+    addToRecentSearches({
+      id: prediction.place_id || `pred-${Date.now()}`,
+      name: prediction.structured_formatting?.main_text || prediction.description,
+      address: prediction.description,
+      timestamp: Date.now(),
+    });
+  };
+
+  // Handle current location selection
+  const handleCurrentLocationSelect = async (inputType) => {
+    try {
+      const location = await getCurrentLocation();
+      // Use lat,lng format that Google Maps API recognizes
+      const locationCoords = `${location.lat.toFixed(6)},${location.lng.toFixed(6)}`;
+      const displayText = `Current Location (${location.lat.toFixed(4)}, ${location.lng.toFixed(4)})`;
+
+      if (inputType === 'origin') {
+        // Store coordinates for API, but show user-friendly text
+        setOrigin(locationCoords);
+        setOriginPredictions([]);
+        setIsOriginFocused(false);
+        // Update input display with friendly text
+        if (originInputRef.current) {
+          originInputRef.current.value = displayText;
+        }
+      } else {
+        setDestination(locationCoords);
+        setDestinationPredictions([]);
+        setIsDestinationFocused(false);
+        // Update input display with friendly text
+        if (destinationInputRef.current) {
+          destinationInputRef.current.value = displayText;
+        }
+      }
+
+      // Add to recent searches
+      addToRecentSearches({
+        id: `current-location-${Date.now()}`,
+        name: 'Current Location',
+        address: displayText,
+        timestamp: Date.now(),
+      });
+    } catch (error) {
+      console.error('Failed to get current location:', error);
+      // Could add toast notification here
+    }
   };
 
   // Handle selecting a recent search
@@ -263,7 +382,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
       });
 
       if (successCount === 0) {
-        setError('No routes could be found for any transportation mode');
+        console.error('No routes could be found for any transportation mode');
         setAllRoutesData({});
         return;
       }
@@ -872,11 +991,57 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                     );
                   })}
                 </div>
+
+                {/* Start Trip Tracking Button */}
+                {allRoutesData.driving && (
+                  <div style={{ marginTop: '12px' }}>
+                    <button
+                      onClick={() => onStartTracking && onStartTracking(allRoutesData.driving)}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: 'rgba(16, 185, 129, 0.8)',
+                        borderRadius: '8px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = 'rgba(16, 185, 129, 1)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'rgba(16, 185, 129, 0.8)';
+                      }}
+                    >
+                      <Play
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          color: 'white',
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          color: 'white',
+                          fontFamily: 'Roboto, sans-serif',
+                        }}
+                      >
+                        Start Trip Tracking
+                      </span>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
           {/* Origin Autocomplete Suggestions */}
-          {isOriginFocused && originPredictions.length > 0 && (
+          {isOriginFocused && (originPredictions.length > 0 || true) && (
             <div
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',
@@ -911,6 +1076,69 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                   >
                     Starting Points
                   </span>
+                </div>
+              </div>
+              {/* Current Location Option */}
+              <div
+                onClick={() => handleCurrentLocationSelect('origin')}
+                style={{
+                  padding: '12px 16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Navigation
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      color: 'white',
+                    }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: isDarkMode ? '#f9fafb' : '#111827',
+                      fontFamily: 'Roboto, sans-serif',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    {isGettingLocation ? 'Getting location...' : 'Current Location'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: isDarkMode ? '#9ca3af' : '#6b7280',
+                      fontFamily: 'Roboto, sans-serif',
+                    }}
+                  >
+                    {currentLocation
+                      ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}`
+                      : 'Use your current position'}
+                  </div>
                 </div>
               </div>
               {originPredictions.slice(0, 4).map((prediction, index) => (
@@ -972,7 +1200,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
           )}
 
           {/* Destination Autocomplete Suggestions */}
-          {isDestinationFocused && destinationPredictions.length > 0 && (
+          {isDestinationFocused && (destinationPredictions.length > 0 || true) && (
             <div
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',
@@ -1009,10 +1237,73 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                   </span>
                 </div>
               </div>
+              {/* Current Location Option */}
+              <div
+                onClick={() => handleCurrentLocationSelect('destination')}
+                style={{
+                  padding: '12px 16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Navigation
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      color: 'white',
+                    }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: isDarkMode ? '#f9fafb' : '#111827',
+                      fontFamily: 'Roboto, sans-serif',
+                      marginBottom: '2px',
+                    }}
+                  >
+                    {isGettingLocation ? 'Getting location...' : 'Current Location'}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: isDarkMode ? '#9ca3af' : '#6b7280',
+                      fontFamily: 'Roboto, sans-serif',
+                    }}
+                  >
+                    {currentLocation
+                      ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}`
+                      : 'Use your current position'}
+                  </div>
+                </div>
+              </div>
               {destinationPredictions.slice(0, 4).map((prediction, index) => (
                 <div
                   key={prediction.place_id}
-                  onClick={() => handleDestinationSelect(prediction)}
+                  onClick={() => handleDestinationPredictionSelect(prediction)}
                   style={{
                     padding: '12px 16px',
                     cursor: 'pointer',
