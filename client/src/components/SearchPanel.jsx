@@ -1023,7 +1023,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onCle
                                     color: isDarkMode ? '#f9fafb' : '#111827',
                                   }}
                                 >
-                                  Transit Route Details
+                                  🚌 Transit Route Details
                                 </div>
                                 {route.steps?.map((step, stepIndex) => {
                                   const isTransit = step.travel_mode === 'TRANSIT';
