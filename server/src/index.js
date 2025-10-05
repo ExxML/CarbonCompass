@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { z } from "zod";
 import RouteCalculator from "./services/RouteCalculator.js";
+import RequestController from "./controllers/RequestController.js";
 
 dotenv.config();
 console.log("Google Maps API Key:", process.env.MAPS_API_KEY ? "YES" : "NO");
@@ -15,15 +16,16 @@ app.use(express.json());
 // Initialize services for multi-modal route optimization
 const routeCalculator = new RouteCalculator();
 
+// Initialize the request controller for specialized route handling
+const requestController = new RequestController();
+
 const GOOGLE_ROUTES_URL =
   "https://routes.googleapis.com/directions/v2:computeRoutes";
 const API_KEY = process.env.MAPS_API_KEY;
-const USE_MOCK_DATA = API_KEY === "PUT_API_KEY_HERE" || !API_KEY;
 
 const ReqSchema = z.object({
   origin: z.string().min(1),
   destination: z.string().min(1),
-  fuelType: z.enum(["GASOLINE", "DIESEL"]).default("GASOLINE"),
 });
 
 const RouteReqSchema = z.object({
@@ -111,6 +113,12 @@ app.post("/api/routes", async (req, res) => {
   }
 });
 
+// Route endpoints using RequestController
+app.post("/api/routes/fastest", (req, res) => requestController.getFastestRoute(req, res));
+app.post("/api/routes/balanced", (req, res) => requestController.getBalancedRoute(req, res));
+app.post("/api/routes/eco", (req, res) => requestController.getEcoRoute(req, res));
+app.post("/api/routes/all", (req, res) => requestController.getAllRouteTypes(req, res));
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
@@ -121,7 +129,7 @@ app.post("/api/emissions/drive", async (req, res) => {
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
   }
-  const { origin, destination, fuelType } = parsed.data;
+  const { origin, destination } = parsed.data;
 
   try {
     const body = {
@@ -152,7 +160,7 @@ app.post("/api/emissions/drive", async (req, res) => {
       parseFloat(String(route.duration ?? "0s").replace("s", "")) || 0;
     const fuelL =
       (route.travelAdvisory?.fuelConsumptionMicroliters ?? 0) / 1_000_000;
-    const co2eKg = fuelL * KG_CO2_PER_L[fuelType];
+    const co2eKg = fuelL * KG_CO2_PER_L['GASOLINE'];
 
     res.json({
       distanceKm: +distanceKm.toFixed(3),
