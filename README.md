@@ -6,7 +6,7 @@ A smart route planning application that helps users make environmentally conscio
 
 </div>
 
-## � Table of Contents
+## Table of Contents
 
 - [📖 About](#-about)
 - [🧮 Carbon Emission Calculations](#-carbon-emission-calculations)
@@ -18,7 +18,7 @@ A smart route planning application that helps users make environmentally conscio
 - [📄 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
 
-## �📖 About
+## 📖 About
 
 Carbon Compass is an interactive web application that empowers users to reduce their environmental impact through informed transportation choices. Simply enter your origin and destination, and our app will show you multiple route options with their respective carbon footprints, helping you choose the most sustainable way to travel.
 
@@ -39,7 +39,7 @@ Our carbon footprint calculations are based on established emission factors for 
 | Transportation Mode        | Emission Factor (g CO₂e/km) | Notes                                           |
 | -------------------------- | --------------------------- | ----------------------------------------------- |
 | **Walking**                | 0                           | No direct emissions                             |
-| **Cycling**                | 0                           | No direct emissions (excluding manufacturing)   |
+| **Cycling**                | 0                           | No direct emissions  |
 | **Public Transit**         | 89                          | Average bus/train occupancy considered          |
 | **Driving (Gasoline Car)** | 210                         | Based on average fuel consumption of 8.0L/100km |
 
@@ -87,7 +87,7 @@ You'll need to obtain API keys from Google Cloud Platform:
 - **Client-side API key** for the frontend (browser-restricted)
 - **Server-side API key** for the backend (server-restricted)
 
-## � Getting Started
+## 🚀 Getting Started
 
 ### 1. Installation
 
@@ -161,7 +161,7 @@ Once both servers are running:
 4. **View route options** with carbon emission calculations for each transportation mode
 5. **Compare environmental impact** and choose the most sustainable option
 
-## � API Endpoints
+## 📡 API Endpoints
 
 The backend provides the following API endpoints:
 
@@ -173,7 +173,7 @@ The backend provides the following API endpoints:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## � Acknowledgments
+## 🙏 Acknowledgments
 
 - Google Maps Platform for routing and mapping services
 - Environmental data sources for emission factor calculations
