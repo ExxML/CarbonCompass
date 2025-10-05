@@ -44,16 +44,6 @@ Tooling / Infra (optional future):
 
 ## 🗺️ Architecture
 
-```
-client/        # React frontend: map, form, results visualization
-server/        # Express API: routing proxy + carbon calculation service
-	└─ src/
-			 emissions/   # Emission factors & calculators
-			 routes/      # REST endpoints
-			 services/    # Google Maps wrapper, caching
-			 utils/       # Validation, normalization
-```
-
 High-Level Flow:
 
 1. User selects origin & destination (autocomplete or map click).

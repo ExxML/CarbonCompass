@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
+import { Home } from 'lucide-react';
 import RoutePolyline from './RoutePolyline';
 import SearchPanel from './SearchPanel';
 import WeatherPanel from './WeatherPanel';
@@ -84,7 +85,7 @@ function StyleController({ isDarkMode }) {
   return null;
 }
 
-export default function MapView() {
+export default function MapView({ onNavigateToLanding }) {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const defaultCenter = { lat: 49.2606, lng: -123.246 };
   const [origin, setOrigin] = useState(null);
@@ -485,6 +486,56 @@ export default function MapView() {
             {isDarkMode ? 'Light Mode' : 'Dark Mode'}
           </span>
         </button>
+
+        {/* Home Button */}
+        {onNavigateToLanding && (
+          <button
+            onClick={onNavigateToLanding}
+            style={{
+              position: 'fixed',
+              top: '136px',
+              right: '16px',
+              zIndex: 9999,
+              background: 'rgba(16, 185, 129, 0.2)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '12px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              padding: '12px 16px',
+              border: '1px solid rgba(16, 185, 129, 0.4)',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = 'rgba(16, 185, 129, 0.3)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            <Home
+              style={{
+                width: '16px',
+                height: '16px',
+                color: '#10b981',
+              }}
+            />
+            <span
+              style={{
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#10b981',
+                fontFamily: 'Roboto, sans-serif',
+              }}
+            >
+              Home
+            </span>
+          </button>
+        )}
 
         {/* Trip Tracking Error Display */}
         {trackingError && (
