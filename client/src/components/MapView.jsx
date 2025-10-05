@@ -45,17 +45,15 @@ function ConfigureControls() {
       disableDefaultUI: true,
       mapTypeControl: false,
       fullscreenControl: false,
-
       zoomControl: false,
+      streetViewControl: false,
+      rotateControl: false,
+      scaleControl: false,
+      panControl: false,
+      overviewMapControl: false,
       zoomControlOptions: {
         position: window.google.maps.ControlPosition.RIGHT_BOTTOM,
       },
-      // example of moving Map/Satellite if you re-enable it:
-      // mapTypeControl: true,
-      // mapTypeControlOptions: {
-      //   position: window.google.maps.ControlPosition.TOP_LEFT,
-      //   style: window.google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-      // },
     });
   }, [map]);
 
@@ -202,6 +200,12 @@ export default function MapView() {
             disableDefaultUI: true,
             mapTypeControl: false,
             fullscreenControl: false,
+            streetViewControl: false,
+            rotateControl: false,
+            scaleControl: false,
+            panControl: false,
+            overviewMapControl: false,
+            zoomControl: false,
             gestureHandling: 'greedy',
             styles: isDarkMode ? darkMapStyles : lightMapStyles,
           }}
@@ -351,7 +355,7 @@ export default function MapView() {
         )}
 
         {/* Weather Panel */}
-        <WeatherPanel isDarkMode={isDarkMode} />
+        <WeatherPanel isDarkMode={isDarkMode} currentLocation={currentLocation} />
 
         {/* Carbon Panel */}
         <CarbonPanel isDarkMode={isDarkMode} />

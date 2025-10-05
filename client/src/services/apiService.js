@@ -93,6 +93,23 @@ class ApiService {
   }
 
   /**
+   * Get weather information for a location
+   * @param {Object} params - Weather parameters
+   * @param {string} params.location - Location name (optional if lat/lng provided)
+   * @param {number} params.lat - Latitude (optional if location provided)
+   * @param {number} params.lng - Longitude (optional if location provided)
+   * @returns {Promise<Object>} - Weather data
+   */
+  async getWeather({ location, lat, lng }) {
+    const params = new URLSearchParams();
+    if (location) params.append('location', location);
+    if (lat) params.append('lat', lat.toString());
+    if (lng) params.append('lng', lng.toString());
+
+    return this.request(`/weather?${params.toString()}`);
+  }
+
+  /**
    * Health check endpoint
    * @returns {Promise<Object>} - Server health status
    */

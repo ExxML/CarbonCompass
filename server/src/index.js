@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import directionsRoutes from "./routes/directions.js";
+import weatherRoutes from "./routes/weather.js";
 
 // Load environment variables
 dotenv.config();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/directions", directionsRoutes);
+app.use("/api/weather", weatherRoutes);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
