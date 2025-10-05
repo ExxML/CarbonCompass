@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps';
 import RoutePolyline from './RoutePolyline';
+import SearchPanel from './SearchPanel';
 
 function ConfigureControls() {
   const map = useMap();
@@ -69,6 +70,9 @@ export default function MapView() {
           {destination?.latLng && <Marker position={destination.latLng} />}
           <RoutePolyline path={path} fit strokeColor="#4285F4" strokeWeight={5} />
         </Map>
+
+        {/* Google Maps-style Search Panel */}
+        <SearchPanel />
       </div>
     </APIProvider>
   );
