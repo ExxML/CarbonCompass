@@ -10,7 +10,7 @@ A smart route planning application that helps users make environmentally conscio
 </div>
 
 <p align="center">
-  <img src="demo_pic/8.png" alt="Carbon Compass Page" width="500">
+  <img src="demo_pic/8.png" alt="Carbon Compass Page" width="400">
 </p>
 
 </div>
