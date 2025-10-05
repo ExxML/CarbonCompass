@@ -10,29 +10,88 @@ export const useDirections = () => {
   const [error, setError] = useState(null);
 
   /**
+   * Fetch directions using Google Maps Directions Service
+   */
+  const getDirectionsFromGoogle = useCallback(async (params) => {
+    return new Promise((resolve, reject) => {
+      if (!window.google || !window.google.maps) {
+        reject(new Error('Google Maps API not loaded'));
+        return;
+      }
+
+      const directionsService = new window.google.maps.DirectionsService();
+      const travelMode =
+        {
+          driving: window.google.maps.TravelMode.DRIVING,
+          walking: window.google.maps.TravelMode.WALKING,
+          bicycling: window.google.maps.TravelMode.BICYCLING,
+          transit: window.google.maps.TravelMode.TRANSIT,
+        }[params.mode] || window.google.maps.TravelMode.DRIVING;
+
+      directionsService.route(
+        {
+          origin: params.origin,
+          destination: params.destination,
+          travelMode: travelMode,
+          unitSystem:
+            params.units === 'metric'
+              ? window.google.maps.UnitSystem.METRIC
+              : window.google.maps.UnitSystem.IMPERIAL,
+          avoidHighways: params.avoid?.includes('highways'),
+          avoidTolls: params.avoid?.includes('tolls'),
+          avoidFerries: params.avoid?.includes('ferries'),
+        },
+        (result, status) => {
+          if (status === window.google.maps.DirectionsStatus.OK) {
+            resolve(result);
+          } else {
+            reject(new Error(`Directions request failed: ${status}`));
+          }
+        }
+      );
+    });
+  }, []);
+
+  /**
    * Fetch directions between two points
    */
-  const getDirections = useCallback(async (params) => {
-    setLoading(true);
-    setError(null);
+  const getDirections = useCallback(
+    async (params) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const response = await apiService.getDirections(params);
+      try {
+        // Try backend first, fallback to Google Maps API
+        let response;
+        try {
+          response = await apiService.getDirections(params);
+          if (response.success) {
+            setDirectionsData(response.data);
+            return response.data;
+          }
+        } catch (backendError) {
+          console.warn(
+            'Backend unavailable, using Google Maps API directly:',
+            backendError.message
+          );
 
-      if (response.success) {
-        setDirectionsData(response.data);
-        return response.data;
-      } else {
-        throw new Error('Failed to get directions');
+          // Fallback to Google Maps API
+          const directResult = await getDirectionsFromGoogle(params);
+          setDirectionsData(directResult);
+          return directResult;
+        }
+
+        throw new Error('Failed to get directions from all sources');
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching directions:', err);
+        throw err;
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching directions:', err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [getDirectionsFromGoogle]
+  );
 
   /**
    * Clear directions data
