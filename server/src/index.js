@@ -5,12 +5,16 @@ import express from "express";
 import { z } from "zod";
 import RouteCalculator from "./services/RouteCalculator.js";
 import RequestController from "./controllers/RequestController.js";
+import { getGoogleMapsConfig, getServerConfig } from "./utils/config.js";
 
 dotenv.config();
+const googleMapsConfig = getGoogleMapsConfig();
+const serverConfig = getServerConfig();
+
 console.log("Google Maps API Key:", process.env.MAPS_API_KEY ? "YES" : "NO");
 
 const app = express();
-app.use(cors({ origin: ["http://localhost:5173", "http://127.0.0.1:5173"] }));
+app.use(cors({ origin: serverConfig.corsOrigins }));
 app.use(express.json());
 
 // Initialize services for multi-modal route optimization
@@ -19,8 +23,7 @@ const routeCalculator = new RouteCalculator();
 // Initialize the request controller for specialized route handling
 const requestController = new RequestController();
 
-const GOOGLE_ROUTES_URL =
-  "https://routes.googleapis.com/directions/v2:computeRoutes";
+const GOOGLE_ROUTES_URL = googleMapsConfig.routesApiBaseUrl;
 const API_KEY = process.env.MAPS_API_KEY;
 
 const ReqSchema = z.object({

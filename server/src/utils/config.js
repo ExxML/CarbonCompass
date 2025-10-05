@@ -19,7 +19,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
- * Application configuration object with validated environment variables
+ * Application configuration object with hardcoded constants
  *
  * This configuration object provides type-safe access to all application settings.
  * It includes validation to ensure required values are present and properly formatted.
@@ -28,11 +28,9 @@ const config = {
   // Server configuration
   server: {
     port: parseInt(process.env.PORT || "8080", 10),
-    host: process.env.HOST || "0.0.0.0",
-    environment: process.env.NODE_ENV || "development",
-    corsOrigins: process.env.CORS_ORIGINS
-      ? process.env.CORS_ORIGINS.split(",")
-      : ["http://localhost:5173", "http://127.0.0.1:5173"],
+    host: "0.0.0.0",
+    environment: "development",
+    corsOrigins: ["http://localhost:5173", "http://127.0.0.1:5173"],
   },
 
   // Google Maps API configuration
@@ -43,38 +41,38 @@ const config = {
     geocodingApiBaseUrl: "https://maps.googleapis.com/maps/api/geocode/json",
     distanceMatrixApiBaseUrl:
       "https://maps.googleapis.com/maps/api/distancematrix/json",
-    timeout: parseInt(process.env.GOOGLE_MAPS_TIMEOUT || "10000", 10),
-    retries: parseInt(process.env.GOOGLE_MAPS_RETRIES || "3", 10),
-    retryDelay: parseInt(process.env.GOOGLE_MAPS_RETRY_DELAY || "1000", 10),
+    timeout: 10000,
+    retries: 3,
+    retryDelay: 1000,
   },
 
   // Cache configuration
   cache: {
-    ttl: parseInt(process.env.CACHE_TTL_SECONDS || "600", 10), // 10 minutes default
-    maxSize: parseInt(process.env.CACHE_MAX_SIZE || "1000", 10),
-    enabled: process.env.CACHE_ENABLED !== "false",
+    ttl: 600, // 10 minutes default
+    maxSize: 1000,
+    enabled: true,
   },
 
   // Rate limiting configuration
   rateLimit: {
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || "60000", 10), // 1 minute
-    maxRequests: parseInt(process.env.RATE_LIMIT_MAX || "60", 10),
-    enabled: process.env.RATE_LIMIT_ENABLED !== "false",
+    windowMs: 60000, // 1 minute
+    maxRequests: 60,
+    enabled: true,
   },
 
   // Logging configuration
   logging: {
-    level: process.env.LOG_LEVEL || "info",
-    format: process.env.LOG_FORMAT || "combined",
-    enableConsole: process.env.LOG_ENABLE_CONSOLE !== "false",
-    enableFile: process.env.LOG_ENABLE_FILE === "true",
+    level: "info",
+    format: "combined",
+    enableConsole: true,
+    enableFile: false,
   },
 
   // Feature flags
   features: {
-    enableCaching: process.env.ENABLE_CACHING !== "false",
-    enableAnalytics: process.env.ENABLE_ANALYTICS === "true",
-    enableUserPreferences: process.env.ENABLE_USER_PREFERENCES !== "false",
+    enableCaching: true,
+    enableAnalytics: false,
+    enableUserPreferences: true,
   },
 };
 
