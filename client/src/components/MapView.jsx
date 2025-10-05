@@ -89,7 +89,7 @@ export default function MapView() {
   const defaultCenter = { lat: 49.2606, lng: -123.246 };
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
-  const [path, setPath] = useState([]);
+  const [allRoutes, setAllRoutes] = useState({});
   const [showTraffic, setShowTraffic] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -101,31 +101,54 @@ export default function MapView() {
 
   if (!apiKey) return <div>Missing Google Maps API key</div>;
 
-  const handleRouteChange = (directionsData) => {
-    console.log('Route data received:', directionsData);
+  const handleRouteChange = (routesData) => {
+    console.log('Routes data received:', routesData);
 
-    if (directionsData && directionsData.routes && directionsData.routes.length > 0) {
-      const bestRoute = directionsData.routes[0];
+    // Handle both single route (legacy) and multiple routes
+    if (routesData && typeof routesData === 'object') {
+      // Check if it's the new multi-route format
+      if (routesData.driving || routesData.transit || routesData.bicycling || routesData.walking) {
+        setAllRoutes(routesData);
+        
+        // Set origin and destination from the first available route
+        const firstRoute = Object.values(routesData).find(data => data?.routes?.[0]);
+        if (firstRoute?.routes?.[0]) {
+          const route = firstRoute.routes[0];
+          
+          if (route.start_location) {
+            setOrigin({
+              latLng: route.start_location,
+              address: route.start_address,
+            });
+          }
 
-      // Set origin and destination markers
-      if (bestRoute.start_location) {
-        setOrigin({
-          latLng: bestRoute.start_location,
-          address: bestRoute.start_address,
-        });
-      }
+          if (route.end_location) {
+            setDestination({
+              latLng: route.end_location,
+              address: route.end_address,
+            });
+          }
+        }
+      } else if (routesData.routes && routesData.routes.length > 0) {
+        // Legacy single route format
+        const bestRoute = routesData.routes[0];
 
-      if (bestRoute.end_location) {
-        setDestination({
-          latLng: bestRoute.end_location,
-          address: bestRoute.end_address,
-        });
-      }
+        if (bestRoute.start_location) {
+          setOrigin({
+            latLng: bestRoute.start_location,
+            address: bestRoute.start_address,
+          });
+        }
 
-      // Decode and set the path for the polyline
-      if (bestRoute.polyline) {
-        const decodedPath = decodePolyline(bestRoute.polyline);
-        setPath(decodedPath);
+        if (bestRoute.end_location) {
+          setDestination({
+            latLng: bestRoute.end_location,
+            address: bestRoute.end_address,
+          });
+        }
+
+        // Convert to new format for consistency
+        setAllRoutes({ driving: routesData });
       }
     }
   };
@@ -153,11 +176,109 @@ export default function MapView() {
 
           {origin?.latLng && <Marker position={origin.latLng} />}
           {destination?.latLng && <Marker position={destination.latLng} />}
-          <RoutePolyline path={path} fit strokeColor="#4285F4" strokeWeight={5} />
+          
+          {/* Render polylines for all available routes */}
+          {Object.entries(allRoutes).map(([mode, routeData]) => {
+            const route = routeData?.routes?.[0];
+            if (!route?.polyline) return null;
+            
+            const decodedPath = decodePolyline(route.polyline);
+            const modeConfig = {
+              driving: { color: '#dc2626', weight: 5, opacity: 0.8 },
+              transit: { color: '#2563eb', weight: 5, opacity: 0.8 },
+              bicycling: { color: '#16a34a', weight: 5, opacity: 0.8 },
+              walking: { color: '#7c3aed', weight: 5, opacity: 0.8 }
+            };
+            
+            const config = modeConfig[mode] || { color: '#6b7280', weight: 5, opacity: 0.8 };
+            
+            return (
+              <RoutePolyline
+                key={mode}
+                path={decodedPath}
+                strokeColor={config.color}
+                strokeWeight={config.weight}
+                strokeOpacity={config.opacity}
+                fit={mode === Object.keys(allRoutes)[0]} // Only fit bounds for the first route
+              />
+            );
+          })}
         </Map>
 
         {/* Google Maps-style Search Panel */}
         <SearchPanel isDarkMode={isDarkMode} onRouteChange={handleRouteChange} />
+
+        {/* Route Legend */}
+        {Object.keys(allRoutes).length > 0 && (
+          <div
+            style={{
+              position: 'fixed',
+              bottom: '20px',
+              right: '20px',
+              zIndex: 9999,
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(15px)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              padding: '12px',
+              minWidth: '160px',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '12px',
+                fontWeight: '600',
+                color: isDarkMode ? '#f9fafb' : '#111827',
+                fontFamily: 'Roboto, sans-serif',
+                marginBottom: '8px',
+                textAlign: 'center',
+              }}
+            >
+              Route Legend
+            </div>
+            {Object.keys(allRoutes).map((mode) => {
+              const modeConfig = {
+                driving: { icon: '🚗', name: 'Driving', color: '#dc2626' },
+                transit: { icon: '🚌', name: 'Transit', color: '#2563eb' },
+                bicycling: { icon: '🚴', name: 'Biking', color: '#16a34a' },
+                walking: { icon: '🚶', name: 'Walking', color: '#7c3aed' }
+              };
+              
+              const config = modeConfig[mode] || { icon: '🗺️', name: mode, color: '#6b7280' };
+              
+              return (
+                <div
+                  key={mode}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '4px',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '16px',
+                      height: '3px',
+                      backgroundColor: config.color,
+                      borderRadius: '2px',
+                    }}
+                  />
+                  <span style={{ fontSize: '12px' }}>{config.icon}</span>
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      color: isDarkMode ? '#d1d5db' : '#6b7280',
+                      fontFamily: 'Roboto, sans-serif',
+                    }}
+                  >
+                    {config.name}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Weather Panel */}
         <WeatherPanel isDarkMode={isDarkMode} />

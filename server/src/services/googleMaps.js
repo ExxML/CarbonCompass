@@ -118,19 +118,43 @@ class GoogleMapsService {
    * @returns {Object} - Carbon emission data
    */
   calculateCarbonEmissions(distanceKm, mode) {
-    // Carbon emission factors (kg CO2 per km)
+    // Carbon emission factors (kg CO2 per km) - More realistic values
     const emissionFactors = {
-      driving: 0.21, // Average car
+      driving: 0.21, // Average car (typical passenger vehicle)
       walking: 0, // No emissions
       bicycling: 0, // No emissions
-      transit: 0.089, // Average public transport
+      transit: 0.089, // Average public transport (bus/train mix)
     };
-
-    const factor = emissionFactors[mode] || emissionFactors.driving;
+    
+    // Normalize the mode name and handle variations
+    const normalizedMode = mode?.toLowerCase()?.trim();
+    let factor;
+    
+    switch (normalizedMode) {
+      case 'driving':
+        factor = emissionFactors.driving;
+        break;
+      case 'walking':
+        factor = emissionFactors.walking;
+        break;
+      case 'bicycling':
+      case 'cycling':
+      case 'biking':
+        factor = emissionFactors.bicycling;
+        break;
+      case 'transit':
+      case 'public_transport':
+        factor = emissionFactors.transit;
+        break;
+      default:
+        console.warn(`Unknown travel mode: "${mode}", using driving factor`);
+        factor = emissionFactors.driving;
+    }
+    
     const emissions = distanceKm * factor;
 
     return {
-      emissions_kg: parseFloat(emissions.toFixed(3)),
+      emissions_kg: parseFloat(emissions.toFixed(1)),
       emissions_factor: factor,
       travel_mode: mode,
       distance_km: distanceKm,

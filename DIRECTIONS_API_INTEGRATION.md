@@ -153,10 +153,10 @@ curl http://localhost:3001/health
 
 The system calculates carbon emissions using these factors:
 
-- **Driving**: 0.160 kg CO₂ per km (average car)
+- **Driving**: 0.21 kg CO₂ per km (average passenger car)
 - **Walking**: 0 kg CO₂ per km
 - **Bicycling**: 0 kg CO₂ per km
-- **Transit**: 0.80 kg CO₂ per km (average public transport)
+- **Transit**: 0.089 kg CO₂ per km (average public transport - bus/train mix)
 
 ## Integration Points
 
