@@ -1,9 +1,22 @@
-// import { useState } from 'react';
-// import reactLogo from './assets/react.svg';
-// import viteLogo from '/vite.svg';
+import { useState } from 'react';
 import MapView from './components/MapView';
+import LandingPage from './components/LandingPage';
 import './App.css';
 
 export default function App() {
-  return <MapView />;
+  const [currentPage, setCurrentPage] = useState('landing'); // 'landing' or 'map'
+
+  const navigateToMap = () => {
+    setCurrentPage('map');
+  };
+
+  const navigateToLanding = () => {
+    setCurrentPage('landing');
+  };
+
+  if (currentPage === 'landing') {
+    return <LandingPage onNavigateToMap={navigateToMap} />;
+  }
+
+  return <MapView onNavigateToLanding={navigateToLanding} />;
 }
