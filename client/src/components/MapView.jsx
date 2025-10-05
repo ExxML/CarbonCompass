@@ -351,7 +351,7 @@ export default function MapView() {
         )}
 
         {/* Weather Panel */}
-        <WeatherPanel isDarkMode={isDarkMode} />
+        <WeatherPanel isDarkMode={isDarkMode} currentLocation={currentLocation} />
 
         {/* Carbon Panel */}
         <CarbonPanel isDarkMode={isDarkMode} />
