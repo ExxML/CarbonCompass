@@ -257,7 +257,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
           <div
             style={{
               display: 'flex',
-              alignItems: 'flex-start',
+              alignItems: 'center',
               gap: '8px',
               padding: '8px',
               background: 'rgba(255, 255, 255, 0.05)',
@@ -266,7 +266,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
               minHeight: '52px',
             }}
           >
-            <div style={{ paddingTop: '2px' }}>
+            <div>
               <Droplets style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
             </div>
             <div style={{ flex: 1 }}>
@@ -296,7 +296,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
           <div
             style={{
               display: 'flex',
-              alignItems: 'flex-start',
+              alignItems: 'center',
               gap: '8px',
               padding: '8px',
               background: 'rgba(255, 255, 255, 0.05)',
@@ -305,7 +305,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
               minHeight: '52px',
             }}
           >
-            <div style={{ paddingTop: '2px' }}>
+            <div>
               <Wind style={{ width: '16px', height: '16px', color: '#10b981' }} />
             </div>
             <div style={{ flex: 1 }}>
@@ -335,7 +335,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
           <div
             style={{
               display: 'flex',
-              alignItems: 'flex-start',
+              alignItems: 'center',
               gap: '8px',
               padding: '8px',
               background: 'rgba(255, 255, 255, 0.05)',
@@ -345,7 +345,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
               ...(isMobile && { gridColumn: '1 / -1', marginTop: '12px' }),
             }}
           >
-            <div style={{ paddingTop: '2px' }}>
+            <div>
               <Zap
                 style={{
                   width: '16px',
