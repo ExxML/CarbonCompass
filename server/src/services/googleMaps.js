@@ -125,32 +125,32 @@ class GoogleMapsService {
       bicycling: 0, // No emissions
       transit: 0.089, // Average public transport (bus/train mix)
     };
-    
+
     // Normalize the mode name and handle variations
     const normalizedMode = mode?.toLowerCase()?.trim();
     let factor;
-    
+
     switch (normalizedMode) {
-      case 'driving':
+      case "driving":
         factor = emissionFactors.driving;
         break;
-      case 'walking':
+      case "walking":
         factor = emissionFactors.walking;
         break;
-      case 'bicycling':
-      case 'cycling':
-      case 'biking':
+      case "bicycling":
+      case "cycling":
+      case "biking":
         factor = emissionFactors.bicycling;
         break;
-      case 'transit':
-      case 'public_transport':
+      case "transit":
+      case "public_transport":
         factor = emissionFactors.transit;
         break;
       default:
         console.warn(`Unknown travel mode: "${mode}", using driving factor`);
         factor = emissionFactors.driving;
     }
-    
+
     const emissions = distanceKm * factor;
 
     return {
