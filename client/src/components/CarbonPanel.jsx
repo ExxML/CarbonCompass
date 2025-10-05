@@ -74,7 +74,7 @@ const CarbonPanel = ({ isDarkMode = false }) => {
           borderRadius: '16px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           border: '1px solid rgba(255, 255, 255, 0.4)',
-          width: '280px',
+          width: '384px',
           padding: '16px',
         }}
       >
@@ -130,70 +130,72 @@ const CarbonPanel = ({ isDarkMode = false }) => {
           </button>
         </div>
 
-        {/* Main Carbon Savings */}
+        {/* Main Content - Horizontal Layout */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '16px',
+            gap: '16px',
+            marginBottom: '12px',
           }}
         >
-          <div>
-            <span
-              style={{
-                fontSize: '32px',
-                fontWeight: '700',
-                color: '#059669',
-                fontFamily: 'Roboto, sans-serif',
-              }}
-            >
-              {carbonData.totalSaved}
-            </span>
-            <span
-              style={{
-                fontSize: '16px',
-                fontWeight: '500',
-                color: '#059669',
-                fontFamily: 'Roboto, sans-serif',
-                marginLeft: '4px',
-              }}
-            >
-              kg
-            </span>
+          {/* Main Carbon Savings */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
             <div
               style={{
-                fontSize: '14px',
-                color: isDarkMode ? '#d1d5db' : '#6b7280',
-                fontFamily: 'Roboto, sans-serif',
-                marginTop: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '50px',
+                height: '50px',
+                background: 'rgba(5, 150, 105, 0.1)',
+                borderRadius: '50%',
+                border: '2px solid rgba(5, 150, 105, 0.2)',
               }}
             >
-              CO₂ Saved Today
+              <Leaf style={{ width: '24px', height: '24px', color: '#059669' }} />
             </div>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '60px',
-              height: '60px',
-              background: 'rgba(5, 150, 105, 0.1)',
-              borderRadius: '50%',
-              border: '2px solid rgba(5, 150, 105, 0.2)',
-            }}
-          >
-            <Leaf style={{ width: '28px', height: '28px', color: '#059669' }} />
+            <div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                <span
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: '700',
+                    color: '#059669',
+                    fontFamily: 'Roboto, sans-serif',
+                  }}
+                >
+                  {carbonData.totalSaved}
+                </span>
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#059669',
+                    fontFamily: 'Roboto, sans-serif',
+                  }}
+                >
+                  kg
+                </span>
+              </div>
+              <div
+                style={{
+                  fontSize: '12px',
+                  color: isDarkMode ? '#d1d5db' : '#6b7280',
+                  fontFamily: 'Roboto, sans-serif',
+                }}
+              >
+                CO₂ Saved Today
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Carbon Stats */}
+        {/* Carbon Stats - Horizontal Layout */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '12px',
+            display: 'flex',
+            gap: '8px',
             paddingTop: '12px',
             borderTop: '1px solid rgba(255, 255, 255, 0.25)',
           }}
@@ -203,18 +205,19 @@ const CarbonPanel = ({ isDarkMode = false }) => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px',
+              gap: '6px',
+              padding: '6px 8px',
               background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '8px',
+              borderRadius: '6px',
               border: '1px solid rgba(255, 255, 255, 0.25)',
+              flex: 1,
             }}
           >
-            <TreePine style={{ width: '16px', height: '16px', color: '#059669' }} />
+            <TreePine style={{ width: '14px', height: '14px', color: '#059669' }} />
             <div>
               <div
                 style={{
-                  fontSize: '12px',
+                  fontSize: '10px',
                   color: isDarkMode ? '#d1d5db' : '#6b7280',
                   fontFamily: 'Roboto, sans-serif',
                 }}
@@ -223,13 +226,13 @@ const CarbonPanel = ({ isDarkMode = false }) => {
               </div>
               <div
                 style={{
-                  fontSize: '14px',
+                  fontSize: '12px',
                   fontWeight: '500',
                   color: isDarkMode ? '#f9fafb' : '#111827',
                   fontFamily: 'Roboto, sans-serif',
                 }}
               >
-                ≈ {carbonData.equivalentTrees}
+                ≈{carbonData.equivalentTrees}
               </div>
             </div>
           </div>
@@ -239,18 +242,19 @@ const CarbonPanel = ({ isDarkMode = false }) => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px',
+              gap: '6px',
+              padding: '6px 8px',
               background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '8px',
+              borderRadius: '6px',
               border: '1px solid rgba(255, 255, 255, 0.25)',
+              flex: 1,
             }}
           >
-            <TrendingDown style={{ width: '16px', height: '16px', color: '#dc2626' }} />
+            <TrendingDown style={{ width: '14px', height: '14px', color: '#dc2626' }} />
             <div>
               <div
                 style={{
-                  fontSize: '12px',
+                  fontSize: '10px',
                   color: isDarkMode ? '#d1d5db' : '#6b7280',
                   fontFamily: 'Roboto, sans-serif',
                 }}
@@ -259,7 +263,7 @@ const CarbonPanel = ({ isDarkMode = false }) => {
               </div>
               <div
                 style={{
-                  fontSize: '14px',
+                  fontSize: '12px',
                   fontWeight: '500',
                   color: isDarkMode ? '#f9fafb' : '#111827',
                   fontFamily: 'Roboto, sans-serif',
@@ -269,46 +273,43 @@ const CarbonPanel = ({ isDarkMode = false }) => {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Last Trip Impact */}
-        <div
-          style={{
-            marginTop: '12px',
-            padding: '12px',
-            background: 'rgba(5, 150, 105, 0.05)',
-            borderRadius: '8px',
-            border: '1px solid rgba(5, 150, 105, 0.2)',
-          }}
-        >
+          {/* Last Trip Impact */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              marginBottom: '4px',
+              gap: '6px',
+              padding: '6px 8px',
+              background: 'rgba(5, 150, 105, 0.05)',
+              borderRadius: '6px',
+              border: '1px solid rgba(5, 150, 105, 0.2)',
+              flex: 1,
             }}
           >
-            <Car style={{ width: '16px', height: '16px', color: '#059669' }} />
-            <span
-              style={{
-                fontSize: '12px',
-                color: isDarkMode ? '#10b981' : '#047857',
-                fontFamily: 'Roboto, sans-serif',
-                fontWeight: '500',
-              }}
-            >
-              Last Route Impact
-            </span>
-          </div>
-          <div
-            style={{
-              fontSize: '14px',
-              color: isDarkMode ? '#10b981' : '#047857',
-              fontFamily: 'Roboto, sans-serif',
-            }}
-          >
-            Saved <strong>{carbonData.lastTripSavings} kg CO₂</strong> vs. driving alone
+            <Car style={{ width: '14px', height: '14px', color: '#059669' }} />
+            <div>
+              <div
+                style={{
+                  fontSize: '10px',
+                  color: isDarkMode ? '#10b981' : '#047857',
+                  fontFamily: 'Roboto, sans-serif',
+                  fontWeight: '500',
+                }}
+              >
+                Last Trip
+              </div>
+              <div
+                style={{
+                  fontSize: '12px',
+                  color: isDarkMode ? '#10b981' : '#047857',
+                  fontFamily: 'Roboto, sans-serif',
+                  fontWeight: '500',
+                }}
+              >
+                -{carbonData.lastTripSavings}kg
+              </div>
+            </div>
           </div>
         </div>
       </div>

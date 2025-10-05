@@ -44,7 +44,7 @@ function ConfigureControls() {
       mapTypeControl: false,
       fullscreenControl: false,
 
-      zoomControl: true,
+      zoomControl: false,
       zoomControlOptions: {
         position: window.google.maps.ControlPosition.RIGHT_BOTTOM,
       },

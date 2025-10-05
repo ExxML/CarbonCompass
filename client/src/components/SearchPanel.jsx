@@ -404,7 +404,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                   border: 'none',
                   fontSize: '16px',
                   color: isDarkMode ? '#f9fafb' : '#111827',
-                  fontWeight: '400',
+                  fontWeight: '500',
                   fontFamily: 'Roboto, sans-serif',
                 }}
               />
@@ -444,7 +444,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                 background: 'rgba(255, 255, 255, 0.1)',
                 borderRadius: '50%',
                 padding: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                border: '2px solid rgba(17, 24, 39, 0.1)',
               }}
             >
               <ArrowRight
@@ -518,7 +518,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange }) => {
                   border: 'none',
                   fontSize: '16px',
                   color: isDarkMode ? '#f9fafb' : '#111827',
-                  fontWeight: '400',
+                  fontWeight: '500',
                   fontFamily: 'Roboto, sans-serif',
                 }}
               />
