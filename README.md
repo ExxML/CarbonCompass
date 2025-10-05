@@ -40,9 +40,8 @@ Our carbon footprint calculations are based on established emission factors for 
 | -------------------------- | --------------------------- | ----------------------------------------------- |
 | **Walking**                | 0                           | No direct emissions                             |
 | **Cycling**                | 0                           | No direct emissions (excluding manufacturing)   |
-| **Public Transit**         | 80                          | Average bus/train occupancy considered          |
-| **Driving (Gasoline Car)** | 192                         | Based on average fuel consumption of 8.0L/100km |
-| **Electric Vehicle**       | 55                          | Based on average grid emission intensity        |
+| **Public Transit**         | 89                          | Average bus/train occupancy considered          |
+| **Driving (Gasoline Car)** | 210                         | Based on average fuel consumption of 8.0L/100km |
 
 ### Calculation Method
 
