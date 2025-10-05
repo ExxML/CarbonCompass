@@ -46,7 +46,7 @@ Our carbon footprint calculations are based on established emission factors for 
 ### Transportation Mode Emission Factors
 
 | Transportation Mode        | Emission Factor (g CO₂e/km) | Notes                                           |
-| -------------------------- | --------------------------- | ----------------------------------------------- |
+| :------------------------: | :-------------------------: | ----------------------------------------------- |
 | **Walking**                | 0                           | No direct emissions                             |
 | **Cycling**                | 0                           | No direct emissions  |
 | **Public Transit**         | 89                          | Average bus/train occupancy considered          |
