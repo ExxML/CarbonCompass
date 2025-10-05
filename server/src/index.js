@@ -22,12 +22,10 @@ const requestController = new RequestController();
 const GOOGLE_ROUTES_URL =
   "https://routes.googleapis.com/directions/v2:computeRoutes";
 const API_KEY = process.env.MAPS_API_KEY;
-const USE_MOCK_DATA = API_KEY === "PUT_API_KEY_HERE" || !API_KEY;
 
 const ReqSchema = z.object({
   origin: z.string().min(1),
   destination: z.string().min(1),
-  fuelType: z.enum(["GASOLINE", "DIESEL"]).default("GASOLINE"),
 });
 
 const RouteReqSchema = z.object({
@@ -131,7 +129,7 @@ app.post("/api/emissions/drive", async (req, res) => {
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
   }
-  const { origin, destination, fuelType } = parsed.data;
+  const { origin, destination } = parsed.data;
 
   try {
     const body = {
@@ -162,7 +160,7 @@ app.post("/api/emissions/drive", async (req, res) => {
       parseFloat(String(route.duration ?? "0s").replace("s", "")) || 0;
     const fuelL =
       (route.travelAdvisory?.fuelConsumptionMicroliters ?? 0) / 1_000_000;
-    const co2eKg = fuelL * KG_CO2_PER_L[fuelType];
+    const co2eKg = fuelL * KG_CO2_PER_L['GASOLINE'];
 
     res.json({
       distanceKm: +distanceKm.toFixed(3),

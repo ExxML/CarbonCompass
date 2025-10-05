@@ -13,7 +13,6 @@ class RequestController {
             origin: z.string().min(1, "Origin is required"),
             destination: z.string().min(1, "Destination is required"),
             userId: z.string().optional(),
-            fuelType: z.enum(['GASOLINE']).default('GASOLINE'),
         });
 
         // Google Maps API configuration
@@ -50,14 +49,14 @@ class RequestController {
     }
 
     // Helper function to process route data
-    processRouteData(routeData, fuelType) {
+    processRouteData(routeData) {
         const route = routeData?.routes?.[0];
         if (!route) return null;
 
         const distanceKm = (route.distanceMeters ?? 0) / 1000;
         const durationSec = parseFloat(String(route.duration ?? '0s').replace('s', '')) || 0;
         const fuelL = (route.travelAdvisory?.fuelConsumptionMicroliters ?? 0) / 1_000_000;
-        const co2eKg = fuelL * this.KG_CO2_PER_L[fuelType];
+        const co2eKg = fuelL * this.KG_CO2_PER_L['GASOLINE'];
 
         return {
             distanceKm: +distanceKm.toFixed(3),
@@ -68,8 +67,8 @@ class RequestController {
     }
 
     // Helper function to create route object
-    createRouteObject(routeData, fuelType, transportMode = 'DRIVE') {
-        const processedData = this.processRouteData(routeData, fuelType);
+    createRouteObject(routeData, transportMode = 'DRIVE') {
+        const processedData = this.processRouteData(routeData);
         if (!processedData) return null;
 
         // Create path from route polyline (simplified)
@@ -96,7 +95,7 @@ class RequestController {
                 });
             }
 
-            const { origin, destination, fuelType } = parsed.data;
+            const { origin, destination } = parsed.data;
 
             const requestBody = {
                 origin: this.asLocation(origin),
@@ -114,7 +113,7 @@ class RequestController {
                 'routes.distanceMeters,routes.duration,routes.travelAdvisory.fuelConsumptionMicroliters'
             );
 
-            const route = this.createRouteObject(response.data, fuelType, 'DRIVE');
+            const route = this.createRouteObject(response.data, 'GASOLINE', 'DRIVE');
 
             if (!route) {
                 return res.status(404).json({ error: 'No fastest route found' });
@@ -146,7 +145,7 @@ class RequestController {
                 });
             }
 
-            const { origin, destination, fuelType } = parsed.data;
+            const { origin, destination } = parsed.data;
 
             const requestBody = {
                 origin: this.asLocation(origin),
@@ -164,7 +163,7 @@ class RequestController {
                 'routes.distanceMeters,routes.duration,routes.travelAdvisory.fuelConsumptionMicroliters'
             );
 
-            const route = this.createRouteObject(response.data, fuelType, 'DRIVE');
+            const route = this.createRouteObject(response.data, 'GASOLINE', 'DRIVE');
 
             if (!route) {
                 return res.status(404).json({ error: 'No balanced route found' });
@@ -282,12 +281,12 @@ class RequestController {
                 });
             }
 
-            const { origin, destination, fuelType } = parsed.data;
+            const { origin, destination } = parsed.data;
 
             // Calculate all three route types
             const [fastestResponse, balancedResponse, ecoResponse] = await Promise.allSettled([
-                this.getFastestRouteInternal(origin, destination, fuelType),
-                this.getBalancedRouteInternal(origin, destination, fuelType),
+                this.getFastestRouteInternal(origin, destination),
+                this.getBalancedRouteInternal(origin, destination),
                 this.getEcoRouteInternal(origin, destination)
             ]);
 
@@ -324,7 +323,7 @@ class RequestController {
     }
 
     // Internal helper methods (not exposed as endpoints)
-    async getFastestRouteInternal(origin, destination, fuelType) {
+    async getFastestRouteInternal(origin, destination) {
         const requestBody = {
             origin: this.asLocation(origin),
             destination: this.asLocation(destination),
@@ -341,10 +340,10 @@ class RequestController {
             'routes.distanceMeters,routes.duration,routes.travelAdvisory.fuelConsumptionMicroliters'
         );
 
-        return this.createRouteObject(response.data, fuelType, 'DRIVE');
+        return this.createRouteObject(response.data, 'DRIVE');
     }
 
-    async getBalancedRouteInternal(origin, destination, fuelType) {
+    async getBalancedRouteInternal(origin, destination) {
         const requestBody = {
             origin: this.asLocation(origin),
             destination: this.asLocation(destination),
@@ -361,7 +360,7 @@ class RequestController {
             'routes.distanceMeters,routes.duration,routes.travelAdvisory.fuelConsumptionMicroliters'
         );
 
-        return this.createRouteObject(response.data, fuelType, 'DRIVE');
+        return this.createRouteObject(response.data, 'DRIVE');
     }
 
     async getEcoRouteInternal(origin, destination) {
