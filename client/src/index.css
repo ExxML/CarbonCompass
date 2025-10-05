@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /*
 
@@ -12,15 +12,15 @@
 ----------------------------------------------------------- */
 :root {
   /* Neutrals */
-  --bg: 255 255 255;            /* page background */
-  --surface: 255 255 255;       /* card/panel surface */
-  --surface-2: 248 249 250;     /* muted surface */
+  --bg: 255 255 255; /* page background */
+  --surface: 255 255 255; /* card/panel surface */
+  --surface-2: 248 249 250; /* muted surface */
   --border: 225 228 232;
-  --text: 17 24 39;             /* slate-900-ish */
-  --text-mute: 100 116 139;     /* slate-500-ish */
+  --text: 17 24 39; /* slate-900-ish */
+  --text-mute: 100 116 139; /* slate-500-ish */
 
   /* Brand / accents (Google-y but not identical) */
-  --brand: 66 133 244;          /* blue 500 */
+  --brand: 66 133 244; /* blue 500 */
   --brand-600: 52 120 236;
   --brand-100: 222 235 255;
 
@@ -34,7 +34,7 @@
   --shadow-strong: 0.22;
 
   /* Radii */
-  --radius: 14px;    /* floating panels, cards */
+  --radius: 14px; /* floating panels, cards */
   --radius-sm: 10px; /* inputs, chips */
 }
 
@@ -54,6 +54,15 @@
   --shadow-strong: 0.44;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 /* -----------------------------------------------------------
    Base
 ----------------------------------------------------------- */
@@ -65,7 +74,7 @@
   body {
     background-color: rgb(var(--bg));
     color: rgb(var(--text));
-    @apply text-[15px] leading-relaxed;
+    /* @apply text-[15px] leading-relaxed; */
   }
 
   a {
@@ -76,7 +85,9 @@
   }
 
   /* Smooth scroll & nicer selection */
-  :root { scroll-behavior: smooth; }
+  :root {
+    scroll-behavior: smooth;
+  }
   ::selection {
     background-color: rgba(var(--brand), 0.18);
   }
@@ -86,7 +97,10 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(var(--text-mute), 0.35) transparent;
   }
-  *::-webkit-scrollbar { width: 8px; height: 8px; }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
   *::-webkit-scrollbar-thumb {
     background: rgba(var(--text-mute), 0.35);
     border-radius: 9999px;
@@ -105,19 +119,21 @@
     border-radius: var(--radius);
     @apply shadow-sm;
     box-shadow:
-      0 4px 18px rgba(0,0,0,var(--shadow)),
-      0 1px 2px rgba(0,0,0,0.06);
+      0 4px 18px rgba(0, 0, 0, var(--shadow)),
+      0 1px 2px rgba(0, 0, 0, 0.06);
   }
   .gm-card-muted {
     background-color: rgb(var(--surface-2));
     border-radius: var(--radius);
     @apply shadow-sm;
   }
-  .gm-floating { @apply backdrop-blur-md; }
+  .gm-floating {
+    @apply backdrop-blur-md;
+  }
 
   /* Toolbar (top bar over the map) */
   .gm-toolbar {
-    @apply gm-card px-3 py-2 flex items-center gap-2;
+    @apply gm-card flex items-center gap-2 px-3 py-2;
     border-radius: var(--radius-sm);
   }
 
@@ -128,9 +144,13 @@
     border: 1px solid rgb(var(--border));
     border-radius: var(--radius-sm);
     outline: none;
-    transition: border-color .15s, box-shadow .15s;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
   }
-  .gm-input::placeholder { color: rgb(var(--text-mute)); }
+  .gm-input::placeholder {
+    color: rgb(var(--text-mute));
+  }
   .gm-input:focus {
     border-color: rgb(var(--brand));
     box-shadow: 0 0 0 3px rgba(var(--brand), 0.18);
@@ -138,25 +158,34 @@
 
   /* Buttons */
   .gm-btn {
-    @apply inline-flex items-center justify-center gap-2 h-9 px-3 text-[14px] font-medium;
+    @apply inline-flex h-9 items-center justify-center gap-2 px-3 text-[14px] font-medium;
     border-radius: var(--radius-sm);
     border: 1px solid rgb(var(--border));
     background-color: rgb(var(--surface));
-    transition: transform .03s ease, box-shadow .15s ease, border-color .15s;
+    transition:
+      transform 0.03s ease,
+      box-shadow 0.15s ease,
+      border-color 0.15s;
   }
-  .gm-btn:hover { box-shadow: 0 3px 10px rgba(0,0,0,.06); }
-  .gm-btn:active { transform: translateY(1px); }
+  .gm-btn:hover {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  }
+  .gm-btn:active {
+    transform: translateY(1px);
+  }
 
   .gm-btn-primary {
     color: white;
     border-color: transparent;
     background-color: rgb(var(--brand));
   }
-  .gm-btn-primary:hover { background-color: rgb(var(--brand-600)); }
+  .gm-btn-primary:hover {
+    background-color: rgb(var(--brand-600));
+  }
 
   /* Chips / filters */
   .gm-chip {
-    @apply inline-flex items-center gap-1 px-3 h-8 text-[13px];
+    @apply inline-flex h-8 items-center gap-1 px-3 text-[13px];
     background-color: rgb(var(--surface-2));
     border: 1px solid rgb(var(--border));
     border-radius: 9999px;
@@ -169,13 +198,19 @@
 
   /* Badges */
   .gm-badge {
-    @apply inline-flex items-center px-2 h-6 text-[12px];
+    @apply inline-flex h-6 items-center px-2 text-[12px];
     background-color: rgba(var(--brand), 0.12);
     color: rgb(var(--brand-600));
     border-radius: 9999px;
   }
-  .gm-badge-success { background-color: rgba(var(--success), .12); color: rgb(var(--success)); }
-  .gm-badge-warning { background-color: rgba(var(--warning), .16); color: rgb(var(--warning)); }
+  .gm-badge-success {
+    background-color: rgba(var(--success), 0.12);
+    color: rgb(var(--success));
+  }
+  .gm-badge-warning {
+    background-color: rgba(var(--warning), 0.16);
+    color: rgb(var(--warning));
+  }
 
   /* Panels typical of map apps (left results / right details) */
   .gm-panel {
@@ -188,9 +223,11 @@
   .gm-search {
     @apply gm-toolbar w-full;
   }
-  .gm-search input { @apply gm-input border-0 w-[min(640px,100%)] bg-transparent; }
+  .gm-search input {
+    @apply gm-input w-[min(640px,100%)] border-0 bg-transparent;
+  }
   .gm-search .gm-sep {
-    @apply h-5 w-px bg-gray-200/70 dark:bg-white/10 mx-2;
+    @apply mx-2 h-5 w-px bg-gray-200/70 dark:bg-white/10;
   }
 
   /* Map container */
@@ -202,15 +239,15 @@
 
   /* Tooltip */
   .gm-tooltip {
-    @apply text-[12px] px-2 py-1 rounded-md;
+    @apply rounded-md px-2 py-1 text-[12px];
     background: rgb(var(--text));
     color: rgb(var(--bg));
-    box-shadow: 0 4px 12px rgba(0,0,0,.18);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
   }
 
   /* Drawer / sheet (mobile) */
   .gm-drawer {
-    @apply gm-card fixed left-0 right-0 bottom-0 p-4;
+    @apply gm-card fixed right-0 bottom-0 left-0 p-4;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
@@ -218,21 +255,24 @@
   /* Modal */
   .gm-modal {
     @apply fixed inset-0 grid place-items-center p-4;
-    background: rgba(0,0,0,.35);
+    background: rgba(0, 0, 0, 0.35);
   }
-  .gm-modal > .gm-card { @apply p-4 w-full max-w-lg; }
+  .gm-modal > .gm-card {
+    @apply w-full max-w-lg p-4;
+  }
 
   /* Table (results list) */
   .gm-table {
     @apply w-full text-[14px];
-    border-collapse: separate; border-spacing: 0;
+    border-collapse: separate;
+    border-spacing: 0;
   }
   .gm-table th {
     @apply text-left font-semibold text-gray-500 dark:text-gray-400;
-    padding: .5rem .75rem;
+    padding: 0.5rem 0.75rem;
   }
   .gm-table td {
-    padding: .5rem .75rem;
+    padding: 0.5rem 0.75rem;
     border-top: 1px solid rgb(var(--border));
   }
 }
@@ -241,21 +281,27 @@
    Utilities — elevation, glass, subtle borders, etc.
 ----------------------------------------------------------- */
 @layer utilities {
-  .elev-1 { box-shadow: 0 2px 8px rgba(0,0,0,var(--shadow)); }
-  .elev-2 { box-shadow: 0 8px 24px rgba(0,0,0,var(--shadow)); }
-  .elev-3 { box-shadow: 0 16px 44px rgba(0,0,0,var(--shadow-strong)); }
-
-  .glass {
-    background: linear-gradient(
-      180deg,
-      rgba(255,255,255,.75),
-      rgba(255,255,255,.55)
-    );
-    @apply backdrop-blur-xl border border-white/40;
+  .elev-1 {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, var(--shadow));
+  }
+  .elev-2 {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, var(--shadow));
+  }
+  .elev-3 {
+    box-shadow: 0 16px 44px rgba(0, 0, 0, var(--shadow-strong));
   }
 
-  .hairline { border-color: rgb(var(--border)); }
-  .muted   { color: rgb(var(--text-mute)); }
+  .glass {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.55));
+    @apply border border-white/40 backdrop-blur-xl;
+  }
+
+  .hairline {
+    border-color: rgb(var(--border));
+  }
+  .muted {
+    color: rgb(var(--text-mute));
+  }
 }
 
 /* -----------------------------------------------------------
@@ -268,15 +314,19 @@
     grid-template-columns: 100%;
     height: 100dvh;
   }
-  .app-topbar { @apply p-2 md:p-3; }
-  .app-content { @apply relative; }
+  .app-topbar {
+    @apply p-2 md:p-3;
+  }
+  .app-content {
+    @apply relative;
+  }
   .app-left-panel {
-    @apply absolute left-3 top-3 z-20 w-[min(380px,92vw)];
+    @apply absolute top-3 left-3 z-20 w-[min(380px,92vw)];
   }
   .app-right-panel {
-    @apply absolute right-3 top-3 z-20 w-[min(420px,92vw)];
+    @apply absolute top-3 right-3 z-20 w-[min(420px,92vw)];
   }
   .app-bottom-sheet {
-    @apply md:hidden fixed inset-x-0 bottom-0 z-30 p-2;
+    @apply fixed inset-x-0 bottom-0 z-30 p-2 md:hidden;
   }
 }
