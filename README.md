@@ -4,6 +4,15 @@
 
 A smart route planning application that helps users make environmentally conscious travel decisions by calculating and comparing carbon emissions across different transportation modes.
 
+<div align="center">
+  <img src="demo_pic/2.png" alt="Carbon Compass Page" width="400" style="margin: 0 10px 0 0;">
+  <img src="demo_pic/Carbon%20Compass.png" alt="Carbon Compass Demo" width="400">
+</div>
+
+<p align="center">
+  <img src="demo_pic/8.png" alt="Carbon Compass Page" width="400">
+</p>
+
 </div>
 
 ## Table of Contents
@@ -44,7 +53,7 @@ Our carbon footprint calculations are based on established emission factors for 
 ### Transportation Mode Emission Factors
 
 | Transportation Mode        | Emission Factor (g CO₂e/km) | Notes                                           |
-| -------------------------- | --------------------------- | ----------------------------------------------- |
+| :------------------------: | :-------------------------: | ----------------------------------------------- |
 | **Walking**                | 0                           | No direct emissions                             |
 | **Cycling**                | 0                           | No direct emissions  |
 | **Public Transit**         | 89                          | Average bus/train occupancy considered          |
