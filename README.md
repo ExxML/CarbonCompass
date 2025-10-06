@@ -2,7 +2,7 @@
 
 # 🌍 Carbon Compass
 
-A smart route planning application that helps users make environmentally conscious travel decisions by calculating and comparing carbon emissions across different transportation modes.
+*A smart route planning application that helps users make environmentally conscious travel decisions by calculating and comparing carbon emissions across different transportation modes.*
 
 <div align="center">
   <img src="demo_pic/2.png" alt="Carbon Compass Page" width="400" style="margin: 0 10px 0 0;">
