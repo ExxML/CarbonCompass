@@ -18,6 +18,13 @@ A smart route planning application that helps users make environmentally conscio
 - [📄 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
 
+## 🔗 Links
+- Deployment
+  - [Vercel Client](https://carboncompass.vercel.app)
+- Figma
+  - [Info Slides](https://www.figma.com/slides/P7BmahOT0D769zal3DFAEu/Carbon-Compass-Slide-Deck?node-id=1-159)
+  - [Web Design Page](https://www.figma.com/design/zQcdtgZLi25XymW7xE9iBE/Carbon-Compass-Landing-FINAL?node-id=0-1&p=f)
+
 ## 📖 About
 
 Carbon Compass is an interactive web application that empowers users to reduce their environmental impact through informed transportation choices. Simply enter your origin and destination, and our app will show you multiple route options with their respective carbon footprints, helping you choose the most sustainable way to travel.
