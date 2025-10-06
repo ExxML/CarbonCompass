@@ -29,7 +29,7 @@
 
 ## 🔗 Links
 - Deployment
-  - [Vercel Client](https://carboncompass.vercel.app)
+  - [Vercel](https://carboncompass.vercel.app)
 - Figma
   - [Info Slides](https://www.figma.com/slides/P7BmahOT0D769zal3DFAEu/Carbon-Compass-Slide-Deck?node-id=1-159)
   - [Web Design Page](https://www.figma.com/design/zQcdtgZLi25XymW7xE9iBE/Carbon-Compass-Landing-FINAL?node-id=0-1&p=f)
