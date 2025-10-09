@@ -1,15 +1,10 @@
 import React from 'react';
 import {
-  Map,
   Navigation,
-  Leaf,
-  Zap,
-  Route,
-  Users,
   Lightbulb,
   Info,
   Send,
-  Github,
+  Github
 } from 'lucide-react';
 import logo_1 from '../assets/LOGO_1.png';
 import logo_2 from '../assets/LOGO_2.png';
@@ -553,7 +548,7 @@ const LandingPage = ({ onNavigateToMap }) => {
             lineHeight: '1.5',
           }}
         >
-          <div style={{ marginBottom: '8px' }}>
+          <div style={{ marginBottom: '8px', textAlign: 'right' }}>
             <a
               href="https://github.com/ExxML/CarbonCompass"
               target="_blank"
@@ -563,12 +558,16 @@ const LandingPage = ({ onNavigateToMap }) => {
                 textDecoration: 'underline',
                 fontWeight: '800',
                 fontSize: '16px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '12px',
               }}
             >
-              Github Repository
+              <Github style={{ width: '20px', height: '20px' }} />
+              View Source
             </a>
           </div>
-          <div style={{ marginBottom: '12px' }}>Powered by Google LLC ©</div>
+          <div style={{ marginTop: '12px', marginBottom: '12px' }}>Powered by Google LLC ©</div>
           <div>
             <div>Andy Wu, Timothy Mai</div>
             <div>Victor Thai, Johnny Ho</div>
