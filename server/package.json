@@ -19,27 +19,27 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.12.2",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "zod": "^4.1.11"
+    "axios": "1.12.2",
+    "cors": "2.8.5",
+    "dotenv": "17.2.3",
+    "express": "5.1.0",
+    "zod": "4.1.11"
   },
   "devDependencies": {
-    "@eslint/js": "^9.37.0",
-    "chokidar-cli": "^3.0.0",
-    "concurrently": "^9.1.0",
-    "eslint": "^9.37.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-n": "^17.23.1",
-    "eslint-plugin-promise": "^7.2.1",
-    "eslint-plugin-security": "^3.0.1",
-    "globals": "^16.4.0",
-    "nodemon": "^3.1.10",
-    "prettier": "^3.6.2"
+    "@eslint/js": "9.37.0",
+    "chokidar-cli": "3.0.0",
+    "concurrently": "9.2.1",
+    "eslint": "9.37.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-n": "17.23.1",
+    "eslint-plugin-promise": "7.2.1",
+    "eslint-plugin-security": "3.0.1",
+    "globals": "16.4.0",
+    "nodemon": "3.1.10",
+    "prettier": "3.6.2"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   }
 }
