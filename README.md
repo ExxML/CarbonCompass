@@ -18,14 +18,20 @@
 ## Table of Contents
 
 - [📖 About](#-about)
+- [🔗 Links](#-links)
 - [🧮 Carbon Emission Calculations](#-carbon-emission-calculations)
 - [🛠️ Tech Stack](#️-tech-stack)
+- [📁 Project Structure](#-project-structure)
 - [📋 Technical Requirements](#-technical-requirements)
 - [🚀 Getting Started](#-getting-started)
 - [🎯 Usage](#-usage)
 - [📡 API Endpoints](#-api-endpoints)
 - [📄 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
+
+## 📖 About
+
+Carbon Compass is an interactive web application that empowers users to reduce their environmental impact through informed transportation choices. Simply enter your origin and destination, and our app will show you multiple route options with their respective carbon footprints, helping you choose the most sustainable way to travel.
 
 ## 🔗 Links
 - Deployment
@@ -34,17 +40,15 @@
   - [Info Slides](https://www.figma.com/slides/P7BmahOT0D769zal3DFAEu/Carbon-Compass-Slide-Deck?node-id=1-159)
   - [Web Design Page](https://www.figma.com/design/zQcdtgZLi25XymW7xE9iBE/Carbon-Compass-Landing-FINAL?node-id=0-1&p=f)
 
-## 📖 About
-
-Carbon Compass is an interactive web application that empowers users to reduce their environmental impact through informed transportation choices. Simply enter your origin and destination, and our app will show you multiple route options with their respective carbon footprints, helping you choose the most sustainable way to travel.
-
 ### Key Features
 
 - **Multi-Modal Route Planning**: Compare walking, cycling, public transit, and driving options
 - **Real-Time Carbon Calculations**: See estimated CO₂ emissions for each transportation mode
 - **Interactive Map Interface**: Visualize routes and make selections directly on the map
-- **Weather Integration**: Get current weather information to help plan your journey
+- **Live Weather Integration**: Real-time weather data powered by Open-Meteo API with automatic geolocation
+- **Trip Tracking**: Track your journey in real-time with live location updates
 - **Responsive Design**: Optimized for both desktop and mobile devices
+- **Dark Mode Support**: Comfortable viewing in any lighting condition
 
 ## 🧮 Carbon Emission Calculations
 
@@ -82,8 +86,75 @@ _Note: These estimates are for educational purposes and may vary based on actual
 
 - **Node.js** with **Express.js** - Server-side JavaScript runtime and web framework
 - **Google Maps Directions API** - Route calculation and distance data
-- **Weather API Integration** - Real-time weather information
 - **CORS** - Cross-origin resource sharing support
+
+### Weather Integration
+
+- **Open-Meteo API** - Free, open-source weather forecasting (no API key required)
+- **OpenStreetMap Nominatim** - Reverse geocoding for location names
+- **Browser Geolocation API** - Automatic location detection
+- **Auto-refresh** - Weather updates every 10 minutes
+
+## 📁 Project Structure
+
+This project follows a monorepo structure with separate client and server applications:
+
+```
+CarbonCompass/
+├── 📁 client/                 # Frontend React application
+│   ├── 📁 public/             # Static assets
+│   │   └── logo.ico
+│   ├── 📁 src/
+│   │   ├── 📁 assets/         # Images and icons
+│   │   ├── 📁 components/     # React components
+│   │   │   ├── CarbonPanel.jsx
+│   │   │   ├── DirectionsComponent.jsx
+│   │   │   ├── FrontPage.jsx
+│   │   │   ├── GlassCard.jsx
+│   │   │   ├── LandingPage.jsx
+│   │   │   ├── MapView.jsx
+│   │   │   ├── RouteDetailsPanel.jsx
+│   │   │   ├── RoutePolyline.jsx
+│   │   │   ├── SearchPanel.jsx
+│   │   │   ├── TripProgressPanel.jsx
+│   │   │   └── WeatherPanel.jsx
+│   │   ├── 📁 hooks/          # Custom React hooks
+│   │   │   ├── useDirections.js
+│   │   │   ├── useResponsive.js
+│   │   │   ├── useTripTracking.js
+│   │   │   └── useWeatherData.js
+│   │   ├── 📁 services/       # API service layer
+│   │   │   └── apiService.js
+│   │   ├── 📁 styles/         # Map styling configurations
+│   │   │   ├── darkMapStyles.js
+│   │   │   ├── lightMapStyles.js
+│   │   │   └── responsive-panels.css
+│   │   ├── 📁 utils/          # Utility functions
+│   │   │   ├── decodePolyline.js
+│   │   │   ├── tripTrackingUtils.js
+│   │   ├── App.jsx             # Main application component
+│   │   ├── main.jsx           # Application entry point
+│   │   └── index.css          # Global styles
+│   ├── package.json
+│   ├── vite.config.js
+│   └── vercel.json
+│
+├── 📁 server/                 # Backend Node.js/Express application
+│   ├── 📁 src/
+│   │   ├── 📁 controllers/    # Route controllers
+│   │   │   ├── directions.js
+│   │   │   └── weather.js
+│   │   ├── 📁 middleware/     # Express middleware
+│   │   │   └── validation.js
+│   │   ├── 📁 services/       # External service integrations
+│   │   │   └── googleMaps.js
+│   │   ├── 📁 utils/          # Utility functions
+│   │   │   └── errors.js
+│   │   └── index.js           # Server entry point
+│   ├── package.json
+│   └── vercel.json
+└── 📄 package.json            # Root package configuration
+```
 
 ## 📋 Technical Requirements
 
@@ -179,11 +250,19 @@ Once both servers are running:
 
 ## 📡 API Endpoints
 
+### Backend API Endpoints
+
 The backend provides the following API endpoints:
 
 - `GET /api/health` - Health check endpoint
 - `GET /api/directions` - Get route directions and carbon calculations
-- `GET /api/weather` - Get weather information for locations
+
+### External APIs Used
+
+- **Open-Meteo API**: `https://api.open-meteo.com/v1/forecast` - Weather data (no key required)
+- **Nominatim API**: `https://nominatim.openstreetmap.org/reverse` - Reverse geocoding (no key required)
+
+For detailed weather integration documentation, see [WEATHER_INTEGRATION.md](WEATHER_INTEGRATION.md)
 
 ## 📄 License
 
@@ -191,7 +270,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Google Maps Platform for routing and mapping services
+- **Google Maps Platform** for routing and mapping services
+- **Open-Meteo** for free, open-source weather data (CC BY 4.0 license)
+- **OpenStreetMap** contributors for geocoding services (ODbL license)
 - Environmental data sources for emission factor calculations
 - Open source community for the tools and libraries used
 

@@ -1,125 +1,234 @@
 import { useState, useEffect, useCallback } from 'react';
-import { apiService } from '../services/apiService';
+
+// WMO Weather interpretation codes
+const mapWeatherCodeToCondition = (code) => {
+  const codes = {
+    0: 'Clear',
+    1: 'Mainly clear',
+    2: 'Partly cloudy',
+    3: 'Cloudy',
+    45: 'Fog',
+    48: 'Depositing rime fog',
+    51: 'Light drizzle',
+    53: 'Moderate drizzle',
+    55: 'Dense drizzle',
+    56: 'Light freezing drizzle',
+    57: 'Dense freezing drizzle',
+    61: 'Slight rain',
+    63: 'Moderate rain',
+    65: 'Heavy rain',
+    66: 'Light freezing rain',
+    67: 'Heavy freezing rain',
+    71: 'Slight snow fall',
+    73: 'Moderate snow fall',
+    75: 'Heavy snow fall',
+    77: 'Snow grains',
+    80: 'Slight rain showers',
+    81: 'Moderate rain showers',
+    82: 'Violent rain showers',
+    85: 'Slight snow showers',
+    86: 'Heavy snow showers',
+    95: 'Thunderstorm',
+    96: 'Thunderstorm with slight hail',
+    99: 'Thunderstorm with heavy hail',
+  };
+  return codes[code] || 'Unknown';
+};
+
+// Function to abbreviate province/state names
+const abbreviateProvince = (province) => {
+  const provinceAbbreviations = {
+    // Canadian Provinces
+    'Alberta': 'AB',
+    'British Columbia': 'BC',
+    'Manitoba': 'MB',
+    'New Brunswick': 'NB',
+    'Newfoundland and Labrador': 'NL',
+    'Northwest Territories': 'NT',
+    'Nova Scotia': 'NS',
+    'Nunavut': 'NU',
+    'Ontario': 'ON',
+    'Prince Edward Island': 'PE',
+    'Quebec': 'QC',
+    'Saskatchewan': 'SK',
+    'Yukon': 'YT',
+    // US States (common ones)
+    'Alabama': 'AL',
+    'Alaska': 'AK',
+    'Arizona': 'AZ',
+    'Arkansas': 'AR',
+    'California': 'CA',
+    'Colorado': 'CO',
+    'Connecticut': 'CT',
+    'Delaware': 'DE',
+    'Florida': 'FL',
+    'Georgia': 'GA',
+    'Hawaii': 'HI',
+    'Idaho': 'ID',
+    'Illinois': 'IL',
+    'Indiana': 'IN',
+    'Iowa': 'IA',
+    'Kansas': 'KS',
+    'Kentucky': 'KY',
+    'Louisiana': 'LA',
+    'Maine': 'ME',
+    'Maryland': 'MD',
+    'Massachusetts': 'MA',
+    'Michigan': 'MI',
+    'Minnesota': 'MN',
+    'Mississippi': 'MS',
+    'Missouri': 'MO',
+    'Montana': 'MT',
+    'Nebraska': 'NE',
+    'Nevada': 'NV',
+    'New Hampshire': 'NH',
+    'New Jersey': 'NJ',
+    'New Mexico': 'NM',
+    'New York': 'NY',
+    'North Carolina': 'NC',
+    'North Dakota': 'ND',
+    'Ohio': 'OH',
+    'Oklahoma': 'OK',
+    'Oregon': 'OR',
+    'Pennsylvania': 'PA',
+    'Rhode Island': 'RI',
+    'South Carolina': 'SC',
+    'South Dakota': 'SD',
+    'Tennessee': 'TN',
+    'Texas': 'TX',
+    'Utah': 'UT',
+    'Vermont': 'VT',
+    'Virginia': 'VA',
+    'Washington': 'WA',
+    'West Virginia': 'WV',
+    'Wisconsin': 'WI',
+    'Wyoming': 'WY',
+    // Common variations
+    'Québec': 'QC',
+    'British Columbia': 'BC',
+    'Prince Edward Island': 'PE',
+  };
+
+  return provinceAbbreviations[province] || province;
+};
 
 export const useWeatherData = (initialLocation = null) => {
-  // Initialize with safe default data to prevent null errors
   const [weatherData, setWeatherData] = useState({
     location: 'Loading...',
     temperature: 0,
-    condition: 'Partly Cloudy',
+    condition: 'Loading...',
     humidity: 0,
     windSpeed: 0,
     uvIndex: 0,
   });
-  const [loading, setLoading] = useState(true); // Start with loading true
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [location, setLocation] = useState(initialLocation);
 
-  // Get user's current location
   const getCurrentLocation = useCallback(() => {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
         reject(new Error('Geolocation is not supported by this browser'));
         return;
       }
-
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          reject(error);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000, // Cache for 5 minutes
-        }
+        (position) => resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
+        (err) => reject(err),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
       );
     });
   }, []);
 
-  // Fetch weather data
-  const fetchWeatherData = useCallback(
-    async (locationParam = null) => {
-      setLoading(true);
-      setError(null);
+  const fetchWeatherData = useCallback(async (locationParam = null) => {
+    setLoading(true);
+    setError(null);
 
-      try {
-        let weatherParams = {};
-
-        if (locationParam) {
-          // Use provided location
-          if (typeof locationParam === 'string') {
-            weatherParams.location = locationParam;
-          } else if (locationParam.lat && locationParam.lng) {
-            weatherParams.lat = locationParam.lat;
-            weatherParams.lng = locationParam.lng;
-          }
-        } else if (location) {
-          // Use stored location
-          if (typeof location === 'string') {
-            weatherParams.location = location;
-          } else if (location.lat && location.lng) {
-            weatherParams.lat = location.lat;
-            weatherParams.lng = location.lng;
-          }
-        } else {
-          // Try to get current location
-          try {
-            const currentLocation = await getCurrentLocation();
-            weatherParams.lat = currentLocation.lat;
-            weatherParams.lng = currentLocation.lng;
-          } catch {
-            // Fallback to default location if geolocation fails
-            weatherParams.location = 'Vancouver, BC';
-          }
+    try {
+      let coords = {};
+      if (locationParam?.lat && locationParam?.lng) {
+        coords = locationParam;
+      } else if (location?.lat && location?.lng) {
+        coords = location;
+      } else {
+        try {
+          coords = await getCurrentLocation();
+        } catch (geoError) {
+          console.error('Geolocation failed:', geoError);
+          // Fallback to a default location (e.g., Vancouver)
+          coords = { lat: 49.2827, lng: -123.1207 };
         }
-
-        const response = await apiService.getWeather(weatherParams);
-
-        if (response.success && response.data) {
-          // Validate and sanitize the response data
-          const sanitizedData = {
-            location: response.data.location || 'Unknown Location',
-            temperature: response.data.temperature ?? 18,
-            condition: response.data.condition || 'Partly Cloudy',
-            humidity: response.data.humidity ?? 65,
-            windSpeed: response.data.windSpeed ?? 12,
-            uvIndex: response.data.uvIndex ?? 3,
-            feelsLike: response.data.feelsLike ?? response.data.temperature ?? 18,
-            visibility: response.data.visibility ?? 10,
-            pressure: response.data.pressure ?? 1013,
-          };
-          setWeatherData(sanitizedData);
-          setError(null);
-        } else {
-          throw new Error(response.error || 'Failed to fetch weather data');
-        }
-      } catch (err) {
-        console.error('Weather fetch error:', err);
-        setError(err.message);
-        // Set fallback weather data
-        setWeatherData({
-          location: 'Vancouver, BC',
-          temperature: 18,
-          condition: 'Partly Cloudy',
-          humidity: 65,
-          windSpeed: 12,
-          uvIndex: 3,
-          feelsLike: 20,
-          visibility: 10,
-          pressure: 1013,
-        });
-      } finally {
-        setLoading(false);
       }
-    },
-    [location, getCurrentLocation]
-  );
+
+      const { lat, lng } = coords;
+      const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=uv_index_max&timezone=auto`;
+
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error('Failed to fetch weather from Open-Meteo');
+
+      const data = await response.json();
+
+      // Reverse geocode to get location name (city, province)
+      let locationName = 'Current Location';
+      try {
+        const geoResponse = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+          {
+            headers: {
+              'User-Agent': 'CarbonCompass/1.0'
+            }
+          }
+        );
+        if (geoResponse.ok) {
+          const geoData = await geoResponse.json();
+          if (geoData.address) {
+            // Extract city and province from address data
+            const city = geoData.address.city || geoData.address.town || geoData.address.village || 'Unknown City';
+            const province = geoData.address.state || geoData.address.region || 'Unknown Province';
+
+            // Format as "City, Abbreviated Province"
+            if (city !== 'Unknown City' && province !== 'Unknown Province') {
+              const abbreviatedProvince = abbreviateProvince(province);
+              locationName = `${city}, ${abbreviatedProvince}`;
+            } else {
+              // Fallback to display_name if address parsing fails
+              locationName = geoData.display_name ? geoData.display_name.split(',')[0] : 'Unknown Location';
+            }
+          } else {
+            locationName = geoData.display_name ? geoData.display_name.split(',')[0] : 'Unknown Location';
+          }
+        }
+      } catch (e) {
+        console.error("Reverse geocoding failed", e);
+      }
+
+      const sanitizedData = {
+        location: locationName,
+        temperature: Math.round(data.current.temperature_2m),
+        condition: mapWeatherCodeToCondition(data.current.weather_code),
+        humidity: data.current.relative_humidity_2m,
+        windSpeed: Math.round(data.current.wind_speed_10m),
+        uvIndex: data.daily.uv_index_max[0],
+        time: undefined,
+        timestamp: undefined,
+      };
+
+      setWeatherData(sanitizedData);
+      setError(null);
+    } catch (err) {
+      console.error('Weather fetch error:', err);
+      setError(err.message);
+      setWeatherData({
+        location: 'Weather Unavailable',
+        temperature: 0,
+        condition: '',
+        humidity: 0,
+        windSpeed: 0,
+        uvIndex: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [location, getCurrentLocation]);
 
   // Update location and fetch new weather data
   const updateLocation = useCallback(
