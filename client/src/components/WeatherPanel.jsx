@@ -4,7 +4,6 @@ import {
   Sun,
   CloudRain,
   Wind,
-  Thermometer,
   Droplets,
   X,
   RefreshCw,
@@ -57,11 +56,9 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
 
   const getUVIndexInfo = (uvIndex) => {
     const uv = uvIndex ?? 0;
-    if (uv <= 2) return { color: '#10b981', level: 'Low' };
-    if (uv <= 5) return { color: '#f59e0b', level: 'Moderate' };
-    if (uv <= 7) return { color: '#f97316', level: 'High' };
-    if (uv <= 10) return { color: '#ef4444', level: 'Very High' };
-    return { color: '#991b1b', level: 'Extreme' };
+    if (uv <= 3) return '#10b981';
+    if (uv <= 7) return '#f59e0b';
+    return '#f97316';  // If uv > 7
   };
 
   if (isMinimized) {
@@ -71,30 +68,30 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
           style={{
             background: 'rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)',
-            borderRadius: '12px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            padding: '12px',
+            borderRadius: '10px',
+            boxShadow: '0 6px 24px rgba(0, 0, 0, 0.1)',
+            padding: '8px',
             cursor: 'pointer',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
             transition: 'all 0.3s ease',
           }}
           onClick={() => setIsMinimized(false)}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-            e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.15)';
+            e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.15)';
             e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-            e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
+            e.currentTarget.style.boxShadow = '0 6px 24px rgba(0, 0, 0, 0.1)';
             e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', pointerEvents: 'none' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', pointerEvents: 'none' }}>
             {getWeatherIcon(displayData.condition)}
             <span
               style={{
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: '500',
                 color: isDarkMode ? '#f9fafb' : '#374151',
                 fontFamily: 'Roboto, sans-serif',
@@ -120,41 +117,58 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
       <div
         style={{
           background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(15px)',
-          borderRadius: isMobile ? '12px' : '16px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.4)',
-          width: `${getPanelWidth(280)}px`,
-          padding: isMobile ? '12px' : '16px',
+          backdropFilter: 'blur(12px)',
+          borderRadius: isMobile ? '8px' : '12px',
+          boxShadow: '0 6px 24px rgba(0, 0, 0, 0.1)',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
+          width: `${getPanelWidth(170)}px`,
+          padding: isMobile ? '8px' : '10px',
         }}
       >
-        {/* Header */}
+        {/* Header with Location */}
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             justifyContent: 'space-between',
-            marginBottom: '12px',
+            marginBottom: '10px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {getWeatherIcon(displayData?.condition)}
-            <span
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+              {getWeatherIcon(displayData?.condition)}
+              <span
+                style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: isDarkMode ? '#f9fafb' : '#111827',
+                  fontFamily: 'Roboto, sans-serif',
+                }}
+              >
+                Weather
+              </span>
+            </div>
+            <div
               style={{
-                fontSize: '16px',
-                fontWeight: '500',
-                color: isDarkMode ? '#f9fafb' : '#111827',
+                fontSize: '13px',
+                color: isDarkMode ? '#d1d5db' : '#6b7280',
                 fontFamily: 'Roboto, sans-serif',
+                marginLeft: '30px',
               }}
             >
-              Weather
-            </span>
+              {displayData?.location || 'Unknown Location'}
+              {error && (
+                <span style={{ color: '#f59e0b', fontSize: '10px', marginLeft: '4px' }}>
+                  (Unavailable)
+                </span>
+              )}
+            </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <button
               onClick={refreshWeather}
               style={{
-                padding: '4px',
+                padding: '3px',
                 borderRadius: '50%',
                 background: 'transparent',
                 border: 'none',
@@ -171,8 +185,8 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
             >
               <RefreshCw
                 style={{
-                  width: '16px',
-                  height: '16px',
+                  width: '14px',
+                  height: '14px',
                   color: isDarkMode ? '#d1d5db' : '#6b7280',
                   transform: loading ? 'rotate(360deg)' : 'rotate(0deg)',
                   transition: 'transform 0.5s ease',
@@ -182,7 +196,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
             <button
               onClick={() => setIsMinimized(true)}
               style={{
-                padding: '4px',
+                padding: '3px',
                 borderRadius: '50%',
                 background: 'transparent',
                 border: 'none',
@@ -197,37 +211,22 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
               onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
               <X
-                style={{ width: '16px', height: '16px', color: isDarkMode ? '#d1d5db' : '#6b7280' }}
+                style={{ width: '14px', height: '14px', color: isDarkMode ? '#d1d5db' : '#6b7280' }}
               />
             </button>
           </div>
         </div>
 
-        {/* Location */}
-        <div style={{ marginBottom: '16px' }}>
-          <span
-            style={{
-              fontSize: '14px',
-              color: isDarkMode ? '#d1d5db' : '#6b7280',
-              fontFamily: 'Roboto, sans-serif',
-            }}
-          >
-            {displayData?.location || 'Unknown Location'}
-            {error && (
-              <span style={{ color: '#f59e0b', fontSize: '12px', marginLeft: '8px' }}>
-                (Weather service unavailable)
-              </span>
-            )}
-          </span>
-        </div>
-
-        {/* Main Temperature */}
+        {/* Main Temperature - Compact */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: '16px',
+            padding: '8px 10px',
+            background: 'rgba(255, 255, 255, 0.08)',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
           }}
         >
           <div>
@@ -237,13 +236,14 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
                 fontWeight: '700',
                 color: isDarkMode ? '#f9fafb' : '#111827',
                 fontFamily: 'Roboto, sans-serif',
+                lineHeight: '1',
               }}
             >
               {displayData?.temperature ?? '--'}°C
             </span>
             <div
               style={{
-                fontSize: '14px',
+                fontSize: '12px',
                 color: isDarkMode ? '#d1d5db' : '#6b7280',
                 fontFamily: 'Roboto, sans-serif',
                 marginTop: '4px',
@@ -252,55 +252,49 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
               {displayData?.condition || 'Unknown'}
             </div>
           </div>
-          <div style={{ fontSize: '48px' }}>{getWeatherIcon(displayData?.condition)}</div>
+          <div style={{ fontSize: '48px', lineHeight: '1', opacity: 0.9 }}>{getWeatherIcon(displayData?.condition)}</div>
         </div>
 
-        {/* Weather Details */}
+        {/* Weather Details - Compact Grid */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr',
-            gap: '12px',
-            paddingTop: '12px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.25)',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '6px',
           }}
         >
           {/* Humidity */}
           <div
             style={{
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px',
+              padding: '8px 4px',
               background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              minHeight: '52px',
+              borderRadius: '6px',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
             }}
           >
-            <div>
-              <Droplets style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
+            <Droplets style={{ width: '16px', height: '16px', color: '#3b82f6', marginBottom: '4px' }} />
+            <div
+              style={{
+                fontSize: '12px',
+                color: isDarkMode ? '#d1d5db' : '#6b7280',
+                fontFamily: 'Roboto, sans-serif',
+                marginBottom: '2px',
+              }}
+            >
+              Humidity
             </div>
-            <div style={{ flex: 1 }}>
-              <div
-                style={{
-                  fontSize: '12px',
-                  color: isDarkMode ? '#d1d5db' : '#6b7280',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
-                Humidity
-              </div>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: isDarkMode ? '#f9fafb' : '#111827',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
-                {displayData?.humidity ?? '--'}%
-              </div>
+            <div
+              style={{
+                fontSize: '14px',
+                fontWeight: '600',
+                color: isDarkMode ? '#f9fafb' : '#111827',
+                fontFamily: 'Roboto, sans-serif',
+              }}
+            >
+              {displayData?.humidity ?? '--'}%
             </div>
           </div>
 
@@ -308,38 +302,37 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
           <div
             style={{
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px',
+              padding: '8px 4px',
               background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              minHeight: '52px',
+              borderRadius: '6px',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
             }}
           >
-            <div>
-              <Wind style={{ width: '16px', height: '16px', color: '#10b981' }} />
+            <Wind style={{ width: '16px', height: '16px', color: '#10b981', marginBottom: '4px' }} />
+            <div
+              style={{
+                fontSize: '12px',
+                color: isDarkMode ? '#d1d5db' : '#6b7280',
+                fontFamily: 'Roboto, sans-serif',
+                marginBottom: '2px',
+              }}
+            >
+              Wind
             </div>
-            <div style={{ flex: 1 }}>
-              <div
-                style={{
-                  fontSize: '12px',
-                  color: isDarkMode ? '#d1d5db' : '#6b7280',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
-                Wind
-              </div>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: isDarkMode ? '#f9fafb' : '#111827',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
-                {displayData?.windSpeed ?? '--'} km/h
-              </div>
+            <div
+              style={{
+                fontSize: '14px',
+                fontWeight: '600',
+                color: isDarkMode ? '#f9fafb' : '#111827',
+                fontFamily: 'Roboto, sans-serif',
+                textAlign: 'center',
+                lineHeight: '1.2',
+              }}
+            >
+              {displayData?.windSpeed ?? '--'}
+              <span style={{ fontSize: '10px', fontWeight: '400' }}> km/h</span>
             </div>
           </div>
 
@@ -347,58 +340,42 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
           <div
             style={{
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px',
+              padding: '8px 4px',
               background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.25)',
-              minHeight: '52px',
-              ...(isMobile && { gridColumn: '1 / -1', marginTop: '12px' }),
+              borderRadius: '6px',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
             }}
           >
-            <div>
-              <Zap
-                style={{
-                  width: '16px',
-                  height: '16px',
-                  color: getUVIndexInfo(displayData?.uvIndex).color,
-                }}
-              />
+            <Zap
+              style={{
+                width: '16px',
+                height: '16px',
+                color: getUVIndexInfo(displayData?.uvIndex),
+                marginBottom: '4px',
+              }}
+            />
+            <div
+              style={{
+                fontSize: '12px',
+                color: isDarkMode ? '#d1d5db' : '#6b7280',
+                fontFamily: 'Roboto, sans-serif',
+                marginBottom: '2px',
+              }}
+            >
+              UV Index
             </div>
-            <div style={{ flex: 1 }}>
-              <div
-                style={{
-                  fontSize: '12px',
-                  color: isDarkMode ? '#d1d5db' : '#6b7280',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
-                UV Index
-              </div>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: isDarkMode ? '#f9fafb' : '#111827',
-                  fontFamily: 'Roboto, sans-serif',
-                  lineHeight: '1.2',
-                }}
-              >
-                <div>{displayData?.uvIndex ?? '--'}</div>
-                <div
-                  style={{
-                    fontSize: '10px',
-                    color: getUVIndexInfo(displayData?.uvIndex).color,
-                    fontWeight: '600',
-                    marginTop: '1px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                  }}
-                >
-                  {getUVIndexInfo(displayData?.uvIndex).level}
-                </div>
-              </div>
+            <div
+              style={{
+                fontSize: '14px',
+                fontWeight: '600',
+                color: isDarkMode ? '#f9fafb' : '#111827',
+                fontFamily: 'Roboto, sans-serif',
+                textAlign: 'center',
+              }}
+            >
+              {displayData?.uvIndex ?? '--'}
             </div>
           </div>
         </div>
@@ -419,18 +396,18 @@ const WeatherPanel = (props) => {
         <div
           style={{
             background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(15px)',
-            borderRadius: '16px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
-            width: '280px',
-            padding: '16px',
+            backdropFilter: 'blur(12px)',
+            borderRadius: '12px',
+            boxShadow: '0 6px 24px rgba(0, 0, 0, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            width: '170px',
+            padding: '12px',
           }}
         >
           <div
             style={{
               color: props.isDarkMode ? '#f9fafb' : '#111827',
-              fontSize: '14px',
+              fontSize: '13px',
               textAlign: 'center',
             }}
           >
