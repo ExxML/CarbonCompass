@@ -29,18 +29,30 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
       return <Cloud style={{ width: '24px', height: '24px', color: '#6b7280' }} />;
     }
 
-    switch (condition.toLowerCase()) {
-      case 'sunny':
-      case 'clear':
-        return <Sun style={{ width: '24px', height: '24px', color: '#f59e0b' }} />;
-      case 'rainy':
-      case 'rain':
-        return <CloudRain style={{ width: '24px', height: '24px', color: '#3b82f6' }} />;
-      case 'partly cloudy':
-      case 'cloudy':
-      default:
-        return <Cloud style={{ width: '24px', height: '24px', color: '#6b7280' }} />;
+    const conditionLower = condition.toLowerCase();
+    
+    // Clear/Sunny conditions
+    if (conditionLower.includes('clear') || conditionLower.includes('sunny')) {
+      return <Sun style={{ width: '24px', height: '24px', color: '#f59e0b' }} />;
     }
+    
+    // Rain conditions
+    if (conditionLower.includes('rain') || conditionLower.includes('drizzle') || conditionLower.includes('shower')) {
+      return <CloudRain style={{ width: '24px', height: '24px', color: '#3b82f6' }} />;
+    }
+    
+    // Thunderstorm
+    if (conditionLower.includes('thunder') || conditionLower.includes('storm')) {
+      return <Zap style={{ width: '24px', height: '24px', color: '#8b5cf6' }} />;
+    }
+    
+    // Wind
+    if (conditionLower.includes('wind')) {
+      return <Wind style={{ width: '24px', height: '24px', color: '#10b981' }} />;
+    }
+    
+    // Cloudy (default)
+    return <Cloud style={{ width: '24px', height: '24px', color: '#6b7280' }} />;
   };
 
   const getUVIndexInfo = (uvIndex) => {
@@ -203,7 +215,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
             {displayData?.location || 'Unknown Location'}
             {error && (
               <span style={{ color: '#f59e0b', fontSize: '12px', marginLeft: '8px' }}>
-                (Using cached data)
+                (Weather service unavailable)
               </span>
             )}
           </span>
