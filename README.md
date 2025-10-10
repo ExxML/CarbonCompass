@@ -163,8 +163,9 @@ Before running the project, ensure you have the following installed:
 - **Node.js** v20
 - **npm** v9
 - **Google Cloud Platform account** with the following APIs enabled:
-- "Maps JavaScript API"
-- "Places API"
+- Maps JavaScript API
+- Directions API
+- Places API
 
 ## 🚀 Getting Started (Local Hosting)
 
