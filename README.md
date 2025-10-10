@@ -23,7 +23,7 @@
 - [🛠️ Tech Stack](#️-tech-stack)
 - [📁 Project Structure](#-project-structure)
 - [📋 Technical Requirements](#-technical-requirements)
-- [🚀 Getting Started](#-getting-started)
+- [🚀 Getting Started (Local Hosting)](#-getting-started-local-hosting)
 - [🎯 Usage](#-usage)
 - [📡 API Endpoints](#-api-endpoints)
 - [📄 License](#-license)
@@ -160,21 +160,13 @@ CarbonCompass/
 
 Before running the project, ensure you have the following installed:
 
-- **Node.js** v20 or higher
-- **npm** v9 or higher
+- **Node.js** v20
+- **npm** v9
 - **Google Cloud Platform account** with the following APIs enabled:
-  - Google Maps JavaScript API
-  - Google Maps Directions API
-  - Google Maps Places API
+- "Maps JavaScript API"
+- "Places API"
 
-### Required API Keys
-
-You'll need to obtain API keys from Google Cloud Platform:
-
-- **Client-side API key** for the frontend (browser-restricted)
-- **Server-side API key** for the backend (server-restricted)
-
-## 🚀 Getting Started
+## 🚀 Getting Started (Local Hosting)
 
 ### 1. Installation
 
@@ -183,7 +175,6 @@ Clone the repository and install dependencies for both client and server:
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd StormHacks-2025
 
 # Install server dependencies
 cd server
@@ -201,8 +192,7 @@ Create `.env` files in both directories:
 **Server `.env` file** (`server/.env`):
 
 ```env
-MAPS_API_KEY=your_google_maps_api_key_here
-PORT=3001
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
 ```
 
 **Client `.env` file** (`client/.env`):
