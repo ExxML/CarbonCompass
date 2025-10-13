@@ -4,9 +4,56 @@ import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { useDirections } from '../hooks/useDirections';
 import { useResponsive } from '../hooks/useResponsive';
 
-const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onClearSearch, onRouteSelect }) => {
+const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRouteSelect }) => {
   // Responsive hook
   const { getPanelWidth, getResponsivePosition, isMobile } = useResponsive();
+
+  // Create dynamic styles for placeholder text that updates with dark mode
+  React.useEffect(() => {
+    const placeholderColor = isDarkMode ? '#9ca3af' : '#6b7280';
+    const styleId = 'search-panel-placeholder-styles';
+
+    // Remove existing style element
+    const existingStyle = document.getElementById(styleId);
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+
+    // Create new style element
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .search-input-origin::placeholder,
+      .search-input-destination::placeholder {
+        color: ${placeholderColor} !important;
+        opacity: 1 !important;
+      }
+      .search-input-origin::-webkit-input-placeholder,
+      .search-input-destination::-webkit-input-placeholder {
+        color: ${placeholderColor} !important;
+        opacity: 1 !important;
+      }
+      .search-input-origin::-moz-placeholder,
+      .search-input-destination::-moz-placeholder {
+        color: ${placeholderColor} !important;
+        opacity: 1 !important;
+      }
+      .search-input-origin:-ms-input-placeholder,
+      .search-input-destination:-ms-input-placeholder {
+        color: ${placeholderColor} !important;
+        opacity: 1 !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Cleanup function
+    return () => {
+      const styleElement = document.getElementById(styleId);
+      if (styleElement) {
+        styleElement.remove();
+      }
+    };
+  }, [isDarkMode]);
   // Removed console.log to prevent constant logging
   const [isMinimized, setIsMinimized] = useState(false);
   const [origin, setOrigin] = useState('');
@@ -553,6 +600,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onCle
                 type="text"
                 placeholder="Choose starting point"
                 value={origin}
+                className="search-input-origin"
                 onChange={(e) => handleOriginChange(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && origin.trim()) {
@@ -675,6 +723,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onStartTracking, onCle
                 type="text"
                 placeholder="Where do you want to go?"
                 value={destination}
+                className="search-input-destination"
                 onChange={(e) => handleDestinationChange(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && destination.trim()) {
