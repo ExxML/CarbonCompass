@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Cloud,
-  Sun,
-  CloudRain,
-  Wind,
-  Droplets,
-  X,
-  RefreshCw,
-  Zap,
-} from 'lucide-react';
+import { Cloud, Sun, CloudRain, Wind, Droplets, X, RefreshCw, Zap } from 'lucide-react';
 import { useResponsive } from '../hooks/useResponsive';
 import { useWeatherData } from '../hooks/useWeatherData';
 
@@ -29,27 +20,31 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
     }
 
     const conditionLower = condition.toLowerCase();
-    
+
     // Clear/Sunny conditions
     if (conditionLower.includes('clear') || conditionLower.includes('sunny')) {
       return <Sun style={{ width: '24px', height: '24px', color: '#f59e0b' }} />;
     }
-    
+
     // Rain conditions
-    if (conditionLower.includes('rain') || conditionLower.includes('drizzle') || conditionLower.includes('shower')) {
+    if (
+      conditionLower.includes('rain') ||
+      conditionLower.includes('drizzle') ||
+      conditionLower.includes('shower')
+    ) {
       return <CloudRain style={{ width: '24px', height: '24px', color: '#3b82f6' }} />;
     }
-    
+
     // Thunderstorm
     if (conditionLower.includes('thunder') || conditionLower.includes('storm')) {
       return <Zap style={{ width: '24px', height: '24px', color: '#8b5cf6' }} />;
     }
-    
+
     // Wind
     if (conditionLower.includes('wind')) {
       return <Wind style={{ width: '24px', height: '24px', color: '#10b981' }} />;
     }
-    
+
     // Cloudy (default)
     return <Cloud style={{ width: '24px', height: '24px', color: '#6b7280' }} />;
   };
@@ -58,7 +53,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
     const uv = uvIndex ?? 0;
     if (uv <= 3) return '#10b981';
     if (uv <= 7) return '#f59e0b';
-    return '#f97316';  // If uv > 7
+    return '#f97316'; // If uv > 7
   };
 
   if (isMinimized) {
@@ -121,7 +116,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
           borderRadius: isMobile ? '8px' : '12px',
           boxShadow: '0 6px 24px rgba(0, 0, 0, 0.1)',
           border: '1px solid rgba(255, 255, 255, 0.3)',
-          width: `${getPanelWidth(170)}px`,
+          width: `${getPanelWidth(210)}px`,
           padding: isMobile ? '8px' : '10px',
         }}
       >
@@ -223,10 +218,11 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '8px 10px',
+            padding: '10px 10px',
             background: 'rgba(255, 255, 255, 0.08)',
             borderRadius: '8px',
             border: '1px solid rgba(255, 255, 255, 0.15)',
+            marginBottom: '10px',
           }}
         >
           <div>
@@ -252,7 +248,9 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
               {displayData?.condition || 'Unknown'}
             </div>
           </div>
-          <div style={{ fontSize: '48px', lineHeight: '1', opacity: 0.9 }}>{getWeatherIcon(displayData?.condition)}</div>
+          <div style={{ fontSize: '48px', lineHeight: '1', opacity: 0.9 }}>
+            {getWeatherIcon(displayData?.condition)}
+          </div>
         </div>
 
         {/* Weather Details - Compact Grid */}
@@ -275,7 +273,9 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
               border: '1px solid rgba(255, 255, 255, 0.15)',
             }}
           >
-            <Droplets style={{ width: '16px', height: '16px', color: '#3b82f6', marginBottom: '4px' }} />
+            <Droplets
+              style={{ width: '16px', height: '16px', color: '#3b82f6', marginBottom: '4px' }}
+            />
             <div
               style={{
                 fontSize: '12px',
@@ -310,7 +310,9 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
               border: '1px solid rgba(255, 255, 255, 0.15)',
             }}
           >
-            <Wind style={{ width: '16px', height: '16px', color: '#10b981', marginBottom: '4px' }} />
+            <Wind
+              style={{ width: '16px', height: '16px', color: '#10b981', marginBottom: '4px' }}
+            />
             <div
               style={{
                 fontSize: '12px',
