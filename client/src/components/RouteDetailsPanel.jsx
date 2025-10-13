@@ -2,8 +2,57 @@ import React from 'react';
 import { X, Play } from 'lucide-react';
 import { useResponsive } from '../hooks/useResponsive';
 
-const RouteDetailsPanel = ({ isDarkMode = false, selectedRoute, routeData, onClose, onStartTracking }) => {
-  const { getPanelWidth, getResponsivePosition, isMobile } = useResponsive();
+const RouteDetailsPanel = ({
+  isDarkMode = false,
+  selectedRoute,
+  routeData,
+  onClose,
+  onStartTracking,
+}) => {
+  const { getPanelWidth, isMobile } = useResponsive();
+
+  // Add minimal scrollbar styles to remove background
+  React.useEffect(() => {
+    const styleId = 'route-details-transparent-scrollbar';
+
+    // Remove existing style element
+    const existingStyle = document.getElementById(styleId);
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+
+    // Create new style element with transparent scrollbar background
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .transparent-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .transparent-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .transparent-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(107, 114, 128, 0.5);
+        border-radius: 4px;
+      }
+      .transparent-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(107, 114, 128, 0.7);
+      }
+      .transparent-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(107, 114, 128, 0.5) transparent;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Cleanup function
+    return () => {
+      const styleElement = document.getElementById(styleId);
+      if (styleElement) {
+        styleElement.remove();
+      }
+    };
+  }, []);
 
   // If no route is selected or no data, don't render
   if (!selectedRoute || !routeData) {
@@ -29,7 +78,7 @@ const RouteDetailsPanel = ({ isDarkMode = false, selectedRoute, routeData, onClo
     const padding = isMobile ? 8 : 16;
     const searchPanelWidth = getPanelWidth(384); // SearchPanel width
     const gap = 12; // Gap between panels
-    
+
     if (isMobile) {
       // On mobile, stack vertically below search panel
       return {
@@ -52,12 +101,13 @@ const RouteDetailsPanel = ({ isDarkMode = false, selectedRoute, routeData, onClo
   return (
     <div style={{ position: 'fixed', ...getAdjacentPosition(), zIndex: 9998 }}>
       <div
+        className="transparent-scrollbar"
         style={{
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(15px)',
           borderRadius: isMobile ? '12px' : '16px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          border: '1px solid rgba(255, 255, 255, 0.4)',
           width: `${getPanelWidth(350)}px`,
           maxHeight: '70vh',
           overflowY: 'auto',
@@ -70,7 +120,7 @@ const RouteDetailsPanel = ({ isDarkMode = false, selectedRoute, routeData, onClo
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '16px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.4)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -113,6 +163,7 @@ const RouteDetailsPanel = ({ isDarkMode = false, selectedRoute, routeData, onClo
 
         {/* Route Details Content */}
         <div
+          className="transparent-scrollbar"
           style={{
             padding: '16px',
             background: 'rgba(255, 255, 255, 0.05)',
@@ -616,7 +667,8 @@ const RouteDetailsPanel = ({ isDarkMode = false, selectedRoute, routeData, onClo
                 🚴 Biking Directions
               </div>
               {route.steps?.map((step, stepIndex) => {
-                const instructions = step.instructions?.replace(/<[^>]*>/g, '') || 'Continue biking';
+                const instructions =
+                  step.instructions?.replace(/<[^>]*>/g, '') || 'Continue biking';
                 const distance = step.distance?.text || '';
                 const duration = step.duration?.text || '';
 
@@ -732,7 +784,15 @@ const RouteDetailsPanel = ({ isDarkMode = false, selectedRoute, routeData, onClo
 
         {/* Start Trip Tracking Button */}
         {onStartTracking && (
-          <div style={{ paddingTop: '8px', paddingBottom: '16px', paddingLeft: '16px', paddingRight: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <div
+            style={{
+              paddingTop: '8px',
+              paddingBottom: '16px',
+              paddingLeft: '16px',
+              paddingRight: '16px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.3)',
+            }}
+          >
             <button
               onClick={() => onStartTracking(routeData)}
               style={{

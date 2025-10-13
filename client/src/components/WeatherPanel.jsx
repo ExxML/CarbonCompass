@@ -116,7 +116,7 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
           borderRadius: isMobile ? '8px' : '12px',
           boxShadow: '0 6px 24px rgba(0, 0, 0, 0.1)',
           border: '1px solid rgba(255, 255, 255, 0.3)',
-          width: `${getPanelWidth(170)}px`,
+          width: `${getPanelWidth(210)}px`,
           padding: isMobile ? '8px' : '10px',
         }}
       >
@@ -218,10 +218,11 @@ const WeatherPanelCore = ({ isDarkMode = false, currentLocation = null }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '8px 10px',
+            padding: '10px 10px',
             background: 'rgba(255, 255, 255, 0.08)',
             borderRadius: '8px',
             border: '1px solid rgba(255, 255, 255, 0.15)',
+            marginBottom: '10px',
           }}
         >
           <div>

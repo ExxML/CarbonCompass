@@ -351,7 +351,6 @@ export default function MapView({ onNavigateToLanding }) {
           />
         )}
 
-
         {/* Weather Panel */}
         <WeatherPanel isDarkMode={isDarkMode} currentLocation={currentLocation} />
 
