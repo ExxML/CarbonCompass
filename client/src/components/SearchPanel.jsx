@@ -54,7 +54,7 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRoute
       }
     };
   }, [isDarkMode]);
-  // Removed console.log to prevent constant logging
+
   const [isMinimized, setIsMinimized] = useState(false);
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
@@ -105,8 +105,8 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRoute
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 60000,
+          timeout: 15000, // Increased timeout for better accuracy
+          maximumAge: 0, // Always get fresh location, no cache
         }
       );
     });

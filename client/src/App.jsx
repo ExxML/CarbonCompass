@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import MapView from './components/MapView';
 import LandingPage from './components/LandingPage';
-import './App.css';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('landing'); // 'landing' or 'map'
