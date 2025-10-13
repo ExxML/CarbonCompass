@@ -9,7 +9,7 @@ const RouteDetailsPanel = ({
   onClose,
   onStartTracking,
 }) => {
-  const { getPanelWidth, getResponsivePosition, isMobile } = useResponsive();
+  const { getPanelWidth, isMobile } = useResponsive();
 
   // Add minimal scrollbar styles to remove background
   React.useEffect(() => {
@@ -107,7 +107,7 @@ const RouteDetailsPanel = ({
           backdropFilter: 'blur(15px)',
           borderRadius: isMobile ? '12px' : '16px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
+          border: '1px solid rgba(255, 255, 255, 0.4)',
           width: `${getPanelWidth(350)}px`,
           maxHeight: '70vh',
           overflowY: 'auto',
@@ -120,7 +120,7 @@ const RouteDetailsPanel = ({
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '16px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.4)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -790,7 +790,7 @@ const RouteDetailsPanel = ({
               paddingBottom: '16px',
               paddingLeft: '16px',
               paddingRight: '16px',
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              borderTop: '1px solid rgba(255, 255, 255, 0.3)',
             }}
           >
             <button
