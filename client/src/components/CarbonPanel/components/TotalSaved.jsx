@@ -1,6 +1,6 @@
 /**
  * TotalSaved Component
- * Displays large CO₂ savings number
+ * Displays large CO2 savings number
  */
 
 const TotalSaved = ({ totalSaved, isDarkMode, isMobile }) => {

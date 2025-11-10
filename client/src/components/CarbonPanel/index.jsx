@@ -16,7 +16,7 @@ import { getMetricConfig } from './utils/metricConfig';
 
 const CarbonPanel = ({ isDarkMode = false }) => {
   const { isMobile, getPanelWidth } = useResponsive();
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
 
   const carbonData = {
     totalSaved: 2.4,

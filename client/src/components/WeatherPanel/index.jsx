@@ -17,7 +17,7 @@ import MetricCard from './components/MetricCard';
 
 const WeatherPanel = ({ isDarkMode = false, currentLocation = null }) => {
   const { isMobile, getPanelWidth } = useResponsive();
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
 
   // Get real weather data from API
   const { weatherData, loading, error, refreshWeather } = useWeatherData(currentLocation);

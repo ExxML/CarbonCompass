@@ -2,17 +2,6 @@
  * CarbonMetric Component
  * Reusable metric card for carbon stats
  */
-
-/**
- * CarbonMetric Component
- * Reusable metric card for carbon stats
- */
-
-/**
- * CarbonMetric Component
- * Reusable metric card for carbon stats
- */
-
 const CarbonMetric = ({ icon, value, label, iconColor, isDarkMode }) => {
   const IconComponent = icon;
 
