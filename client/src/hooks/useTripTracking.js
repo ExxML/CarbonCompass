@@ -283,7 +283,6 @@ export const useTripTracking = () => {
     } else if (directions.overview_polyline) {
       route = directions; // Direct route format
     } else {
-      console.error('Invalid directions structure:', directions);
       return false;
     }
 
@@ -297,16 +296,8 @@ export const useTripTracking = () => {
     );
 
     if (!hasPolyline) {
-      console.error('Route missing polyline data. Route structure:', route);
       return false;
     }
-
-    console.log('Route validation passed. Available polyline sources:', {
-      points: !!route.points,
-      overview_polyline: !!route.overview_polyline?.points,
-      polyline: !!route.polyline,
-      steps: route.legs?.[0]?.steps?.length || 0,
-    });
 
     return true;
   }, []);
@@ -320,7 +311,8 @@ export const useTripTracking = () => {
       }
 
       // Validate route data first
-      if (!validateRouteData(directions)) {
+      const isValid = validateRouteData(directions);
+      if (!isValid) {
         setError('Invalid or incomplete route data');
         return;
       }
@@ -328,10 +320,8 @@ export const useTripTracking = () => {
       // Extract route from directions
       const route = directions.routes?.[0] || directions;
       setRouteData(route);
-      setIsTracking(true);
       setError(null);
-
-      console.log('Starting trip tracking with validated route:', route);
+      setIsTracking(true);
 
       const id = navigator.geolocation.watchPosition(
         (position) => {
@@ -369,12 +359,8 @@ export const useTripTracking = () => {
           // Calculate progress using the stored route data
           const progress = calculateTripProgress(location, route);
           setTripProgress(progress);
-
-          console.log('Location updated:', location);
-          console.log('Trip progress:', progress);
         },
         (error) => {
-          console.error('Geolocation error:', error);
           let errorMessage = 'Location tracking failed';
 
           switch (error.code) {
@@ -399,8 +385,13 @@ export const useTripTracking = () => {
       );
 
       setWatchId(id);
+
+      // Force a small delay to ensure state update propagates
+      setTimeout(() => {
+        console.log('Checking isTracking state after timeout');
+      }, 100);
     },
-    [calculateTripProgress, validateRouteData, calculateDistance, previousLocation]
+    [calculateTripProgress, validateRouteData, calculateDistance]
   );
 
   // Stop tracking

@@ -13,7 +13,7 @@
  * Reusable metric card for carbon stats
  */
 
-const CarbonMetric = ({ icon, value, label, bgColor, borderColor, iconColor, isDarkMode }) => {
+const CarbonMetric = ({ icon, value, label, iconColor, isDarkMode }) => {
   const IconComponent = icon;
 
   return (
@@ -42,7 +42,7 @@ const CarbonMetric = ({ icon, value, label, bgColor, borderColor, iconColor, isD
       >
         <span
           style={{
-            fontSize: '11px',
+            fontSize: '12px',
             fontWeight: '600',
             color: isDarkMode ? '#f9fafb' : '#111827',
             fontFamily: 'Roboto, sans-serif',
@@ -53,7 +53,7 @@ const CarbonMetric = ({ icon, value, label, bgColor, borderColor, iconColor, isD
         </span>
         <span
           style={{
-            fontSize: '8px',
+            fontSize: '10px',
             color: isDarkMode ? '#9ca3af' : '#6b7280',
             fontFamily: 'Roboto, sans-serif',
           }}

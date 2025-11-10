@@ -38,9 +38,14 @@ export const useRecentSearches = () => {
 
   const addToRecentSearches = useCallback(
     (search) => {
+      // Filter out duplicates based on both name and address to prevent duplicates
       const updatedSearches = [
         search,
-        ...recentSearches.filter((s) => s.name !== search.name),
+        ...recentSearches.filter(
+          (s) =>
+            s.name.toLowerCase() !== search.name.toLowerCase() &&
+            s.address.toLowerCase() !== search.address.toLowerCase()
+        ),
       ].slice(0, 10); // Keep only 10 most recent
 
       setRecentSearches(updatedSearches);

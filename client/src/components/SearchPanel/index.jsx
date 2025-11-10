@@ -367,7 +367,9 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRoute
           destinationPredictions.length === 0 && (
             <RecentSearches
               searches={recentSearches}
-              onSelect={handleRecentSearchSelect}
+              onSelect={(search) =>
+                handleRecentSearchSelect(search, isOriginFocused, isDestinationFocused)
+              }
               isDarkMode={isDarkMode}
             />
           )}

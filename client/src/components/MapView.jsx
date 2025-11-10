@@ -41,8 +41,6 @@ export default function MapView({ onNavigateToLanding }) {
   if (!apiKey) return <div>Missing Google Maps API key</div>;
 
   const handleRouteChange = (routesData) => {
-    console.log('Routes data received:', routesData);
-
     // Clear selected route when new routes are loaded
     setSelectedRoute(null);
     setSelectedRouteData(null);
@@ -99,17 +97,17 @@ export default function MapView({ onNavigateToLanding }) {
   // Handle starting trip tracking
   const handleStartTracking = (routeData) => {
     if (!routeData) {
-      console.error('No route data provided for tracking');
       return;
     }
 
-    console.log('Starting trip tracking with route:', routeData);
     startTracking(routeData);
+
+    // Close the route details panel when tracking starts
+    handleCloseRouteDetails();
   };
 
   // Handle route selection for detailed view
   const handleRouteSelect = (mode, routeData) => {
-    console.log('Route selected:', mode, routeData);
     setSelectedRoute(mode);
     setSelectedRouteData(routeData);
   };

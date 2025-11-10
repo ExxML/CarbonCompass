@@ -133,13 +133,19 @@ export const useSearchState = ({
 
   // Handle recent search selection
   const handleRecentSearchSelect = useCallback(
-    (search) => {
-      setOrigin('');
-      setDestination(search.address || search.name);
-      clearOriginPredictions();
-      clearDestinationPredictions();
-      setIsOriginFocused(false);
-      setIsDestinationFocused(false);
+    (search, isOriginFocusedParam, isDestinationFocusedParam) => {
+      const searchValue = search.address || search.name;
+
+      // Set value to whichever input is focused
+      if (isOriginFocusedParam) {
+        setOrigin(searchValue);
+        clearOriginPredictions();
+        setIsOriginFocused(false);
+      } else if (isDestinationFocusedParam) {
+        setDestination(searchValue);
+        clearDestinationPredictions();
+        setIsDestinationFocused(false);
+      }
     },
     [clearOriginPredictions, clearDestinationPredictions]
   );
