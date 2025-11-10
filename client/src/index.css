@@ -68,7 +68,8 @@ body,
 ----------------------------------------------------------- */
 @layer base {
   html {
-    @apply antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
@@ -98,11 +99,445 @@ body,
     scrollbar-color: rgba(var(--text-mute), 0.35) transparent;
   }
   *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
   }
   *::-webkit-scrollbar-thumb {
     background: rgba(var(--text-mute), 0.35);
+    border-radius: 4px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--text-mute), 0.5);
+  }
+}
+
+/* -----------------------------------------------------------
+   Custom component classes (reusable styles)
+----------------------------------------------------------- */
+@layer components {
+  /* Glass morphism panel */
+  .glass-panel {
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+  }
+
+  .glass-panel-mobile {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+  }
+
+  /* Minimized panel button */
+  .minimized-panel {
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    cursor: pointer;
+    transition: all 300ms;
+  }
+
+  .minimized-panel:hover {
+    transform: translateY(-2px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Input field with glass effect */
+  .glass-input {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    backdrop-filter: blur(4px);
+    transition: all 300ms;
+  }
+
+  .glass-input:hover {
+    transform: translateY(-1px);
+    border-color: rgba(59, 130, 246, 0.5);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+  }
+
+  .glass-input input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    font-weight: 500;
+    outline: none;
+  }
+
+  .glass-input input::placeholder {
+    opacity: 1;
+  }
+
+  /* Panel header */
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 16px;
+  }
+
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  /* Button styles */
+  .btn-icon {
+    cursor: pointer;
     border-radius: 9999px;
+    border: none;
+    background: transparent;
+    padding: 4px;
+    transition: colors 200ms;
+  }
+
+  .btn-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-primary {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(59, 130, 246, 0.8);
+    padding: 12px 16px;
+    font-weight: 500;
+    color: white;
+    transition: all 300ms;
+  }
+
+  .btn-primary:hover {
+    background: rgb(59, 130, 246);
+  }
+
+  .btn-primary:disabled {
+    cursor: not-allowed;
+    background: rgba(59, 130, 246, 0.5);
+  }
+
+  .btn-danger {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    gap: 4px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(220, 38, 38, 0.8);
+    padding: 6px 12px;
+    color: white;
+    transition: all 200ms;
+  }
+
+  .btn-danger:hover {
+    background: rgb(220, 38, 38);
+  }
+
+  /* Card styles */
+  .suggestion-card {
+    cursor: pointer;
+    padding: 12px;
+    transition: all 200ms;
+  }
+
+  .suggestion-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .route-card {
+    position: relative;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    transition: all 200ms;
+  }
+
+  .route-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Text styles */
+  .text-panel-title {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .text-panel-subtitle {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .text-body {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .text-body-sm {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .text-caption {
+    font-size: 12px;
+  }
+
+  /* Dropdown/suggestion list */
+  .suggestions-container {
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .suggestions-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 12px 8px 12px;
+  }
+
+  .suggestion-divider {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* Metric card */
+  .metric-card {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+  }
+
+  /* Stat row */
+  .stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Badge */
+  .badge {
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* Section divider */
+  .section-divider {
+    margin: 12px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Loading state */
+  .loading-skeleton {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Error state */
+  .error-box {
+    border-radius: 8px;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    background: rgba(220, 38, 38, 0.1);
+    padding: 12px;
+  }
+
+  /* Success state */
+  .success-box {
+    border-radius: 12px;
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    background: rgba(5, 150, 105, 0.1);
+    padding: 16px;
+  }
+
+  /* Scroll container */
+  .scroll-container {
+    overflow-y: auto;
+  }
+
+  .scroll-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scroll-container::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: rgba(107, 114, 128, 0.5);
+  }
+
+  .scroll-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(107, 114, 128, 0.7);
+  }
+
+  /* Fixed positioning utilities */
+  .panel-fixed-left {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 9999;
+  }
+
+  .panel-fixed-right {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 9999;
+  }
+
+  .panel-fixed-bottom-left {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    z-index: 9999;
+  }
+
+  .panel-fixed-bottom-right {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 9999;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .panel-fixed-left {
+      top: 8px;
+      left: 8px;
+    }
+
+    .panel-fixed-right {
+      top: 8px;
+      right: 8px;
+    }
+
+    .panel-fixed-bottom-left {
+      bottom: 8px;
+      left: 8px;
+    }
+
+    .panel-fixed-bottom-right {
+      bottom: 8px;
+      right: 8px;
+    }
+
+    .glass-panel {
+      border-radius: 12px;
+    }
+  }
+}
+
+/* -----------------------------------------------------------
+   Dark mode text colors (with proper CSS var usage)
+----------------------------------------------------------- */
+@layer utilities {
+  .text-panel-light {
+    color: rgb(var(--text));
+  }
+
+  .text-panel-muted-light {
+    color: rgb(var(--text-mute));
+  }
+
+  /* Add responsive font sizing */
+  .text-responsive {
+    font-size: 14px;
+  }
+
+  @media (min-width: 768px) {
+    .text-responsive {
+      font-size: 16px;
+    }
+  }
+
+  /* Custom animations */
+  @keyframes slideUp {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  /* Glassmorphism variations */
+  .glass-light {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .glass-medium {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .glass-heavy {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 }

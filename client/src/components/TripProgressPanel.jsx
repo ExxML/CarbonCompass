@@ -1,7 +1,16 @@
+/**
+ * Refactored Trip Progress Panel Component
+ * Following SOLID principles:
+ * - Single Responsibility: Displays trip progress
+ * - Uses composition with smaller UI components
+ * - Clean separation of presentation from logic
+ */
+
 import React from 'react';
-import { MapPin, Clock, Route, Square, StopCircle, Navigation } from 'lucide-react';
-import { formatDuration, formatDistance } from '../utils/tripTrackingUtils';
+import { Navigation, MapPin, Clock, Route, StopCircle } from 'lucide-react';
+import { PanelHeader, MetricDisplay, Divider } from './ui/SharedComponents';
 import { useResponsive } from '../hooks/useResponsive';
+import { formatDuration, formatDistance } from '../utils/tripTrackingUtils';
 
 const TripProgressPanel = ({
   isDarkMode = false,
@@ -10,19 +19,14 @@ const TripProgressPanel = ({
   isTracking,
   onStopTracking,
 }) => {
-  // Responsive hook - must be called before any conditional returns
   const { getPanelWidth, isMobile } = useResponsive();
 
   if (!isTracking) return null;
 
-  // Debug logging
-  console.log('TripProgressPanel tripProgress:', tripProgress);
-  if (tripProgress) {
-    console.log('tripProgress.eta:', tripProgress.eta, typeof tripProgress.eta);
-  }
+  const textColor = isDarkMode ? 'text-gray-50' : 'text-gray-900';
+  const mutedColor = isDarkMode ? 'text-gray-400' : 'text-gray-600';
 
   const formatArrival = (date) => {
-    console.log('formatArrival called with:', date, typeof date);
     if (!date) return '--:--';
     if (typeof date === 'string') {
       const parsedDate = new Date(date);
@@ -35,266 +39,84 @@ const TripProgressPanel = ({
     return '--:--';
   };
 
+  const position = isMobile
+    ? 'fixed top-[26px] right-2 z-[9999]'
+    : 'fixed top-[198px] right-4 z-[9999]';
+
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: isMobile ? '26px' : '198px',
-        right: isMobile ? '8px' : '16px',
-        zIndex: 9999,
-        transform: isMobile ? `translateY(${0 * 60}px)` : 'none',
-      }}
-    >
+    <div className={position}>
       <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(15px)',
-          borderRadius: isMobile ? '12px' : '16px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          width: `${getPanelWidth(320)}px`,
-          padding: isMobile ? '12px' : '16px',
-        }}
+        className={isMobile ? 'glass-panel-mobile' : 'glass-panel'}
+        style={{ width: `${getPanelWidth(320)}px`, padding: isMobile ? '12px' : '16px' }}
       >
-        {/* Header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '12px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Navigation style={{ width: '20px', height: '20px', color: '#10b981' }} />
-            <span
-              style={{
-                fontSize: '16px',
-                fontWeight: '500',
-                color: isDarkMode ? '#f9fafb' : '#111827',
-                fontFamily: 'Roboto, sans-serif',
-              }}
-            >
-              Trip Progress
-            </span>
+        {/* Header with Stop Button */}
+        <div className="flex items-center justify-between p-4 border-b border-white/25">
+          <div className="flex items-center gap-2">
+            <Navigation className="w-5 h-5 text-emerald-600" />
+            <span className={`text-base font-medium ${textColor}`}>Trip Progress</span>
           </div>
-          <button
-            onClick={onStopTracking}
-            style={{
-              padding: '6px 12px',
-              borderRadius: '8px',
-              background: 'rgba(220, 38, 38, 0.8)',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = 'rgba(220, 38, 38, 1)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = 'rgba(220, 38, 38, 0.8)';
-            }}
-          >
-            <StopCircle style={{ width: '14px', height: '14px', color: 'white' }} />
-            <span
-              style={{
-                fontSize: '12px',
-                fontWeight: '500',
-                color: 'white',
-                fontFamily: 'Roboto, sans-serif',
-              }}
-            >
-              Stop
-            </span>
+          <button onClick={onStopTracking} className="btn-danger">
+            <StopCircle className="w-4 h-4" />
+            <span className="text-sm font-medium">Stop</span>
           </button>
         </div>
 
-        {/* Progress Bar */}
-        {tripProgress && (
-          <div style={{ marginBottom: '16px' }}>
-            <div
-              style={{
-                width: '100%',
-                height: '8px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '4px',
-                overflow: 'hidden',
-              }}
-            >
+        {/* Progress Content */}
+        <div className="p-4">
+          {/* ETA Display */}
+          <div className="text-center mb-4">
+            <div className={`text-xs ${mutedColor} mb-1`}>Estimated Arrival</div>
+            <div className={`text-4xl font-bold ${textColor}`}>
+              {formatArrival(tripProgress?.eta)}
+            </div>
+          </div>
+
+          <Divider />
+
+          {/* Progress Metrics */}
+          <div className="space-y-3">
+            <MetricDisplay
+              icon={Route}
+              label="Distance Remaining"
+              value={formatDistance(tripProgress?.distanceRemaining)}
+              color="#3b82f6"
+              isDarkMode={isDarkMode}
+            />
+            <MetricDisplay
+              icon={Clock}
+              label="Time Remaining"
+              value={formatDuration(tripProgress?.timeRemaining)}
+              color="#f59e0b"
+              isDarkMode={isDarkMode}
+            />
+            <MetricDisplay
+              icon={MapPin}
+              label="Progress"
+              value={`${tripProgress?.percentComplete || 0}%`}
+              color="#10b981"
+              isDarkMode={isDarkMode}
+            />
+          </div>
+
+          <Divider />
+
+          {/* Progress Bar */}
+          <div className="mt-3">
+            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
               <div
-                style={{
-                  width: `${tripProgress.progressPercentage}%`,
-                  height: '100%',
-                  background: tripProgress.isOffRoute
-                    ? 'linear-gradient(90deg, #f59e0b, #d97706)'
-                    : 'linear-gradient(90deg, #10b981, #059669)',
-                  borderRadius: '4px',
-                  transition: 'width 0.5s ease',
-                }}
+                className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${tripProgress?.percentComplete || 0}%` }}
               />
             </div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: '4px',
-              }}
-            >
-              <span
-                style={{
-                  fontSize: '12px',
-                  color: isDarkMode ? '#d1d5db' : '#6b7280',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
-                {Math.round(tripProgress.progressPercentage || 0)}% complete
-              </span>
-              {tripProgress.isOffRoute && (
-                <span
-                  style={{
-                    fontSize: '12px',
-                    color: '#f59e0b',
-                    fontFamily: 'Roboto, sans-serif',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                >
-                  <AlertTriangle style={{ width: '12px', height: '12px' }} />
-                  Off route
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Trip Stats */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '12px',
-            marginBottom: '12px',
-          }}
-        >
-          {/* Remaining Time */}
-          <div
-            style={{
-              padding: '12px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-              <Clock style={{ width: '14px', height: '14px', color: '#10b981' }} />
-              <span
-                style={{
-                  fontSize: '12px',
-                  color: isDarkMode ? '#d1d5db' : '#6b7280',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
-                Remaining
-              </span>
-            </div>
-            <div
-              style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                color: isDarkMode ? '#f9fafb' : '#111827',
-                fontFamily: 'Roboto, sans-serif',
-              }}
-            >
-              {tripProgress ? formatDuration(tripProgress.remainingTime) : '--'}
-            </div>
           </div>
 
-          {/* Remaining Distance */}
-          <div
-            style={{
-              padding: '12px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-              <MapPin style={{ width: '14px', height: '14px', color: '#10b981' }} />
-              <span
-                style={{
-                  fontSize: '12px',
-                  color: isDarkMode ? '#d1d5db' : '#6b7280',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
-                Distance
-              </span>
+          {/* Current Location Info */}
+          {currentLocation && (
+            <div className={`mt-3 text-xs ${mutedColor} text-center`}>
+              Current: {currentLocation.lat.toFixed(4)}, {currentLocation.lng.toFixed(4)}
             </div>
-            <div
-              style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                color: isDarkMode ? '#f9fafb' : '#111827',
-                fontFamily: 'Roboto, sans-serif',
-              }}
-            >
-              {tripProgress ? formatDistance(tripProgress.remainingDistance) : '--'}
-            </div>
-          </div>
+          )}
         </div>
-
-        {/* Arrival Time */}
-        {tripProgress && (
-          <div
-            style={{
-              padding: '12px',
-              background: 'rgba(16, 185, 129, 0.05)',
-              borderRadius: '8px',
-              border: '1px solid rgba(16, 185, 129, 0.2)',
-              textAlign: 'center',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '12px',
-                color: isDarkMode ? '#10b981' : '#047857',
-                fontFamily: 'Roboto, sans-serif',
-                marginBottom: '2px',
-              }}
-            >
-              Estimated Arrival
-            </div>
-            <div
-              style={{
-                fontSize: '18px',
-                fontWeight: '700',
-                color: isDarkMode ? '#10b981' : '#047857',
-                fontFamily: 'Roboto, sans-serif',
-              }}
-            >
-              {formatArrival(tripProgress.eta)}
-            </div>
-          </div>
-        )}
-
-        {/* Location Accuracy */}
-        {currentLocation && (
-          <div
-            style={{
-              marginTop: '8px',
-              fontSize: '10px',
-              color: isDarkMode ? '#9ca3af' : '#6b7280',
-              textAlign: 'center',
-              fontFamily: 'Roboto, sans-serif',
-            }}
-          >
-            Accuracy: ±{Math.round(currentLocation.accuracy)}m
-          </div>
-        )}
       </div>
     </div>
   );
