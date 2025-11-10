@@ -12,7 +12,7 @@ export const WeatherMetric = ({ icon, label, value, color, isDarkMode }) => {
 
   return (
     <div className="metric-card">
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2 flex items-center justify-between">
         <IconComponent style={{ width: '20px', height: '20px', color }} />
         <span className={`text-xl font-bold ${textColor}`}>{value}</span>
       </div>

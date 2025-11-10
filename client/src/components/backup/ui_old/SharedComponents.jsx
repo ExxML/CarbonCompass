@@ -3,6 +3,7 @@
  * Single Responsibility: Provide reusable, presentational UI components
  */
 
+import React from 'react';
 import { X } from 'lucide-react';
 
 /**

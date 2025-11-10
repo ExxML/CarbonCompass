@@ -6,7 +6,6 @@
  * - Clean separation of presentation from logic
  */
 
-import React from 'react';
 import { Navigation, MapPin, Clock, Route, StopCircle } from 'lucide-react';
 import { PanelHeader, MetricDisplay, Divider } from './ui/SharedComponents';
 import { useResponsive } from '../hooks/useResponsive';
@@ -50,13 +49,13 @@ const TripProgressPanel = ({
         style={{ width: `${getPanelWidth(320)}px`, padding: isMobile ? '12px' : '16px' }}
       >
         {/* Header with Stop Button */}
-        <div className="flex items-center justify-between p-4 border-b border-white/25">
+        <div className="flex items-center justify-between border-b border-white/25 p-4">
           <div className="flex items-center gap-2">
-            <Navigation className="w-5 h-5 text-emerald-600" />
+            <Navigation className="h-5 w-5 text-emerald-600" />
             <span className={`text-base font-medium ${textColor}`}>Trip Progress</span>
           </div>
           <button onClick={onStopTracking} className="btn-danger">
-            <StopCircle className="w-4 h-4" />
+            <StopCircle className="h-4 w-4" />
             <span className="text-sm font-medium">Stop</span>
           </button>
         </div>
@@ -64,7 +63,7 @@ const TripProgressPanel = ({
         {/* Progress Content */}
         <div className="p-4">
           {/* ETA Display */}
-          <div className="text-center mb-4">
+          <div className="mb-4 text-center">
             <div className={`text-xs ${mutedColor} mb-1`}>Estimated Arrival</div>
             <div className={`text-4xl font-bold ${textColor}`}>
               {formatArrival(tripProgress?.eta)}
@@ -102,9 +101,9 @@ const TripProgressPanel = ({
 
           {/* Progress Bar */}
           <div className="mt-3">
-            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
               <div
-                className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
+                className="h-2 rounded-full bg-emerald-600 transition-all duration-300"
                 style={{ width: `${tripProgress?.percentComplete || 0}%` }}
               />
             </div>
