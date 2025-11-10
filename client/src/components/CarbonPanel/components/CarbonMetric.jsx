@@ -24,8 +24,8 @@ const CarbonMetric = ({ icon, value, label, bgColor, borderColor, iconColor, isD
         gap: '6px',
         padding: '8px 10px',
         borderRadius: '8px',
-        background: bgColor,
-        border: `1px solid ${borderColor}`,
+        background: 'rgba(220, 220, 220, 0.28)',
+        border: '1px solid rgba(220, 220, 220, 0.38)',
         minWidth: '0',
         flex: '1 1 0',
       }}
