@@ -6,43 +6,17 @@ import { Cloud } from 'lucide-react';
 const MinimizedView = ({ isDarkMode, weatherData, isMobile, onExpand }) => {
   return (
     <div
-      style={{
-        position: 'fixed',
-        bottom: isMobile ? '8px' : '16px',
-        right: isMobile ? '8px' : '16px',
-        zIndex: 9999,
-      }}
+      className={`fixed ${isMobile ? 'bottom-2 right-2' : 'bottom-4 right-4'} z-[9999]`}
     >
       <div
         onClick={onExpand}
-        style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '12px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          padding: '12px',
-          cursor: 'pointer',
-          transition: 'all 0.3s',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'none';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-        }}
+        className="minimized-panel bg-white/10 backdrop-blur-[10px] rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] border border-white/20 p-3 cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.02] hover:border-white/30"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', pointerEvents: 'none' }}>
-          <Cloud style={{ width: '20px', height: '20px', color: '#6b7280' }} />
+        <div className="flex items-center gap-2 pointer-events-none">
+          <Cloud className="w-5 h-5 text-gray-500" />
           <span
-            style={{
-              fontSize: '14px',
-              fontWeight: '500',
-              color: isDarkMode ? '#f9fafb' : '#374151',
-              fontFamily: 'Roboto, sans-serif',
-            }}
+            className={`text-sm font-medium font-['Roboto'] ${isDarkMode ? 'text-gray-50' : 'text-gray-700'
+              }`}
           >
             {weatherData?.temperature ?? '--'}°C
           </span>

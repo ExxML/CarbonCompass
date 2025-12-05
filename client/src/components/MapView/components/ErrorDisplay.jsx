@@ -7,41 +7,9 @@ function ErrorDisplay({ error, title = 'Error' }) {
   if (!error) return null;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        zIndex: 10000,
-        background: 'rgba(220, 38, 38, 0.95)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: '12px',
-        padding: '16px 20px',
-        maxWidth: '300px',
-        textAlign: 'center',
-      }}
-    >
-      <div
-        style={{
-          fontSize: '14px',
-          fontWeight: '500',
-          color: 'white',
-          fontFamily: 'Roboto, sans-serif',
-          marginBottom: '8px',
-        }}
-      >
-        {title}
-      </div>
-      <div
-        style={{
-          fontSize: '12px',
-          color: 'rgba(255, 255, 255, 0.9)',
-          fontFamily: 'Roboto, sans-serif',
-        }}
-      >
-        {error}
-      </div>
+    <div className="fixed left-1/2 top-1/2 z-[10000] max-w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-red-600/95 px-5 py-4 text-center backdrop-blur-[10px]">
+      <div className="mb-2 font-['Roboto'] text-sm font-medium text-white">{title}</div>
+      <div className="font-['Roboto'] text-xs text-white/90">{error}</div>
     </div>
   );
 }

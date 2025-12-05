@@ -6,74 +6,28 @@ import logo_1 from '../../assets/LOGO_1.png';
  */
 const Header = ({ onNavigateToSection }) => {
   return (
-    <header
-      style={{
-        position: 'absolute',
-        top: '20px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        color: '#1A3B00',
-        fontSize: '24px',
-        fontWeight: '400',
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '200px',
-        fontFamily: '"Roboto", system-ui, -apple-system, sans-serif',
-        zIndex: 10,
-        whiteSpace: 'nowrap',
-        width: 'auto',
-        minWidth: 'max-content',
-        padding: '8px 10px',
-      }}
-    >
+    <header className="absolute top-5 left-1/2 -translate-x-1/2 text-[#1A3B00] text-2xl font-normal flex flex-row items-center justify-center gap-[200px] font-['Roboto'] z-10 whitespace-nowrap w-auto min-w-max py-2 px-2.5">
       {/* Logo */}
       <img
         src={logo_1}
         alt="Logo"
-        style={{
-          width: '150px',
-          height: '150px',
-          flexShrink: 0,
-        }}
+        className="w-[150px] h-[150px] flex-shrink-0"
       />
       <p
         onClick={() => onNavigateToSection('gyi-section')}
-        style={{
-          margin: 0,
-          flexShrink: 0,
-          cursor: 'pointer',
-          transition: 'color 0.3s ease',
-        }}
-        onMouseOver={(e) => (e.target.style.color = '#0d5f2b')}
-        onMouseOut={(e) => (e.target.style.color = '#1A3B00')}
+        className="m-0 flex-shrink-0 cursor-pointer transition-colors duration-300 hover:text-[#0d5f2b]"
       >
         compass
       </p>
       <p
         onClick={() => onNavigateToSection('about-carbon-section')}
-        style={{
-          margin: 0,
-          flexShrink: 0,
-          cursor: 'pointer',
-          transition: 'color 0.3s ease',
-        }}
-        onMouseOver={(e) => (e.target.style.color = '#0d5f2b')}
-        onMouseOut={(e) => (e.target.style.color = '#1A3B00')}
+        className="m-0 flex-shrink-0 cursor-pointer transition-colors duration-300 hover:text-[#0d5f2b]"
       >
         about us
       </p>
       <p
         onClick={() => onNavigateToSection('gyi-section')}
-        style={{
-          margin: 0,
-          flexShrink: 0,
-          cursor: 'pointer',
-          transition: 'color 0.3s ease',
-        }}
-        onMouseOver={(e) => (e.target.style.color = '#0d5f2b')}
-        onMouseOut={(e) => (e.target.style.color = '#1A3B00')}
+        className="m-0 flex-shrink-0 cursor-pointer transition-colors duration-300 hover:text-[#0d5f2b]"
       >
         getting involved
       </p>

@@ -5,48 +5,22 @@ import { X } from 'lucide-react';
  */
 const Header = ({ config, isDarkMode, onClose }) => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '16px',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontSize: '20px' }}>{config.icon}</span>
+    <div className="flex items-center justify-between border-b border-white/25 p-4">
+      <div className="flex items-center gap-2">
+        <span className="text-xl">{config.icon}</span>
         <span
-          style={{
-            fontSize: '16px',
-            fontWeight: '500',
-            color: isDarkMode ? '#f9fafb' : '#111827',
-            fontFamily: 'Roboto, sans-serif',
-          }}
+          className={`font-['Roboto'] text-base font-medium ${
+            isDarkMode ? 'text-gray-50' : 'text-gray-900'
+          }`}
         >
           {config.name} Route
         </span>
       </div>
       <button
         onClick={onClose}
-        style={{
-          padding: '4px',
-          borderRadius: '50%',
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          transition: 'background-color 0.2s',
-        }}
-        onMouseOver={(e) => {
-          e.currentTarget.style.backgroundColor = isDarkMode
-            ? 'rgba(255, 255, 255, 0.1)'
-            : '#f3f4f6';
-        }}
-        onMouseOut={(e) => {
-          e.currentTarget.style.backgroundColor = 'transparent';
-        }}
+        className="cursor-pointer rounded-full border-none bg-transparent p-1 transition-colors hover:bg-white/10 dark:hover:bg-white/10"
       >
-        <X style={{ width: '16px', height: '16px', color: isDarkMode ? '#d1d5db' : '#6b7280' }} />
+        <X className={`h-4 w-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-500'}`} />
       </button>
     </div>
   );

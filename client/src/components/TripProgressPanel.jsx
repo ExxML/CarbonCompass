@@ -36,156 +36,76 @@ const TripProgressPanel = ({
     return '--:--';
   };
 
-  const positionStyle = isMobile
-    ? { position: 'fixed', top: '50%', right: '8px', transform: 'translateY(-50%)', zIndex: 9999 }
-    : { position: 'fixed', top: '50%', right: '16px', transform: 'translateY(-50%)', zIndex: 9999 };
-
   return (
-    <div style={positionStyle}>
+    <div
+      className={`fixed top-1/2 -translate-y-1/2 z-[9999] ${isMobile ? 'right-2' : 'right-4'
+        }`}
+    >
       <div
-        className={isMobile ? 'glass-panel-mobile' : 'glass-panel'}
-        style={{
-          width: `${getPanelWidth(320)}px`,
-          padding: '16px',
-        }}
+        className={isMobile ? 'glass-panel-mobile p-4' : 'glass-panel p-4'}
+        style={{ width: `${getPanelWidth(320)}px` }}
       >
         {/* Compact Header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '12px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div
-              style={{
-                background: 'rgba(16, 185, 129, 0.15)',
-                borderRadius: '8px',
-                padding: '6px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Navigation style={{ width: '18px', height: '18px', color: '#10b981' }} />
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="bg-emerald-500/15 rounded-lg p-1.5 flex items-center justify-center">
+              <Navigation className="w-4.5 h-4.5 text-emerald-500" />
             </div>
             <span
-              style={{
-                fontSize: '15px',
-                fontWeight: '600',
-                color: isDarkMode ? '#f9fafb' : '#111827',
-                fontFamily: 'Roboto, sans-serif',
-              }}
+              className={`text-[15px] font-semibold font-['Roboto'] ${isDarkMode ? 'text-gray-50' : 'text-gray-900'
+                }`}
             >
               Trip Progress
             </span>
           </div>
           <button
             onClick={onStopTracking}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 12px',
-              background: 'rgba(239, 68, 68, 0.15)',
-              borderRadius: '8px',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.25)';
-              e.currentTarget.style.transform = 'scale(1.02)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/15 rounded-lg border border-red-500/30 cursor-pointer transition-all duration-200 hover:bg-red-500/25 hover:scale-[1.02]"
           >
-            <StopCircle style={{ width: '14px', height: '14px', color: '#ef4444' }} />
-            <span
-              style={{
-                fontSize: '13px',
-                fontWeight: '500',
-                color: '#ef4444',
-                fontFamily: 'Roboto, sans-serif',
-              }}
-            >
-              Stop
-            </span>
+            <StopCircle className="w-3.5 h-3.5 text-red-500" />
+            <span className="text-[13px] font-medium text-red-500 font-['Roboto']">Stop</span>
           </button>
         </div>
 
         {/* ETA Display */}
         <div
-          style={{
-            background: isDarkMode ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.05)',
-            borderRadius: '10px',
-            padding: '12px',
-            marginBottom: '12px',
-            textAlign: 'center',
-            border: `1px solid ${isDarkMode ? 'rgba(16, 185, 129, 0.2)' : 'rgba(16, 185, 129, 0.15)'}`,
-          }}
+          className={`rounded-[10px] p-3 mb-3 text-center ${isDarkMode
+              ? 'bg-emerald-500/10 border border-emerald-500/20'
+              : 'bg-emerald-500/5 border border-emerald-500/15'
+            }`}
         >
           <div
-            style={{
-              fontSize: '11px',
-              color: isDarkMode ? '#9ca3af' : '#6b7280',
-              marginBottom: '4px',
-              fontFamily: 'Roboto, sans-serif',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-            }}
+            className={`text-[11px] mb-1 font-['Roboto'] uppercase tracking-wider ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+              }`}
           >
             Estimated Arrival
           </div>
-          <div
-            style={{
-              fontSize: '28px',
-              fontWeight: '700',
-              color: '#10b981',
-              fontFamily: 'Roboto, sans-serif',
-            }}
-          >
+          <div className="text-[28px] font-bold text-emerald-500 font-['Roboto']">
             {formatArrival(tripProgress?.eta)}
           </div>
         </div>
 
         {/* Progress Metrics - Compact Grid */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+        <div className="flex flex-col gap-2 mb-3">
           {/* Distance */}
           <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 12px',
-              background: isDarkMode ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)',
-              borderRadius: '8px',
-              border: `1px solid ${isDarkMode ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.15)'}`,
-            }}
+            className={`flex items-center justify-between px-3 py-2.5 rounded-lg ${isDarkMode
+                ? 'bg-blue-500/10 border border-blue-500/20'
+                : 'bg-blue-500/5 border border-blue-500/15'
+              }`}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Route style={{ width: '16px', height: '16px', color: '#3b82f6', flexShrink: 0 }} />
+            <div className="flex items-center gap-2.5">
+              <Route className="w-4 h-4 text-blue-500 flex-shrink-0" />
               <span
-                style={{
-                  fontSize: '13px',
-                  color: isDarkMode ? '#d1d5db' : '#6b7280',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
+                className={`text-[13px] font-['Roboto'] ${isDarkMode ? 'text-gray-300' : 'text-gray-500'
+                  }`}
               >
                 Distance
               </span>
             </div>
             <span
-              style={{
-                fontSize: '14px',
-                fontWeight: '600',
-                color: isDarkMode ? '#f9fafb' : '#111827',
-                fontFamily: 'Roboto, sans-serif',
-              }}
+              className={`text-sm font-semibold font-['Roboto'] ${isDarkMode ? 'text-gray-50' : 'text-gray-900'
+                }`}
             >
               {formatDistance(tripProgress?.distanceRemaining)}
             </span>
@@ -193,35 +113,23 @@ const TripProgressPanel = ({
 
           {/* Time */}
           <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 12px',
-              background: isDarkMode ? 'rgba(245, 158, 11, 0.1)' : 'rgba(245, 158, 11, 0.05)',
-              borderRadius: '8px',
-              border: `1px solid ${isDarkMode ? 'rgba(245, 158, 11, 0.2)' : 'rgba(245, 158, 11, 0.15)'}`,
-            }}
+            className={`flex items-center justify-between px-3 py-2.5 rounded-lg ${isDarkMode
+                ? 'bg-amber-500/10 border border-amber-500/20'
+                : 'bg-amber-500/5 border border-amber-500/15'
+              }`}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Clock style={{ width: '16px', height: '16px', color: '#f59e0b', flexShrink: 0 }} />
+            <div className="flex items-center gap-2.5">
+              <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
               <span
-                style={{
-                  fontSize: '13px',
-                  color: isDarkMode ? '#d1d5db' : '#6b7280',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
+                className={`text-[13px] font-['Roboto'] ${isDarkMode ? 'text-gray-300' : 'text-gray-500'
+                  }`}
               >
                 Time Left
               </span>
             </div>
             <span
-              style={{
-                fontSize: '14px',
-                fontWeight: '600',
-                color: isDarkMode ? '#f9fafb' : '#111827',
-                fontFamily: 'Roboto, sans-serif',
-              }}
+              className={`text-sm font-semibold font-['Roboto'] ${isDarkMode ? 'text-gray-50' : 'text-gray-900'
+                }`}
             >
               {formatDuration(tripProgress?.timeRemaining)}
             </span>
@@ -229,36 +137,21 @@ const TripProgressPanel = ({
 
           {/* Progress Percentage */}
           <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 12px',
-              background: isDarkMode ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.05)',
-              borderRadius: '8px',
-              border: `1px solid ${isDarkMode ? 'rgba(16, 185, 129, 0.2)' : 'rgba(16, 185, 129, 0.15)'}`,
-            }}
+            className={`flex items-center justify-between px-3 py-2.5 rounded-lg ${isDarkMode
+                ? 'bg-emerald-500/10 border border-emerald-500/20'
+                : 'bg-emerald-500/5 border border-emerald-500/15'
+              }`}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <MapPin style={{ width: '16px', height: '16px', color: '#10b981', flexShrink: 0 }} />
+            <div className="flex items-center gap-2.5">
+              <MapPin className="w-4 h-4 text-emerald-500 flex-shrink-0" />
               <span
-                style={{
-                  fontSize: '13px',
-                  color: isDarkMode ? '#d1d5db' : '#6b7280',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
+                className={`text-[13px] font-['Roboto'] ${isDarkMode ? 'text-gray-300' : 'text-gray-500'
+                  }`}
               >
                 Progress
               </span>
             </div>
-            <span
-              style={{
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#10b981',
-                fontFamily: 'Roboto, sans-serif',
-              }}
-            >
+            <span className="text-sm font-semibold text-emerald-500 font-['Roboto']">
               {tripProgress?.percentComplete || 0}%
             </span>
           </div>
@@ -266,37 +159,20 @@ const TripProgressPanel = ({
 
         {/* Progress Bar */}
         <div
-          style={{
-            background: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-            borderRadius: '9999px',
-            height: '6px',
-            overflow: 'hidden',
-            position: 'relative',
-          }}
+          className={`rounded-full h-1.5 overflow-hidden relative ${isDarkMode ? 'bg-white/5' : 'bg-black/5'
+            }`}
         >
           <div
-            style={{
-              height: '6px',
-              borderRadius: '9999px',
-              background: 'linear-gradient(90deg, #10b981, #34d399)',
-              transition: 'all 0.5s ease',
-              width: `${tripProgress?.percentComplete || 0}%`,
-              boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)',
-            }}
+            className="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+            style={{ width: `${tripProgress?.percentComplete || 0}%` }}
           />
         </div>
 
         {/* Current Location Info */}
         {currentLocation && (
           <div
-            style={{
-              marginTop: '10px',
-              fontSize: '10px',
-              color: isDarkMode ? '#9ca3af' : '#6b7280',
-              textAlign: 'center',
-              fontFamily: 'Roboto, sans-serif',
-              opacity: 0.7,
-            }}
+            className={`mt-2.5 text-[10px] text-center font-['Roboto'] opacity-70 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+              }`}
           >
             {currentLocation.lat.toFixed(4)}, {currentLocation.lng.toFixed(4)}
           </div>

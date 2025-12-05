@@ -11,50 +11,11 @@ const FeatureCard = ({ icon, title, href }) => {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      style={{
-        textDecoration: 'none',
-        color: 'inherit',
-        display: 'block',
-      }}
+      className="no-underline text-inherit block"
     >
-      <div
-        style={{
-          flex: '1',
-          minWidth: '280px',
-          padding: '40px 20px',
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          borderRadius: '16px',
-          textAlign: 'center',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-          transition: 'all 0.3s ease',
-          cursor: 'pointer',
-        }}
-        onMouseOver={(e) => {
-          e.currentTarget.style.transform = 'translateY(-5px)';
-          e.currentTarget.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.15)';
-        }}
-        onMouseOut={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
-        }}
-      >
-        <IconComponent
-          style={{
-            width: '48px',
-            height: '48px',
-            color: '#1A3B00',
-            margin: '0 auto 20px',
-          }}
-        />
-        <h3
-          style={{
-            color: '#1A3B00',
-            fontSize: '16px',
-            fontWeight: '400',
-            fontFamily: '"Roboto", system-ui, -apple-system, sans-serif',
-            margin: 0,
-          }}
-        >
+      <div className="flex-1 min-w-[280px] py-10 px-5 bg-white/80 rounded-2xl text-center shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all duration-300 cursor-pointer hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)]">
+        <IconComponent className="w-12 h-12 text-[#1A3B00] mx-auto mb-5" />
+        <h3 className="text-[#1A3B00] text-base font-normal font-['Roboto'] m-0">
           {title}
         </h3>
       </div>
@@ -88,81 +49,30 @@ const AboutSection = () => {
   return (
     <div
       id="about-carbon-section"
-      style={{
-        maxWidth: '1200px',
-        width: '90%',
-        textAlign: 'center',
-        marginTop: '90px',
-        marginBottom: '80px',
-        padding: '60px 40px',
-        alignSelf: 'center',
-        zIndex: 10,
-        position: 'relative',
-      }}
+      className="max-w-[1200px] w-[90%] text-center mt-[90px] mb-20 py-[60px] px-10 self-center z-10 relative"
     >
-      <h2
-        style={{
-          color: '#1A3B00',
-          fontSize: '48px',
-          fontWeight: '400',
-          fontFamily: '"Roboto", system-ui, -apple-system, sans-serif',
-          margin: '0 0 20px 0',
-          lineHeight: '0.9',
-          textAlign: 'center',
-        }}
-      >
-        <span
-          style={{
-            fontStyle: 'italic',
-            fontSize: '36px',
-            fontFamily: '"Garamond", "Times New Roman", serif',
-          }}
-        >
+      <h2 className="text-[#1A3B00] text-5xl font-normal font-['Roboto'] m-0 mb-5 leading-[0.9] text-center">
+        <span className="italic text-4xl font-['Garamond']">
           take a moment to
         </span>
         <br />
-        <span
-          style={{
-            fontFamily: '"Microsoft Himalaya", serif',
-            fontWeight: '400',
-            fontSize: '100px',
-            letterSpacing: '-3px',
-          }}
-        >
+        <span className="font-['Microsoft_Himalaya'] font-normal text-[100px] tracking-[-3px]">
           understand your steps.
         </span>
       </h2>
 
-      <div
-        style={{
-          color: '#666',
-          fontSize: '16px',
-          fontWeight: '400',
-          fontFamily: '"Roboto", system-ui, -apple-system, sans-serif',
-          lineHeight: '1.0',
-          marginBottom: '40px',
-          textAlign: 'center',
-        }}
-      >
-        <p style={{ margin: '0 0 10px 0' }}>
-          <span style={{ fontStyle: 'italic' }}>/kärben kom·pəs/</span> · carbon compass ·{' '}
-          <span style={{ fontStyle: 'italic' }}>noun</span>
+      <div className="text-[#666] text-base font-normal font-['Roboto'] leading-none mb-10 text-center">
+        <p className="m-0 mb-2.5">
+          <span className="italic">/kärben kom·pəs/</span> · carbon compass ·{' '}
+          <span className="italic">noun</span>
         </p>
-        <p style={{ margin: 0 }}>
+        <p className="m-0">
           Navigate through the city with a deeper understanding of every trip you make.
         </p>
       </div>
 
       {/* Feature Cards */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          gap: '40px',
-          marginTop: '60px',
-          flexWrap: 'wrap',
-        }}
-      >
+      <div className="flex justify-between gap-10 mt-[60px] flex-wrap">
         {features.map((feature, index) => (
           <FeatureCard key={index} icon={feature.icon} title={feature.title} href={feature.href} />
         ))}

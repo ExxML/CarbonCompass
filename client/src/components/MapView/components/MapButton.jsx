@@ -29,52 +29,23 @@ const MapButton = ({
   return (
     <button
       onClick={onClick}
+      className="fixed right-4 z-[9999] backdrop-blur-[10px] rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] py-3 px-4 cursor-pointer transition-all duration-300 flex items-center gap-2 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)]"
       style={{
-        position: 'fixed',
         top: `${16 + position * 60}px`,
-        right: '16px',
-        zIndex: 9999,
         background: bgColor,
-        backdropFilter: 'blur(10px)',
-        borderRadius: '12px',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-        padding: '12px 16px',
         border: `1px solid ${borderColor}`,
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
         width: width,
-      }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.15)';
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
       }}
     >
       {Icon && (
         <Icon
-          style={{
-            width: '18px',
-            height: '18px',
-            color: finalIconColor,
-            flexShrink: 0,
-          }}
+          className="w-4.5 h-4.5 flex-shrink-0"
+          style={{ color: finalIconColor }}
         />
       )}
       <span
-        style={{
-          fontSize: '14px',
-          fontWeight: '500',
-          color: textColor,
-          fontFamily: 'Roboto, sans-serif',
-          transition: 'color 0.3s ease',
-          whiteSpace: 'nowrap',
-        }}
+        className="text-sm font-medium font-['Roboto'] transition-colors duration-300 whitespace-nowrap"
+        style={{ color: textColor }}
       >
         {label}
       </span>

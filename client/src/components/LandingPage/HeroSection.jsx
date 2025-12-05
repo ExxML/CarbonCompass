@@ -10,84 +10,27 @@ const HeroSection = ({ onNavigateToMap }) => {
   return (
     <div
       id="gyi-section"
-      style={{
-        position: 'relative',
-        width: '1440px',
-        height: '665px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: '0',
-        maxWidth: '90vw',
-        zIndex: 10,
-      }}
+      className="relative w-[1440px] h-[665px] flex flex-col items-center justify-center mt-0 max-w-[90vw] z-10"
     >
       {/* Background map image */}
       <div
-        style={{
-          position: 'absolute',
-          top: '0',
-          left: '0',
-          right: '0',
-          height: '665px',
-          background: `url(${map_behind}) center center/cover no-repeat`,
-          backgroundSize: 'cover',
-          opacity: 0.9,
-          zIndex: 1,
-          borderRadius: '44px',
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-        }}
+        className="absolute top-0 left-0 right-0 h-[665px] bg-cover bg-center bg-no-repeat opacity-90 z-[1] rounded-[44px] shadow-[0_10px_30px_rgba(0,0,0,0.1)]"
+        style={{ backgroundImage: `url(${map_behind})` }}
       />
 
       {/* GYI Image */}
       <img
         src={gyi}
         alt="Logo"
-        style={{
-          width: '960px',
-          height: 'auto',
-          flexShrink: 0,
-          zIndex: 2,
-          position: 'relative',
-          maxWidth: '90vw',
-        }}
+        className="w-[960px] h-auto flex-shrink-0 z-[2] relative max-w-[90vw]"
       />
 
       {/* CTA Button - Centered and positioned lower */}
       <button
         onClick={onNavigateToMap}
-        style={{
-          position: 'absolute',
-          left: '50%',
-          bottom: '150px',
-          transform: 'translateX(-50%)',
-          background: 'linear-gradient(135deg, #10b981, #059669)',
-          border: 'none',
-          borderRadius: '50px',
-          padding: '16px 80px',
-          fontSize: '18px',
-          fontWeight: '600',
-          color: 'white',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          transition: 'all 0.3s ease',
-          boxShadow: '0 10px 30px rgba(16, 185, 129, 0.3)',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          zIndex: 3,
-        }}
-        onMouseOver={(e) => {
-          e.currentTarget.style.transform = 'translateX(-50%) translateY(-2px)';
-          e.currentTarget.style.boxShadow = '0 15px 40px rgba(16, 185, 129, 0.4)';
-        }}
-        onMouseOut={(e) => {
-          e.currentTarget.style.transform = 'translateX(-50%)';
-          e.currentTarget.style.boxShadow = '0 10px 30px rgba(16, 185, 129, 0.3)';
-        }}
+        className="absolute left-1/2 bottom-[150px] -translate-x-1/2 bg-gradient-to-br from-emerald-500 to-emerald-600 border-none rounded-[50px] px-20 py-4 text-lg font-semibold text-white cursor-pointer flex items-center gap-3 transition-all duration-300 shadow-[0_10px_30px_rgba(16,185,129,0.3)] font-[system-ui] z-[3] hover:-translate-y-0.5 hover:shadow-[0_15px_40px_rgba(16,185,129,0.4)]"
       >
-        <Navigation style={{ width: '20px', height: '20px' }} />
+        <Navigation className="w-5 h-5" />
         Find Your Carbon Footprint
       </button>
     </div>

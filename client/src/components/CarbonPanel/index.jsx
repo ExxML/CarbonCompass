@@ -43,21 +43,10 @@ const CarbonPanel = ({ isDarkMode = false }) => {
   const tripConfig = getMetricConfig('trip');
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: isMobile ? '8px' : '16px',
-        left: isMobile ? '8px' : '16px',
-        zIndex: 9999,
-      }}
-    >
+    <div className={`fixed z-[9999] ${isMobile ? 'bottom-2 left-2' : 'bottom-4 left-4'}`}>
       <div
+        className={`bg-white/10 backdrop-blur-[15px] ${isMobile ? 'rounded-xl' : 'rounded-2xl'} border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1)]`}
         style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(15px)',
-          borderRadius: isMobile ? '12px' : '16px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
           width: isMobile ? '100%' : `${getPanelWidth(384)}px`,
         }}
       >
@@ -65,7 +54,7 @@ const CarbonPanel = ({ isDarkMode = false }) => {
         <Header isDarkMode={isDarkMode} onMinimize={() => setIsMinimized(true)} />
 
         {/* Content */}
-        <div style={{ padding: '16px' }}>
+        <div className="p-4">
           <div
             style={{
               display: 'flex',
@@ -131,16 +120,11 @@ const CarbonPanel = ({ isDarkMode = false }) => {
           </div>
 
           {/* Divider */}
-          <div style={{ margin: '10px 0 8px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }} />
+          <div className="my-2.5 mb-2 mt-2.5 border-t border-white/10" />
 
           {/* Info Text */}
           <div
-            style={{
-              fontSize: '10px',
-              color: isDarkMode ? '#9ca3af' : '#6b7280',
-              textAlign: 'center',
-              fontFamily: 'Roboto, sans-serif',
-            }}
+            className={`font-roboto text-center text-[10px] ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
           >
             By choosing eco-friendly transport, you&apos;re making a difference! 🌱
           </div>

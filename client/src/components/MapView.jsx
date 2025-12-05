@@ -134,13 +134,13 @@ export default function MapView({ onNavigateToLanding }) {
 
   return (
     <APIProvider apiKey={apiKey} libraries={['places']}>
-      <div style={{ position: 'relative', width: '100vw', height: '100dvh' }}>
+      <div className="relative w-screen h-screen">
         {/* Map Component - Keep Original Style */}
         <Map
           key={`map-${isDarkMode ? 'dark' : 'light'}`}
           defaultCenter={defaultCenter}
           defaultZoom={13}
-          style={{ width: '100vw', height: '100dvh' }}
+          className="w-screen h-screen"
           options={{
             gestureHandling: 'greedy',
           }}

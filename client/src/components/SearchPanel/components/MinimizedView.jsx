@@ -6,39 +6,15 @@ import { Navigation } from 'lucide-react';
  */
 const MinimizedView = ({ isDarkMode, onExpand }) => {
   return (
-    <div style={{ position: 'fixed', top: '16px', left: '16px', zIndex: 9999 }}>
+    <div className="fixed top-4 left-4 z-[9999]">
       <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '12px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          padding: '12px',
-          cursor: 'pointer',
-          border: '1px solid rgba(255, 255, 255, 0.4)',
-          transition: 'all 0.3s ease',
-        }}
+        className="bg-white/10 backdrop-blur-[10px] rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] p-3 cursor-pointer border border-white/40 transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)] hover:border-white/30"
         onClick={onExpand}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
-          e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.15)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-          e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-        }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', pointerEvents: 'none' }}>
-          <Navigation style={{ width: '20px', height: '20px', color: '#2563eb' }} />
+        <div className="flex items-center gap-2 pointer-events-none">
+          <Navigation className="w-5 h-5 text-blue-600" />
           <span
-            style={{
-              fontSize: '14px',
-              fontWeight: '500',
-              color: isDarkMode ? '#f9fafb' : '#374151',
-              fontFamily: 'Roboto, sans-serif',
-            }}
+            className={`text-sm font-medium font-roboto ${isDarkMode ? 'text-gray-50' : 'text-gray-700'}`}
           >
             Directions
           </span>

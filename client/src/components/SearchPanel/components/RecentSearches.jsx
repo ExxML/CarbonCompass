@@ -10,39 +10,20 @@ const RecentSearches = ({ searches, onSelect, isDarkMode }) => {
   }
 
   return (
-    <div style={{ padding: '0 16px 16px 16px' }}>
+    <div className="px-4 pb-4">
       <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          borderRadius: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          overflow: 'hidden',
-        }}
+        className="bg-white/5 rounded-xl border border-white/20 overflow-hidden"
       >
         {/* Header */}
         <div
-          style={{
-            padding: '12px 16px 8px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-          }}
+          className="py-3 px-4 pb-2 border-b border-white/10"
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="flex items-center gap-2">
             <Clock
-              style={{
-                width: '14px',
-                height: '14px',
-                color: isDarkMode ? '#d1d5db' : '#6b7280',
-              }}
+              className={`w-3.5 h-3.5 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
             />
             <span
-              style={{
-                fontSize: '12px',
-                fontWeight: '500',
-                color: isDarkMode ? '#d1d5db' : '#6b7280',
-                fontFamily: 'Roboto, sans-serif',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              }}
+              className={`text-xs font-medium font-roboto uppercase tracking-wide ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
             >
               Recent Searches
             </span>
@@ -54,48 +35,19 @@ const RecentSearches = ({ searches, onSelect, isDarkMode }) => {
           <div
             key={search.id}
             onClick={() => onSelect(search)}
-            style={{
-              padding: '12px 16px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              borderBottom:
-                index < searches.length - 1 && index < 2
-                  ? '1px solid rgba(255, 255, 255, 0.05)'
-                  : 'none',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
+            className={`py-3 px-4 cursor-pointer transition-all duration-200 hover:bg-white/10 ${index < searches.length - 1 && index < 2 ? 'border-b border-white/5' : ''
+              }`}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <MapPin style={{ width: '16px', height: '16px', color: '#2563eb', flexShrink: 0 }} />
-              <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="flex items-center gap-3">
+              <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
                 <div
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    color: isDarkMode ? '#f9fafb' : '#111827',
-                    fontFamily: 'Roboto, sans-serif',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
+                  className={`text-sm font-medium font-roboto overflow-hidden text-ellipsis whitespace-nowrap ${isDarkMode ? 'text-gray-50' : 'text-gray-900'}`}
                 >
                   {search.name}
                 </div>
                 <div
-                  style={{
-                    fontSize: '12px',
-                    color: isDarkMode ? '#d1d5db' : '#6b7280',
-                    fontFamily: 'Roboto, sans-serif',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    marginTop: '2px',
-                  }}
+                  className={`text-xs font-roboto overflow-hidden text-ellipsis whitespace-nowrap mt-0.5 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
                 >
                   {search.address}
                 </div>

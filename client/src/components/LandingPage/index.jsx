@@ -20,22 +20,8 @@ const LandingPage = ({ onNavigateToMap }) => {
 
   return (
     <div
-      style={{
-        minHeight: '100vh',
-        width: '100vw',
-        background: `url(${background_0}) center center/cover no-repeat`,
-        backgroundAttachment: 'fixed',
-        backgroundSize: 'cover',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        padding: '180px 0 0',
-        position: 'relative',
-        margin: 0,
-        boxSizing: 'border-box',
-        overflow: 'auto',
-      }}
+      className="min-h-screen w-screen bg-center bg-cover bg-no-repeat bg-fixed flex flex-col items-center justify-start pt-[180px] relative m-0 box-border overflow-auto"
+      style={{ backgroundImage: `url(${background_0})` }}
     >
       <Header onNavigateToSection={scrollToSection} />
       <HeroSection onNavigateToMap={onNavigateToMap} />

@@ -21,71 +21,33 @@ const RouteCard = ({ mode, routeData, onSelect, isDarkMode }) => {
     return (
       <div
         key={mode}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '10px 12px',
-          background: 'rgba(107, 114, 128, 0.1)',
-          borderRadius: '8px',
-          border: `1px solid ${config.color}`,
-          opacity: 0.6,
-          position: 'relative',
-        }}
+        className="flex items-center justify-center px-3 py-2.5 bg-gray-500/10 rounded-lg opacity-60 relative"
+        style={{ border: `1px solid ${config.color}` }}
       >
         {/* Left side - Icon */}
-        <div
-          style={{
-            position: 'absolute',
-            left: '12px',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <span style={{ fontSize: '18px', filter: 'grayscale(1)' }}>{config.icon}</span>
+        <div className="absolute left-3 flex items-center">
+          <span className="text-lg grayscale">{config.icon}</span>
         </div>
 
         {/* Center - Transportation mode and details */}
-        <div style={{ textAlign: 'center' }}>
+        <div className="text-center">
           <div
-            style={{
-              fontSize: '14px',
-              fontWeight: '500',
-              color: isDarkMode ? '#9ca3af' : '#6b7280',
-              fontFamily: 'Roboto, sans-serif',
-            }}
+            className={`text-sm font-medium font-['Roboto'] ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+              }`}
           >
             {config.name}
           </div>
           <div
-            style={{
-              fontSize: '12px',
-              color: isDarkMode ? '#6b7280' : '#9ca3af',
-              fontFamily: 'Roboto, sans-serif',
-            }}
+            className={`text-xs font-['Roboto'] ${isDarkMode ? 'text-gray-500' : 'text-gray-400'
+              }`}
           >
             Route not available
           </div>
         </div>
 
         {/* Right side - N/A */}
-        <div
-          style={{
-            position: 'absolute',
-            right: '12px',
-            textAlign: 'right',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '13px',
-              fontWeight: '600',
-              color: '#6b7280',
-              fontFamily: 'Roboto, sans-serif',
-            }}
-          >
-            N/A
-          </div>
+        <div className="absolute right-3 text-right">
+          <div className="text-[13px] font-semibold text-gray-500 font-['Roboto']">N/A</div>
         </div>
       </div>
     );
@@ -97,78 +59,41 @@ const RouteCard = ({ mode, routeData, onSelect, isDarkMode }) => {
   return (
     <div
       key={mode}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '10px 12px',
-        background: 'rgba(255, 255, 255, 0.1)',
-        borderRadius: '8px',
-        border: `2px solid ${config.color}`,
-        position: 'relative',
-        cursor: 'pointer',
-      }}
+      className="flex items-center justify-center px-3 py-2.5 bg-white/10 rounded-lg relative cursor-pointer"
+      style={{ border: `2px solid ${config.color}` }}
       onClick={() => onSelect && onSelect(mode, routeData)}
     >
       {/* Left side - Icon */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '12px',
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        <span style={{ fontSize: '18px' }}>{config.icon}</span>
+      <div className="absolute left-3 flex items-center">
+        <span className="text-lg">{config.icon}</span>
       </div>
 
       {/* Center - Transportation mode and details */}
-      <div style={{ textAlign: 'center' }}>
+      <div className="text-center">
         <div
-          style={{
-            fontSize: '14px',
-            fontWeight: '500',
-            color: isDarkMode ? '#f9fafb' : '#111827',
-            fontFamily: 'Roboto, sans-serif',
-          }}
+          className={`text-sm font-medium font-['Roboto'] ${isDarkMode ? 'text-gray-50' : 'text-gray-900'
+            }`}
         >
           {config.name}
         </div>
         <div
-          style={{
-            fontSize: '12px',
-            color: isDarkMode ? '#d1d5db' : '#6b7280',
-            fontFamily: 'Roboto, sans-serif',
-          }}
+          className={`text-xs font-['Roboto'] ${isDarkMode ? 'text-gray-300' : 'text-gray-500'}`}
         >
           {route.distance?.text} • {route.duration?.text}
         </div>
       </div>
 
       {/* Right side - Emissions */}
-      <div
-        style={{
-          position: 'absolute',
-          right: '12px',
-          textAlign: 'right',
-        }}
-      >
+      <div className="absolute right-3 text-right">
         <div
-          style={{
-            fontSize: '13px',
-            fontWeight: '600',
-            color: emissions?.emissions_kg === 0 ? '#16a34a' : config.color,
-            fontFamily: 'Roboto, sans-serif',
-          }}
+          className="text-[13px] font-semibold font-['Roboto']"
+          style={{ color: emissions?.emissions_kg === 0 ? '#16a34a' : config.color }}
         >
           {emissions?.emissions_kg === 0 ? '0 kg CO₂' : `${emissions?.emissions_kg || 0} kg CO₂`}
         </div>
         <div
-          style={{
-            fontSize: '11px',
-            color: isDarkMode ? '#9ca3af' : '#6b7280',
-            fontFamily: 'Roboto, sans-serif',
-          }}
+          className={`text-[11px] font-['Roboto'] ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+            }`}
         >
           emissions
         </div>

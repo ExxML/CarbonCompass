@@ -7,45 +7,22 @@ const CarbonMetric = ({ icon, value, label, iconColor, isDarkMode }) => {
 
   return (
     <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        padding: '8px 10px',
-        borderRadius: '8px',
-        background: 'rgba(220, 220, 220, 0.28)',
-        border: '1px solid rgba(220, 220, 220, 0.38)',
-        minWidth: '0',
-        flex: '1 1 0',
-      }}
+      className="flex items-center gap-1.5 py-2 px-2.5 rounded-lg bg-[rgba(220,220,220,0.28)] border border-[rgba(220,220,220,0.38)] min-w-0 flex-1"
     >
-      <IconComponent style={{ width: '14px', height: '14px', color: iconColor, flexShrink: 0 }} />
+      <IconComponent
+        className="w-3.5 h-3.5 flex-shrink-0"
+        style={{ color: iconColor }}
+      />
       <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1px',
-          minWidth: '0',
-          flex: '1',
-        }}
+        className="flex flex-col gap-px min-w-0 flex-1"
       >
         <span
-          style={{
-            fontSize: '12px',
-            fontWeight: '600',
-            color: isDarkMode ? '#f9fafb' : '#111827',
-            fontFamily: 'Roboto, sans-serif',
-            lineHeight: '1.2',
-          }}
+          className={`text-xs font-semibold font-roboto leading-[1.2] ${isDarkMode ? 'text-gray-50' : 'text-gray-900'}`}
         >
           {value}
         </span>
         <span
-          style={{
-            fontSize: '10px',
-            color: isDarkMode ? '#9ca3af' : '#6b7280',
-            fontFamily: 'Roboto, sans-serif',
-          }}
+          className={`text-[10px] font-roboto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
         >
           {label}
         </span>

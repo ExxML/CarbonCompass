@@ -49,76 +49,33 @@ const RouteDetailsPanel = ({
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        ...position,
-        zIndex: 9998,
-      }}
-    >
+    <div className="fixed z-[9998]" style={{ ...position }}>
       <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(15px)',
-          borderRadius: isMobile ? '12px' : '16px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          width: `${getPanelWidth(384)}px`,
-          maxHeight: 'calc(100vh - 32px)',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
+        className={`bg-white/10 backdrop-blur-[15px] ${isMobile ? 'rounded-xl' : 'rounded-2xl'} flex max-h-[calc(100vh-32px)] flex-col border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1)]`}
+        style={{ width: `${getPanelWidth(384)}px` }}
       >
         <Header config={config} isDarkMode={isDarkMode} onClose={onClose} />
 
         {/* Route Summary */}
-        <div
-          style={{
-            padding: '16px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '8px',
-            }}
-          >
+        <div className="border-b border-white/15 p-4">
+          <div className="mb-2 flex items-center justify-between">
             <div
-              style={{
-                fontSize: '20px',
-                fontWeight: '600',
-                color: isDarkMode ? '#f9fafb' : '#111827',
-                fontFamily: 'Roboto, sans-serif',
-              }}
+              className={`font-['Roboto'] text-xl font-semibold ${isDarkMode ? 'text-gray-50' : 'text-gray-900'}`}
             >
               {route.distance?.text || 'N/A'}
             </div>
-            <div
-              style={{
-                fontSize: '16px',
-                fontWeight: '500',
-                color: config.color,
-                fontFamily: 'Roboto, sans-serif',
-              }}
-            >
+            <div className="font-['Roboto'] text-base font-medium" style={{ color: config.color }}>
               {route.duration?.text || 'N/A'}
             </div>
           </div>
           {route.carbon_emissions && (
             <div
-              style={{
-                fontSize: '12px',
-                color:
-                  route.carbon_emissions.emissions_kg === 0
-                    ? '#10b981'
-                    : isDarkMode
-                      ? '#d1d5db'
-                      : '#6b7280',
-                fontFamily: 'Roboto, sans-serif',
-              }}
+              className={`font-['Roboto'] text-xs ${route.carbon_emissions.emissions_kg === 0
+                  ? 'text-emerald-500'
+                  : isDarkMode
+                    ? 'text-gray-300'
+                    : 'text-gray-500'
+                }`}
             >
               Carbon:{' '}
               {route.carbon_emissions.emissions_kg === 0
@@ -129,21 +86,9 @@ const RouteDetailsPanel = ({
         </div>
 
         {/* Scrollable Directions */}
-        <div
-          className="transparent-scrollbar"
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '16px',
-          }}
-        >
+        <div className="transparent-scrollbar flex-1 overflow-y-auto p-4">
           <div
-            style={{
-              fontSize: '14px',
-              fontWeight: '600',
-              marginBottom: '12px',
-              color: isDarkMode ? '#f9fafb' : '#111827',
-            }}
+            className={`mb-3 text-sm font-semibold ${isDarkMode ? 'text-gray-50' : 'text-gray-900'}`}
           >
             {getModeTitle()}
           </div>

@@ -21,43 +21,14 @@ const LocationInput = ({
   const className = isOrigin ? 'search-input-origin' : 'search-input-destination';
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          padding: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
-          borderRadius: '12px',
-          background: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(5px)',
-          transition: 'all 0.3s ease',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-1px)';
-          e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.5)';
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.1)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0px)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-          e.currentTarget.style.boxShadow = 'none';
-        }}
-      >
+    <div className="relative">
+      <div className="flex items-center gap-3 rounded-xl border border-white/30 bg-white/5 p-3 backdrop-blur-[5px] transition-all duration-300 hover:-translate-y-px hover:border-blue-600/50 hover:shadow-[0_4px_12px_rgba(37,99,235,0.1)]">
         {isOrigin ? (
-          <div
-            style={{
-              width: '12px',
-              height: '12px',
-              border: '3px solid #10b981',
-              borderRadius: '50%',
-              flexShrink: 0,
-            }}
-          />
+          <div className="h-3 w-3 flex-shrink-0 rounded-full border-[3px] border-emerald-500" />
         ) : (
           <svg
-            style={{ width: '20px', height: '20px', color: iconColor, flexShrink: 0 }}
+            className="h-5 w-5 flex-shrink-0"
+            style={{ color: iconColor }}
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -73,47 +44,18 @@ const LocationInput = ({
           type="text"
           placeholder={placeholder}
           value={value}
-          className={className}
+          className={`font-roboto flex-1 border-none bg-transparent text-[15px] font-medium outline-none ${isDarkMode ? 'text-gray-50' : 'text-gray-900'} ${className}`}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={onKeyDown}
           onFocus={onFocus}
           onBlur={onBlur}
-          style={{
-            flex: 1,
-            background: 'transparent',
-            outline: 'none',
-            border: 'none',
-            fontSize: '15px',
-            color: isDarkMode ? '#f9fafb' : '#111827',
-            fontWeight: '500',
-            fontFamily: 'Roboto, sans-serif',
-          }}
         />
         {value && (
           <button
             onClick={onClear}
-            style={{
-              padding: '4px',
-              borderRadius: '50%',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className="cursor-pointer rounded-full border-none bg-transparent p-1 transition-colors duration-200 hover:bg-white/10"
           >
-            <X
-              style={{
-                width: '16px',
-                height: '16px',
-                color: isDarkMode ? '#d1d5db' : '#9ca3af',
-              }}
-            />
+            <X className={`h-4 w-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-400'}`} />
           </button>
         )}
       </div>
@@ -125,22 +67,10 @@ const LocationInput = ({
  * Arrow separator between origin and destination inputs
  */
 export const InputSeparator = ({ isDarkMode }) => (
-  <div style={{ display: 'flex', justifyContent: 'center', margin: '-6px 0' }}>
-    <div
-      style={{
-        background: 'rgba(255, 255, 255, 0.1)',
-        borderRadius: '50%',
-        padding: '8px',
-        border: '2px solid rgba(17, 24, 39, 0.1)',
-      }}
-    >
+  <div className="-my-1.5 flex justify-center">
+    <div className="rounded-full border-2 border-gray-900/10 bg-white/10 p-2">
       <ArrowRight
-        style={{
-          width: '16px',
-          height: '16px',
-          color: isDarkMode ? '#d1d5db' : '#6b7280',
-          transform: 'rotate(90deg)',
-        }}
+        className={`h-4 w-4 rotate-90 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
       />
     </div>
   </div>

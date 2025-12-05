@@ -124,67 +124,33 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRoute
 
   // Main panel
   return (
-    <div style={{ position: 'fixed', ...getResponsivePosition('left'), zIndex: 9999 }}>
+    <div className="fixed z-[9999]" style={{ ...getResponsivePosition('left') }}>
       <div
+        className={`bg-white/10 backdrop-blur-[15px] ${isMobile ? 'rounded-xl' : 'rounded-2xl'} border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1)]`}
         style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(15px)',
-          borderRadius: isMobile ? '12px' : '16px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
           width: `${getPanelWidth(384)}px`,
         }}
       >
         {/* Header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '16px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Navigation style={{ width: '20px', height: '20px', color: '#2563eb' }} />
+        <div className="flex items-center justify-between border-b border-white/25 p-4">
+          <div className="flex items-center gap-2">
+            <Navigation className="h-5 w-5 text-blue-600" />
             <span
-              style={{
-                fontSize: '16px',
-                fontWeight: '500',
-                color: isDarkMode ? '#f9fafb' : '#111827',
-                fontFamily: 'Roboto, sans-serif',
-              }}
+              className={`font-roboto text-base font-medium ${isDarkMode ? 'text-gray-50' : 'text-gray-900'}`}
             >
               Directions
             </span>
           </div>
           <button
             onClick={() => setIsMinimized(true)}
-            style={{
-              padding: '4px',
-              borderRadius: '50%',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = isDarkMode
-                ? 'rgba(255, 255, 255, 0.1)'
-                : '#f3f4f6';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            className={`cursor-pointer rounded-full border-none bg-transparent p-1 transition-colors duration-200 ${isDarkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'}`}
           >
-            <X
-              style={{ width: '16px', height: '16px', color: isDarkMode ? '#d1d5db' : '#6b7280' }}
-            />
+            <X className={`h-4 w-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`} />
           </button>
         </div>
 
         {/* Search Inputs */}
-        <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="flex flex-col gap-3 p-4">
           <LocationInput
             type="origin"
             value={origin}
@@ -242,28 +208,11 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRoute
             <button
               onClick={handleGetDirections}
               disabled={loading}
-              style={{
-                padding: '12px 16px',
-                background: loading ? 'rgba(37, 99, 235, 0.5)' : 'rgba(37, 99, 235, 0.8)',
-                borderRadius: '12px',
-                border: 'none',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-              }}
+              className={`flex items-center justify-center gap-2 rounded-xl border-none px-4 py-3 transition-all duration-300 ${loading ? 'cursor-not-allowed bg-blue-600/50' : 'cursor-pointer bg-blue-600/80'
+                }`}
             >
-              <Navigation style={{ width: '16px', height: '16px', color: 'white' }} />
-              <span
-                style={{
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'white',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
+              <Navigation className="h-4 w-4 text-white" />
+              <span className="font-roboto text-sm font-medium text-white">
                 {loading ? 'Finding All Routes...' : 'Get All Routes'}
               </span>
             </button>
@@ -271,24 +220,8 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRoute
 
           {/* Error Display */}
           {error && (
-            <div
-              style={{
-                padding: '12px',
-                background: 'rgba(220, 38, 38, 0.1)',
-                borderRadius: '8px',
-                border: '1px solid rgba(220, 38, 38, 0.3)',
-              }}
-            >
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: '14px',
-                  color: '#dc2626',
-                  fontFamily: 'Roboto, sans-serif',
-                }}
-              >
-                {error}
-              </p>
+            <div className="rounded-lg border border-red-600/30 bg-red-600/10 p-3">
+              <p className="font-roboto m-0 text-sm text-red-600">{error}</p>
             </div>
           )}
 
@@ -296,26 +229,11 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRoute
           {allRoutesData &&
             typeof allRoutesData === 'object' &&
             Object.keys(allRoutesData).length > 0 && (
-              <div
-                style={{
-                  padding: '16px',
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(16, 185, 129, 0.3)',
-                }}
-              >
-                <p
-                  style={{
-                    margin: '0 0 12px 0',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#059669',
-                    fontFamily: 'Roboto, sans-serif',
-                  }}
-                >
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+                <p className="font-roboto m-0 mb-3 text-base font-semibold text-emerald-600">
                   Routes Found!
                 </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div className="flex flex-col gap-2">
                   {['driving', 'transit', 'bicycling', 'walking'].map((mode) => (
                     <RouteCard
                       key={mode}

@@ -4,50 +4,18 @@
  */
 const MetricCard = ({ icon, value, label, isDarkMode }) => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '6px',
-        padding: '8px 6px',
-        borderRadius: '8px',
-        background: 'rgba(220, 220, 220, 0.28)',
-        border: '1px solid rgba(220, 220, 220, 0.38)',
-        minWidth: '60px',
-        flex: '1',
-        maxWidth: '80px',
-      }}
-    >
+    <div className="flex flex-col items-center justify-center gap-1.5 px-1.5 py-2 rounded-lg bg-[rgba(220,220,220,0.28)] border border-[rgba(220,220,220,0.38)] min-w-[60px] flex-1 max-w-[80px]">
       {icon}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '2px',
-        }}
-      >
+      <div className="flex flex-col items-center gap-0.5">
         <span
-          style={{
-            fontSize: '11px',
-            fontWeight: '600',
-            color: isDarkMode ? '#f9fafb' : '#111827',
-            fontFamily: 'Roboto, sans-serif',
-            lineHeight: '1.1',
-            textAlign: 'center',
-          }}
+          className={`text-[11px] font-semibold font-['Roboto'] leading-tight text-center ${isDarkMode ? 'text-gray-50' : 'text-gray-900'
+            }`}
         >
           {value}
         </span>
         <span
-          style={{
-            fontSize: '9px',
-            color: isDarkMode ? '#9ca3af' : '#6b7280',
-            fontFamily: 'Roboto, sans-serif',
-            textAlign: 'center',
-          }}
+          className={`text-[9px] font-['Roboto'] text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-500'
+            }`}
         >
           {label}
         </span>

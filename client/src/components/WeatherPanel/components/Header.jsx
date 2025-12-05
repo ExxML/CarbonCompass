@@ -5,81 +5,35 @@ import { Cloud, RefreshCw, X } from 'lucide-react';
  */
 const Header = ({ isDarkMode, loading, onRefresh, onMinimize }) => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '16px',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Cloud style={{ width: '20px', height: '20px', color: '#6b7280' }} />
+    <div className="flex items-center justify-between p-4 border-b border-white/25">
+      <div className="flex items-center gap-2">
+        <Cloud className="w-5 h-5 text-gray-500" />
         <span
-          style={{
-            fontSize: '16px',
-            fontWeight: '500',
-            color: isDarkMode ? '#f9fafb' : '#111827',
-            fontFamily: 'Roboto, sans-serif',
-          }}
+          className={`text-base font-medium font-['Roboto'] ${isDarkMode ? 'text-gray-50' : 'text-gray-900'
+            }`}
         >
           Weather
         </span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="flex items-center gap-2">
         <button
           onClick={onRefresh}
           disabled={loading}
-          style={{
-            padding: '4px',
-            borderRadius: '50%',
-            background: 'transparent',
-            border: 'none',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            transition: 'background-color 0.2s',
-            opacity: loading ? 0.5 : 1,
-          }}
-          onMouseOver={(e) => {
-            if (!loading) {
-              e.currentTarget.style.backgroundColor = isDarkMode
-                ? 'rgba(255, 255, 255, 0.1)'
-                : '#f3f4f6';
-            }
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-          }}
+          className={`p-1 rounded-full bg-transparent border-none transition-colors ${loading
+              ? 'cursor-not-allowed opacity-50'
+              : 'cursor-pointer hover:bg-white/10 dark:hover:bg-white/10'
+            }`}
         >
           <RefreshCw
-            style={{
-              width: '16px',
-              height: '16px',
-              color: isDarkMode ? '#d1d5db' : '#6b7280',
-              animation: loading ? 'spin 1s linear infinite' : 'none',
-            }}
+            className={`w-4 h-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-500'} ${loading ? 'animate-spin' : ''
+              }`}
           />
         </button>
         <button
           onClick={onMinimize}
-          style={{
-            padding: '4px',
-            borderRadius: '50%',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'background-color 0.2s',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = isDarkMode
-              ? 'rgba(255, 255, 255, 0.1)'
-              : '#f3f4f6';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-          }}
+          className="p-1 rounded-full bg-transparent border-none cursor-pointer transition-colors hover:bg-white/10 dark:hover:bg-white/10"
         >
-          <X style={{ width: '16px', height: '16px', color: isDarkMode ? '#d1d5db' : '#6b7280' }} />
+          <X className={`w-4 h-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-500'}`} />
         </button>
       </div>
     </div>

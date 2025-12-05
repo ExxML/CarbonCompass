@@ -1,10 +1,11 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /*
 
  THIS IS THE GLOBAL CSS STYLING
 
- PLEASE IGNORE THE @apply LINT ERRORS
  */
 
 /* -----------------------------------------------------------
@@ -12,15 +13,21 @@
 ----------------------------------------------------------- */
 :root {
   /* Neutrals */
-  --bg: 255 255 255; /* page background */
-  --surface: 255 255 255; /* card/panel surface */
-  --surface-2: 248 249 250; /* muted surface */
+  --bg: 255 255 255;
+  /* page background */
+  --surface: 255 255 255;
+  /* card/panel surface */
+  --surface-2: 248 249 250;
+  /* muted surface */
   --border: 225 228 232;
-  --text: 17 24 39; /* slate-900-ish */
-  --text-mute: 100 116 139; /* slate-500-ish */
+  --text: 17 24 39;
+  /* slate-900-ish */
+  --text-mute: 100 116 139;
+  /* slate-500-ish */
 
   /* Brand / accents (Google-y but not identical) */
-  --brand: 66 133 244; /* blue 500 */
+  --brand: 66 133 244;
+  /* blue 500 */
   --brand-600: 52 120 236;
   --brand-100: 222 235 255;
 
@@ -34,8 +41,10 @@
   --shadow-strong: 0.22;
 
   /* Radii */
-  --radius: 14px; /* floating panels, cards */
-  --radius-sm: 10px; /* inputs, chips */
+  --radius: 14px;
+  /* floating panels, cards */
+  --radius-sm: 10px;
+  /* inputs, chips */
 }
 
 :root.dark {
@@ -81,6 +90,7 @@ body,
   a {
     color: rgb(var(--brand));
   }
+
   a:hover {
     color: rgb(var(--brand-600));
   }
@@ -89,6 +99,7 @@ body,
   :root {
     scroll-behavior: smooth;
   }
+
   ::selection {
     background-color: rgba(var(--brand), 0.18);
   }
@@ -98,17 +109,21 @@ body,
     scrollbar-width: thin;
     scrollbar-color: rgba(var(--text-mute), 0.35) transparent;
   }
+
   *::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
+
   *::-webkit-scrollbar-track {
     background: transparent;
   }
+
   *::-webkit-scrollbar-thumb {
     background: rgba(var(--text-mute), 0.35);
     border-radius: 4px;
   }
+
   *::-webkit-scrollbar-thumb:hover {
     background: rgba(var(--text-mute), 0.5);
   }
@@ -118,6 +133,7 @@ body,
    Custom component classes (reusable styles)
 ----------------------------------------------------------- */
 @layer components {
+
   /* Glass morphism panel */
   .glass-panel {
     border-radius: 16px;
@@ -493,6 +509,7 @@ body,
       transform: translateY(10px);
       opacity: 0;
     }
+
     to {
       transform: translateY(0);
       opacity: 1;
@@ -503,16 +520,19 @@ body,
     from {
       transform: rotate(0deg);
     }
+
     to {
       transform: rotate(360deg);
     }
   }
 
   @keyframes pulse {
+
     0%,
     100% {
       opacity: 1;
     }
+
     50% {
       opacity: 0.5;
     }
