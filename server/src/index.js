@@ -12,6 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 // Routes
 app.use("/api/directions", directionsRoutes);
 
@@ -22,7 +23,7 @@ app.get("/api/health", (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("[Server Error]", err.message, req.method, req.path);
   res.status(500).json({
     error: "Something went wrong!",
     message:

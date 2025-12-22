@@ -17,6 +17,8 @@ export const useSearchState = ({
   // Input State
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
+  const [originValue, setOriginValue] = useState(''); // Actual value for API (coords or address)
+  const [destinationValue, setDestinationValue] = useState(''); // Actual value for API (coords or address)
   const [isOriginFocused, setIsOriginFocused] = useState(false);
   const [isDestinationFocused, setIsDestinationFocused] = useState(false);
 
@@ -92,6 +94,7 @@ export const useSearchState = ({
   const handleOriginSelect = useCallback(
     (prediction) => {
       setOrigin(prediction.description);
+      setOriginValue(prediction.description);
       clearOriginPredictions();
       setIsOriginFocused(false);
     },
@@ -102,6 +105,7 @@ export const useSearchState = ({
   const handleDestinationSelect = useCallback(
     (prediction) => {
       setDestination(prediction.description);
+      setDestinationValue(prediction.description);
       clearDestinationPredictions();
       setIsDestinationFocused(false);
     },
@@ -114,13 +118,16 @@ export const useSearchState = ({
       try {
         const location = await getCurrentLocation();
         const displayText = `Current Location (${location.lat.toFixed(4)}, ${location.lng.toFixed(4)})`;
+        const coordsValue = `${location.lat},${location.lng}`; // Format for Google Maps API
 
         if (inputType === 'origin') {
           setOrigin(displayText);
+          setOriginValue(coordsValue);
           clearOriginPredictions();
           setIsOriginFocused(false);
         } else if (inputType === 'destination') {
           setDestination(displayText);
+          setDestinationValue(coordsValue);
           clearDestinationPredictions();
           setIsDestinationFocused(false);
         }
@@ -155,6 +162,8 @@ export const useSearchState = ({
     isMinimized,
     origin,
     destination,
+    originValue,
+    destinationValue,
     isOriginFocused,
     isDestinationFocused,
     allRoutesData,
