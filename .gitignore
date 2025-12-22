@@ -49,6 +49,10 @@ coverage/
 # nyc test coverage
 .nyc_output
 
+# Project documentation (internal use only)
+PROJECT_NOTES.md
+client/PROJECT_NOTES.md
+
 # Dependency directories
 jspm_packages/
 node_modules/
