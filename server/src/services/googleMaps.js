@@ -1,9 +1,15 @@
 import axios from "axios";
+import { GoogleMapsError } from "../utils/errors.js";
 
 class GoogleMapsService {
   constructor() {
     this.apiKey = process.env.GOOGLE_MAPS_API_KEY;
     this.baseUrl = "https://maps.googleapis.com/maps/api";
+
+    console.log(
+      "[GoogleMapsService] Initializing with API key:",
+      this.apiKey ? "Present" : "MISSING",
+    );
 
     if (!this.apiKey) {
       throw new Error("Google Maps API key is required");
@@ -50,19 +56,27 @@ class GoogleMapsService {
       });
 
       if (response.data.status !== "OK") {
-        throw new Error(
-          `Google Maps API error: ${response.data.status} - ${response.data.error_message || "Unknown error"}`,
+        throw new GoogleMapsError(
+          `${response.data.status}: ${response.data.error_message || "There was an issue performing a Directions request."}`,
+          response.data.status,
         );
       }
 
       return this.processDirectionsResponse(response.data);
     } catch (error) {
+      if (error instanceof GoogleMapsError) {
+        throw error;
+      }
       if (error.response) {
-        throw new Error(
-          `Google Maps API request failed: ${error.response.status} ${error.response.statusText}`,
+        throw new GoogleMapsError(
+          `API request failed: ${error.response.status} ${error.response.statusText}`,
+          "REQUEST_FAILED",
         );
       }
-      throw error;
+      throw new GoogleMapsError(
+        error.message || "Unknown error occurred",
+        "UNKNOWN_ERROR",
+      );
     }
   }
 

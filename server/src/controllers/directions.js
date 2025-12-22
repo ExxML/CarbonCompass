@@ -32,7 +32,7 @@ router.post(
       const directionsData = await service.getDirections(
         origin,
         destination,
-        options
+        options,
       );
 
       // Calculate carbon emissions for each route
@@ -40,7 +40,7 @@ router.post(
         const distanceKm = route.distance.value / 1000; // Convert meters to km
         const emissions = service.calculateCarbonEmissions(
           distanceKm,
-          options.mode
+          options.mode,
         );
 
         return {
@@ -59,15 +59,23 @@ router.post(
       });
     } catch (error) {
       if (error instanceof GoogleMapsError) {
-        return res.status(400).json({
+        console.error(
+          "[Directions] Google Maps Error:",
+          error.status,
+          error.message,
+        );
+        return res.json({
+          success: false,
           error: "Google Maps API Error",
           message: error.message,
           status: error.status,
+          timestamp: new Date().toISOString(),
         });
       }
+      console.error("[Directions] Unexpected error:", error.message);
       throw error;
     }
-  })
+  }),
 );
 
 /**
@@ -85,7 +93,7 @@ router.get(
       const directionsData = await service.getDirections(
         origin,
         destination,
-        options
+        options,
       );
 
       // Calculate carbon emissions for each route
@@ -93,7 +101,7 @@ router.get(
         const distanceKm = route.distance.value / 1000; // Convert meters to km
         const emissions = service.calculateCarbonEmissions(
           distanceKm,
-          options.mode
+          options.mode,
         );
 
         return {
@@ -112,15 +120,23 @@ router.get(
       });
     } catch (error) {
       if (error instanceof GoogleMapsError) {
-        return res.status(400).json({
+        console.error(
+          "[Directions] Google Maps Error:",
+          error.status,
+          error.message,
+        );
+        return res.json({
+          success: false,
           error: "Google Maps API Error",
           message: error.message,
           status: error.status,
+          timestamp: new Date().toISOString(),
         });
       }
+      console.error("[Directions] Unexpected error:", error.message);
       throw error;
     }
-  })
+  }),
 );
 
 /**
@@ -147,7 +163,7 @@ router.post(
       data: emissions,
       timestamp: new Date().toISOString(),
     });
-  })
+  }),
 );
 
 export default router;

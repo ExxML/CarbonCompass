@@ -69,6 +69,8 @@ export const useDirections = () => {
             setDirectionsData(response.data);
             return response.data;
           }
+          // Backend returned unsuccessful response, trigger fallback
+          throw new Error(`Backend returned: ${response.message || 'Unknown error'}`);
         } catch (backendError) {
           console.warn(
             'Backend unavailable, using Google Maps API directly:',
@@ -80,8 +82,6 @@ export const useDirections = () => {
           setDirectionsData(directResult);
           return directResult;
         }
-
-        throw new Error('Failed to get directions from all sources');
       } catch (err) {
         setError(err.message);
         console.error('Error fetching directions:', err);

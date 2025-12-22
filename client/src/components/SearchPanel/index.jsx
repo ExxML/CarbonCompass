@@ -36,6 +36,8 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRoute
     isMinimized,
     origin,
     destination,
+    originValue,
+    destinationValue,
     isOriginFocused,
     isDestinationFocused,
     allRoutesData,
@@ -73,14 +75,19 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRoute
       return;
     }
 
+    // Use originValue/destinationValue for API (coords or address), fall back to display text
+    const originForAPI = originValue || origin;
+    const destinationForAPI = destinationValue || destination;
+
+
     setAllRoutesData({});
 
     try {
       const modes = ['driving', 'transit', 'bicycling', 'walking'];
       const routePromises = modes.map((mode) =>
         getDirections({
-          origin,
-          destination,
+          origin: originForAPI,
+          destination: destinationForAPI,
           mode,
           alternatives: false,
           units: 'metric',
