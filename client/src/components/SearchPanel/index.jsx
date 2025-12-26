@@ -17,7 +17,13 @@ import RouteCard from './components/RouteCard';
  * Main SearchPanel component
  * Provides search interface for route planning with autocomplete
  */
-const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRouteSelect }) => {
+const SearchPanel = ({
+  isDarkMode = false,
+  onRouteChange,
+  onClearSearch,
+  onRouteSelect,
+  onEnableTraffic,
+}) => {
   const { getPanelWidth, getResponsivePosition, isMobile } = useResponsive();
   const { loading, error, getDirections } = useDirections();
   const { currentLocation, isGettingLocation, getCurrentLocation } = useGeolocation();
@@ -119,6 +125,11 @@ const SearchPanel = ({ isDarkMode = false, onRouteChange, onClearSearch, onRoute
       if (onRouteChange && Object.keys(allRoutes).length > 0) {
         onRouteChange(allRoutes);
       }
+
+      if (onEnableTraffic && Object.keys(allRoutes).length > 0) {
+        onEnableTraffic();
+      }
+      
     } catch (err) {
       console.error('Failed to get directions:', err);
     }

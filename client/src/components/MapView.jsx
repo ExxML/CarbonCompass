@@ -173,6 +173,7 @@ export default function MapView({ onNavigateToLanding }) {
           onClearSearch={(clearFn) => {
             clearSearchPanelRef.current = clearFn;
           }}
+          onEnableTraffic={() => setShowTraffic(true)}
         />
 
         {/* Route Details Panel */}
