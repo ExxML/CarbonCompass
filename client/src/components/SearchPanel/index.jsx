@@ -36,6 +36,8 @@ const SearchPanel = ({
     fetchDestinationPredictions,
     clearOriginPredictions,
     clearDestinationPredictions,
+    endOriginSession,
+    endDestinationSession,
   } = useAutocomplete();
 
   const {
@@ -65,6 +67,8 @@ const SearchPanel = ({
     fetchDestinationPredictions,
     clearOriginPredictions,
     clearDestinationPredictions,
+    endOriginSession,
+    endDestinationSession,
     onClearSearch,
   });
 
@@ -84,7 +88,6 @@ const SearchPanel = ({
     // Use originValue/destinationValue for API (coords or address), fall back to display text
     const originForAPI = originValue || origin;
     const destinationForAPI = destinationValue || destination;
-
 
     setAllRoutesData({});
 
@@ -129,7 +132,6 @@ const SearchPanel = ({
       if (onEnableTraffic && Object.keys(allRoutes).length > 0) {
         onEnableTraffic();
       }
-      
     } catch (err) {
       console.error('Failed to get directions:', err);
     }
@@ -226,8 +228,9 @@ const SearchPanel = ({
             <button
               onClick={handleGetDirections}
               disabled={loading}
-              className={`flex items-center justify-center gap-2 rounded-xl border-none px-4 py-3 transition-all duration-300 ${loading ? 'cursor-not-allowed bg-blue-600/50' : 'cursor-pointer bg-blue-600/80'
-                }`}
+              className={`flex items-center justify-center gap-2 rounded-xl border-none px-4 py-3 transition-all duration-300 ${
+                loading ? 'cursor-not-allowed bg-blue-600/50' : 'cursor-pointer bg-blue-600/80'
+              }`}
             >
               <Navigation className="h-4 w-4 text-white" />
               <span className="font-roboto text-sm font-medium text-white">

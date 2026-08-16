@@ -9,6 +9,8 @@ export const useSearchState = ({
   fetchDestinationPredictions,
   clearOriginPredictions,
   clearDestinationPredictions,
+  endOriginSession,
+  endDestinationSession,
   onClearSearch,
 }) => {
   // UI State
@@ -38,6 +40,8 @@ export const useSearchState = ({
     setAllRoutesData({});
     clearOriginPredictions();
     clearDestinationPredictions();
+    endOriginSession();
+    endDestinationSession();
 
     if (originInputRef.current) {
       originInputRef.current.focus();
@@ -46,7 +50,13 @@ export const useSearchState = ({
     if (onClearSearch) {
       onClearSearch();
     }
-  }, [clearOriginPredictions, clearDestinationPredictions, onClearSearch]);
+  }, [
+    clearOriginPredictions,
+    clearDestinationPredictions,
+    endOriginSession,
+    endDestinationSession,
+    onClearSearch,
+  ]);
 
   // Handle origin input change
   const handleOriginChange = useCallback(
@@ -96,9 +106,10 @@ export const useSearchState = ({
       setOrigin(prediction.description);
       setOriginValue(prediction.description);
       clearOriginPredictions();
+      endOriginSession();
       setIsOriginFocused(false);
     },
-    [clearOriginPredictions]
+    [clearOriginPredictions, endOriginSession]
   );
 
   // Handle destination selection from predictions
@@ -107,9 +118,10 @@ export const useSearchState = ({
       setDestination(prediction.description);
       setDestinationValue(prediction.description);
       clearDestinationPredictions();
+      endDestinationSession();
       setIsDestinationFocused(false);
     },
-    [clearDestinationPredictions]
+    [clearDestinationPredictions, endDestinationSession]
   );
 
   // Handle current location selection
@@ -124,18 +136,20 @@ export const useSearchState = ({
           setOrigin(displayText);
           setOriginValue(coordsValue);
           clearOriginPredictions();
+          endOriginSession();
           setIsOriginFocused(false);
         } else if (inputType === 'destination') {
           setDestination(displayText);
           setDestinationValue(coordsValue);
           clearDestinationPredictions();
+          endDestinationSession();
           setIsDestinationFocused(false);
         }
       } catch (error) {
         console.error('Failed to get current location:', error);
       }
     },
-    [clearOriginPredictions, clearDestinationPredictions]
+    [clearOriginPredictions, clearDestinationPredictions, endOriginSession, endDestinationSession]
   );
 
   // Handle recent search selection
@@ -147,14 +161,16 @@ export const useSearchState = ({
       if (isOriginFocusedParam) {
         setOrigin(searchValue);
         clearOriginPredictions();
+        endOriginSession();
         setIsOriginFocused(false);
       } else if (isDestinationFocusedParam) {
         setDestination(searchValue);
         clearDestinationPredictions();
+        endDestinationSession();
         setIsDestinationFocused(false);
       }
     },
-    [clearOriginPredictions, clearDestinationPredictions]
+    [clearOriginPredictions, clearDestinationPredictions, endOriginSession, endDestinationSession]
   );
 
   return {

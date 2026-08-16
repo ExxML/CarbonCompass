@@ -1,24 +1,67 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
+
+/**
+ * Maps a Places suggestion to the prediction shape consumed by the search panel
+ * @param {google.maps.places.AutocompleteSuggestion} suggestion
+ */
+const toPrediction = ({ placePrediction }) => ({
+  place_id: placePrediction.placeId,
+  description: placePrediction.text?.toString() ?? '',
+  structured_formatting: {
+    main_text: placePrediction.mainText?.toString() ?? '',
+    secondary_text: placePrediction.secondaryText?.toString() ?? '',
+  },
+});
 
 /**
  * Custom hook for managing Google Places autocomplete functionality
  * Handles prediction fetching for both origin and destination inputs
  */
 export const useAutocomplete = () => {
-  const [autocompleteService, setAutocompleteService] = useState(null);
   const [originPredictions, setOriginPredictions] = useState([]);
   const [destinationPredictions, setDestinationPredictions] = useState([]);
 
+  // Loads asynchronously; predictions can only be fetched once it is available
   const placesLib = useMapsLibrary('places');
 
-  // Initialize autocomplete service
-  useEffect(() => {
-    if (!placesLib) return;
+  // Billing sessions, kept separate so each input is charged as its own session
+  const originSessionRef = useRef(null);
+  const destinationSessionRef = useRef(null);
 
-    const service = new placesLib.AutocompleteService();
-    setAutocompleteService(service);
-  }, [placesLib]);
+  // Returns the active session token, starting a new session when none is open
+  const getSessionToken = useCallback(
+    (sessionRef) => {
+      if (!placesLib) return undefined;
+
+      if (!sessionRef.current) {
+        sessionRef.current = new placesLib.AutocompleteSessionToken();
+      }
+
+      return sessionRef.current;
+    },
+    [placesLib]
+  );
+
+  const fetchPredictions = useCallback(
+    async (value, sessionRef, setPredictions, label) => {
+      try {
+        const { suggestions } = await placesLib.AutocompleteSuggestion.fetchAutocompleteSuggestions(
+          {
+            input: value,
+            sessionToken: getSessionToken(sessionRef),
+            includedPrimaryTypes: ['geocode', 'establishment'],
+          }
+        );
+
+        setPredictions(suggestions.filter((s) => s.placePrediction).map(toPrediction));
+      } catch (error) {
+        console.warn(`${label} prediction request failed:`, error);
+        setPredictions([]);
+      }
+    },
+    [placesLib, getSessionToken]
+  );
 
   // Clear predictions
   const clearOriginPredictions = useCallback(() => {
@@ -29,60 +72,39 @@ export const useAutocomplete = () => {
     setDestinationPredictions([]);
   }, []);
 
+  // End the current billing session, so the next keystroke starts a new one
+  const endOriginSession = useCallback(() => {
+    originSessionRef.current = null;
+  }, []);
+
+  const endDestinationSession = useCallback(() => {
+    destinationSessionRef.current = null;
+  }, []);
+
   // Fetch origin predictions
   const fetchOriginPredictions = useCallback(
     (value) => {
-      if (!value || value.trim() === '' || !autocompleteService) {
+      if (!value || value.trim() === '' || !placesLib) {
         setOriginPredictions([]);
         return;
       }
 
-      autocompleteService.getPlacePredictions(
-        {
-          input: value,
-          types: ['geocode', 'establishment'],
-        },
-        (predictions, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
-            setOriginPredictions(predictions);
-          } else if (status === window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
-            setOriginPredictions([]);
-          } else {
-            console.warn('Origin prediction request failed:', status);
-            setOriginPredictions([]);
-          }
-        }
-      );
+      fetchPredictions(value, originSessionRef, setOriginPredictions, 'Origin');
     },
-    [autocompleteService]
+    [placesLib, fetchPredictions]
   );
 
   // Fetch destination predictions
   const fetchDestinationPredictions = useCallback(
     (value) => {
-      if (!value || value.trim() === '' || !autocompleteService) {
+      if (!value || value.trim() === '' || !placesLib) {
         setDestinationPredictions([]);
         return;
       }
 
-      autocompleteService.getPlacePredictions(
-        {
-          input: value,
-          types: ['geocode', 'establishment'],
-        },
-        (predictions, status) => {
-          if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
-            setDestinationPredictions(predictions);
-          } else if (status === window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
-            setDestinationPredictions([]);
-          } else {
-            console.warn('Destination prediction request failed:', status);
-            setDestinationPredictions([]);
-          }
-        }
-      );
+      fetchPredictions(value, destinationSessionRef, setDestinationPredictions, 'Destination');
     },
-    [autocompleteService]
+    [placesLib, fetchPredictions]
   );
 
   return {
@@ -92,6 +114,7 @@ export const useAutocomplete = () => {
     fetchDestinationPredictions,
     clearOriginPredictions,
     clearDestinationPredictions,
-    autocompleteService,
+    endOriginSession,
+    endDestinationSession,
   };
 };
